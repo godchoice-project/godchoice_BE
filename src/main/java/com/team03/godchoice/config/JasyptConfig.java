@@ -12,7 +12,7 @@ public class JasyptConfig {
 
     @Value("${jasypt.secret.key}")
     private String key;
-
+//test
     @Bean(name = "jasyptStringEncryptor")
     public StringEncryptor stringEncryptor() {
 

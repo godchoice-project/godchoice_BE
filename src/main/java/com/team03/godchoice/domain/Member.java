@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member extends Timestamped{
+public class Member{
 
     @Id
     @Column(name = "memberId")
@@ -23,16 +23,15 @@ public class Member extends Timestamped{
     @Column(nullable = false)
     private String userName;
 
-    private String address;
+    private String userAddressTag;
 
-    private String userTag;
-
-    @Column(nullable = false)
-    private String sex;
-
-    @Column(nullable = false)
     private String userImgUrl;
 
+    //UUID 난수 암호화
     @Column(nullable = false)
     private String pw;
+
+    //ADMIN , USER
+    @Column(nullable = false)
+    private String role;
 }

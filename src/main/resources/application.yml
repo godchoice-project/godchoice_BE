@@ -1,0 +1,37 @@
+#https ??
+#server:
+#  ssl:
+#    key-store-password: 5509kong
+#    key-store-type: PKCS12
+#    key-store:  classpath:keystore.p12
+
+spring:
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        #나중에 지워야함
+
+#h2 테이블 만들어지는 규칙?
+    hibernate:
+      ddl-auto: create-drop
+  #    hibernate:
+  #      ddl-auto: update
+
+jwt :
+  secret:
+    key : ENC(nFJ2lB2DY3VYNIQcw8ipImC4VB50glEJlLGQWj/FNao=)
+
+jasypt:
+  secret:
+    key: "my_jasypt_key"

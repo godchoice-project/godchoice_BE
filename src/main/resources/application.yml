@@ -30,7 +30,7 @@ spring:
 
 jwt :
   secret:
-    key : ENC(nFJ2lB2DY3VYNIQcw8ipImC4VB50glEJlLGQWj/FNao=)
+    key : ENC(7ZvmGsATO2+bqAzJhy/kEiwcy2nogu5wkrycMRH28TrtLcELCTlUWMF7DgoPQlNHaaTEg+RliXgecU8+jHQX8I4q80NLvlN/LC1FdVhIxQZ+EdV8LaePnXhhv1zasVCpSibJwBYz2NnTrq/QnCSH3+GXlOhz6ymBkiQlevS2BGnJGN5eqc4ilq+1p41+VSqQwGyRT9DBSSBSySWoafBubywqT+30P+8848UsguUy1yMcFM/i/bvDjl53Mo5IZeBQRUdrKlB+8XhoHNa0ps06QiwieYLQbcV5NUuIp1s6r+HdlJa4rlciCR0ETFeO0pwrQGWER0f357domOc0rwjf1NIyvG+/JmKj)
 
 jasypt:
   secret:

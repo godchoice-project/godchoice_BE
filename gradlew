@@ -24,7 +24,7 @@
 #
 #   (1) You need a POSIX-compliant shell to run this script. If your /bin/sh is
 #       noncompliant, but you have some other compliant shell such as ksh or
-#       bash, then to run this script, type that shell name before the whole
+#       bash, then to run this script, type that shell userName before the whole
 #       command line, like:
 #
 #           ksh Gradle
@@ -82,8 +82,8 @@ done
 
 APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
 
-APP_NAME="Gradle"
-APP_BASE_NAME=${0##*/}
+APP_userName="Gradle"
+APP_BASE_userName=${0##*/}
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
@@ -107,7 +107,7 @@ cygwin=false
 msys=false
 darwin=false
 nonstop=false
-case "$( uname )" in                #(
+case "$( uuserName )" in                #(
   CYGWIN* )         cygwin=true  ;; #(
   Darwin* )         darwin=true  ;; #(
   MSYS* | MINGW* )  msys=true    ;; #(
@@ -156,9 +156,9 @@ fi
 
 # Collect all arguments for the java command, stacking in reverse order:
 #   * args from the command line
-#   * the main class name
+#   * the main class userName
 #   * -classpath
-#   * -D...appname settings
+#   * -D...appuserName settings
 #   * --module-path (only if needed)
 #   * DEFAULT_JVM_OPTS, JAVA_OPTS, and GRADLE_OPTS environment variables.
 
@@ -200,7 +200,7 @@ fi
 #   * put everything else in single quotes, so that it's not re-expanded.
 
 set -- \
-        "-Dorg.gradle.appname=$APP_BASE_NAME" \
+        "-Dorg.gradle.appuserName=$APP_BASE_userName" \
         -classpath "$CLASSPATH" \
         org.gradle.wrapper.GradleWrapperMain \
         "$@"

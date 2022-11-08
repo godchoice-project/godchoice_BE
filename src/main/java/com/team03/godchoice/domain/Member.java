@@ -3,14 +3,17 @@ package com.team03.godchoice.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member{
+public class Member implements Serializable {
 
     @Id
     @Column(name = "memberId")
@@ -34,4 +37,19 @@ public class Member{
     //ADMIN , USER
     @Column(nullable = false)
     private String role;
+
+    //========================================================================
+    public Member(String name, String email, String picture) {
+        this.userName = name;
+        this.email = email;
+        this.userImgUrl = picture;
+    }
+
+    public Member update(String name, String picture) {
+        this.userName = name;
+        this.userImgUrl = picture;
+
+        return this;
+
+    }
 }

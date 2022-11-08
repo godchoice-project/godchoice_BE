@@ -19,7 +19,7 @@ public class NaverUserInfoDto {
     @Builder
     public NaverUserInfoDto(String SocialId, String nickname, String userEmail, String accessToken,  String refreshToken) {
 //        this.SocialId = SocialId;
-//        this.nickname = nickname;
+//        this.nickuserName = nickuserName;
 //        this.userEmail = userEmail;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;

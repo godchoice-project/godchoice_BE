@@ -10,8 +10,12 @@ spring:
     console:
       enabled: true
 
+  # --- application-oauth.yml 추가
+  profiles:
+    includes: oauth
+
   datasource:
-    driver-class-name: org.h2.Driver
+    driver-class-: org.h2.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect

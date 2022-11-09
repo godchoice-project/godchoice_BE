@@ -7,7 +7,7 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.Role;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.socialDto.SocialUserInfoDto;
+import com.team03.godchoice.dto.userinfo.SocialUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;

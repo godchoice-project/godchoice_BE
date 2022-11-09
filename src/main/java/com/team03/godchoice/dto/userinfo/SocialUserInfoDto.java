@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.socialDto;
+package com.team03.godchoice.dto.userinfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

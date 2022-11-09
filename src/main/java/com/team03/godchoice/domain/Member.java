@@ -1,6 +1,7 @@
 package com.team03.godchoice.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,4 +35,19 @@ public class Member{
     //ADMIN , USER
     @Column(nullable = false)
     private String role;
+
+    @Column
+    private Boolean isAccepted = false;
+
+    @Column
+    private Boolean isDeleted;
+
+    @Builder
+    public Member(String email, String userName, String pw, Boolean isAccepted, Boolean isDeleted){
+        this.email=email;
+        this.userName=userName;
+        this.pw=pw;
+        this.isAccepted=isAccepted;
+        this.isDeleted=isDeleted;
+    }
 }

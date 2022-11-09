@@ -30,8 +30,21 @@ spring:
 
 jwt :
   secret:
-    key : ENC(nFJ2lB2DY3VYNIQcw8ipImC4VB50glEJlLGQWj/FNao=)
+    key : ENC(tlpTNg1TYeUptcB4XxvUNWsvuz5CF2BgcHsrKTaFMbTagKjtCyY2/7GXPL+jqTc9eJapoEvm/3mVlxaKwQItMKrd2zlwo5jyN58VTFodm6t6Jqn7QOSR91MGQug19AgRMoNNO9v9xyabpnjawL22hL63yFRj+m+QP6nHposThKk6QmhYRNh7v75i6XjN58ER5aZX5FzQDRPPR1IA+N52jjOtFXw9pzf8+IDiRf7ptAJEjQTDjhFJ0x1TO7n467qcuL0zNt19jxVS61k5YmvOHWGXabAHTxnXZSp/4Fx5OMHNXO5MsXYs2YnvNZQb3MBCzjhQkNFH8hc+1nRtsMauCXXGx+u5AQWN)
 
 jasypt:
   secret:
     key: "my_jasypt_key"
+
+#google login
+google:
+  auth:
+    url: 'https://oauth2.googleapis.com'
+    scope: 'profile,email,openid'
+  login:
+    url: 'https://accounts.google.com'
+  redirect:
+    uri: 'http://localhost:8080/google/login/redirect'D
+  client:
+    id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
+  secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)

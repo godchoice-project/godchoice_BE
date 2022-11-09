@@ -130,7 +130,7 @@ public class SocialKakaoService {
 
     //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
     public Member saveMember(SocialUserInfoDto socialUserInfoDto) {
-        Member kakaoMember = memberRepository.findByEmail(socialUserInfoDto.getEmail()).orElse(null);
+        Member kakaoMember = memberRepository.findByEmail("k_"+socialUserInfoDto.getEmail()).orElse(null);
 
         //없다면 저장
         if (kakaoMember == null) {

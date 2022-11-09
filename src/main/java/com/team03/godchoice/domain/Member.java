@@ -1,12 +1,9 @@
 package com.team03.godchoice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -45,8 +42,16 @@ public class Member {
     @Column
     private Boolean isDeleted;
 
+    @Column
+    private String provider;
+    @Column
+    private String userRealEmail;
+
+
+
     @Builder
-    public Member(String email, String userName, String  userImgUrl,String pw, Boolean isAccepted, Boolean isDeleted, Role role){
+    public Member(String email, String userName, String  userImgUrl,String pw, Boolean isAccepted, Boolean isDeleted, Role role,
+                  String userRealEmail, String provider){
         this.email=email;
         this.userName=userName;
         this.userImgUrl=userImgUrl;
@@ -54,19 +59,7 @@ public class Member {
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
         this.role = role;
-    }
-
-    //========================================================================
-    public Member(String name, String email, String picture) {
-        this.userName = name;
-        this.email = email;
-        this.userImgUrl = picture;
-    }
-
-    public Member update(String name, String picture) {
-        this.userName = name;
-        this.userImgUrl = picture;
-
-        return this;
+        this.userRealEmail = userRealEmail;
+        this.provider = provider;
     }
 }

@@ -1,27 +1,24 @@
 package com.team03.godchoice.dto.userinfo;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
 @Data
+@AllArgsConstructor
 public class NaverUserInfoDto {
 
-//    private String SocialId;
-    private String email;
-    private String userName;
+    private String SocialId;
+    private String nickName;
+    private String userEmail;
     private String userImgUrl;
-    private String sex;
     private String accessToken;
     private String refreshToken;
 
     @Builder
-    public NaverUserInfoDto(String SocialId, String nickname, String userEmail, String accessToken,  String refreshToken) {
-//        this.SocialId = SocialId;
-//        this.nickuserName = nickuserName;
-//        this.userEmail = userEmail;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+    public NaverUserInfoDto(String naverId, String nickName, String userEmail, String access_token, String refresh_token) {
+        this.SocialId = naverId;
+        this.nickName = nickName;
+        this.userEmail = userEmail;
+        this.accessToken = access_token;
+        this.refreshToken = refresh_token;
     }
 }

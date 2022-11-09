@@ -1,14 +1,20 @@
-package com.team03.godchoice.security;
+package com.team03.godchoice.security.jwt;
 
 import com.team03.godchoice.domain.Member;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private Member member;
+
+    public UserDetailsImpl(Member member) {
+        this.member = member;
+    }
 
     public Member getAccount() {
         return this.member;

@@ -1,4 +1,4 @@
-package com.team03.godchoice.security;
+package com.team03.godchoice.security.jwt;
 
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.repository.MemberRepository;

@@ -1,5 +1,7 @@
 package com.team03.godchoice.security;
 
+import com.team03.godchoice.security.jwt.JwtAuthFilter;
+import com.team03.godchoice.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
@@ -78,6 +80,8 @@ public class WebSecurityConfig {
         //토큰없이 요청가능한 url 그외에는 권환학인 필수
         http
                 .authorizeRequests()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/member/**").permitAll()
 
                 .anyRequest().authenticated()
 

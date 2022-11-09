@@ -1,6 +1,7 @@
 package com.team03.godchoice.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member{
+public class Member {
 
     @Id
     @Column(name = "memberId")
@@ -32,6 +33,16 @@ public class Member{
     private String pw;
 
     //ADMIN , USER
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;
+    private Role role;
+
+    @Builder
+    public Member(String email, String userName, String userImgUrl, String pw, Role role) {
+        this.email = email;
+        this.userName = userName;
+        this.userImgUrl = userImgUrl;
+        this.pw = pw;
+        this.role = role;
+    }
 }

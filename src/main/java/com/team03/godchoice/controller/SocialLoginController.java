@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member/signup")
-public class SocialGoogleController {
+public class SocialLoginController {
 
 
     private final SocialGoogleService socialGoogleService;

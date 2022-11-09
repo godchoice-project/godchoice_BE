@@ -42,19 +42,19 @@ public class SocialGoogleService {
 
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final ComfortUtils comfortUtils;
 
-    public GlobalResDto googleLogin(String code, HttpServletResponse response)
+    public GlobalResDto<?> googleLogin(String code, HttpServletResponse response)
     throws JsonProcessingException {
         // 1. "인가코드" 로 "액세스 토큰" 요청
         String getAccessToken = getAccessToken(code);
 
-        // 2. 토큰으로 카카오 API 호출
+        // 2. 토큰으로 구글 API 호출
         GoogleUserInfoDto googleUserInfo = getGoogleUserInfo(getAccessToken);
 
-        // 3. 카카오ID로 회원가입 처리
+        // 3.  구글ID로 회원가입 처리
         Member member = signupGoogleUser(googleUserInfo);
 
         //4. 강제 로그인 처리
@@ -78,7 +78,7 @@ public class SocialGoogleService {
         setHeader(response, tokenDto);
 
 
-        return new GlobalResDto(HttpStatus.OK.value(), null, "Success Google login");
+        return GlobalResDto.success(null, "Success Google login");
     }
 
     //header 에 Content-type 지정
@@ -150,17 +150,16 @@ public class SocialGoogleService {
 
     private Member signupGoogleUser(GoogleUserInfoDto googleUserInfoDto) {
         // 재가입 방지
-        // DB 에 중복된 Kakao Id 가 있는지 확인
+        // DB 에 중복된 Google Id 가 있는지 확인
         Member findGoogle = memberRepository.findByEmail(googleUserInfoDto.getUserEmail()).orElse(null);
 
 
         //DB에 중복된 계정이 없으면 회원가입 처리
         if (findGoogle == null) {
-            String userName = googleUserInfoDto.getNickname();
+
             String email = googleUserInfoDto.getUserEmail();
             String password = UUID.randomUUID().toString();
             String encodedPassword = password;
-            String provider = "google";
 
             Member googleMember = Member.builder()
                     .email("g_" + email)
@@ -170,7 +169,6 @@ public class SocialGoogleService {
                     .isDeleted(false)
                     .build();
             memberRepository.save(googleMember);
-
 
             return googleMember;
         }

@@ -19,11 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 public class SocialGoogleController {
 
     private final SocialGoogleService socialGoogleService;
-    private final MemberService memberService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping("/user/signin/google")
-    public GlobalResDto googleLogin(
+    public GlobalResDto<?> googleLogin(
             @RequestParam(value = "code") String code, HttpServletResponse response) throws JsonProcessingException {
         return socialGoogleService.googleLogin(code, response);
     }

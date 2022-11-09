@@ -1,19 +1,20 @@
-package com.team03.godchoice.service;
+package com.team03.godchoice.service.socialLogin;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
+import com.team03.godchoice.domain.Role;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.GoogleUserInfoDto;
+import com.team03.godchoice.dto.socialDto.GoogleUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
-import com.team03.godchoice.security.JwtUtil;
-import com.team03.godchoice.security.UserDetailsImpl;
+import com.team03.godchoice.security.jwt.JwtUtil;
+import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.util.ComfortUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +36,9 @@ import java.util.UUID;
 @Service
 public class SocialGoogleService {
 
-    @Value("${cloud.security.oauth2.client.registration.google.client-id}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String client_id;
-    @Value("${cloud.security.oauth2.client.registration.google.client-secret}")
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     String clientSecret;
 
     private final JwtUtil jwtUtil;
@@ -159,14 +160,17 @@ public class SocialGoogleService {
 
             String email = googleUserInfoDto.getUserEmail();
             String password = UUID.randomUUID().toString();
-            String encodedPassword = password;
+            //수정필요
+            String userImgUrl = "sdf";
 
             Member googleMember = Member.builder()
                     .email("g_" + email)
                     .userName(comfortUtils.makeUserNickName())
-                    .pw(encodedPassword)
+                    .userImgUrl(userImgUrl)//수정필요
+                    .pw(password)
                     .isAccepted(false)
                     .isDeleted(false)
+                    .role(Role.USER)
                     .build();
             memberRepository.save(googleMember);
 
@@ -176,7 +180,7 @@ public class SocialGoogleService {
         return findGoogle;
     }
 
-    public Authentication forceLoginGoogleUser(Member googleMember) {
+    public void forceLoginGoogleUser(Member googleMember) {
         UserDetails userDetails = new UserDetailsImpl(googleMember);
         if (googleMember.getIsDeleted().equals(true)) {
             throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
@@ -184,7 +188,6 @@ public class SocialGoogleService {
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return authentication;
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {

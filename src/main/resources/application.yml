@@ -50,6 +50,13 @@ spring:
               - profile_image
               - account_email
             client-name: kakao
+          google:
+            client-id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
+            client-secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)
+            scope:
+              - profile
+              - email
+              - openid
           github :
             client-id: ENC(kPT+Y+wbyQ33X2pxj8883ic6543VJ28mMF0u6wH85Gg=)
             client-secret: ENC(LoQHy5dVgo+rHIXp51+8P03fgkZpWcv6a1lL186yLhZJkiM1NeSSL6jnN0e70Zgn6jw3IecNG3Q=)
@@ -68,16 +75,3 @@ jwt :
 jasypt:
   secret:
     key: "my_jasypt_key"
-
-#google login
-google:
-  auth:
-    url: 'https://oauth2.googleapis.com'
-    scope: 'profile,email,openid'
-  login:
-    url: 'https://accounts.google.com'
-  redirect:
-    uri: 'http://localhost:8080/google/login/redirect'D
-  client:
-    id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
-  secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)

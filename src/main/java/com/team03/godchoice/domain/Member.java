@@ -46,20 +46,13 @@ public class Member {
     private Boolean isDeleted;
 
     @Builder
-    public Member(String email, String userName, String pw, Boolean isAccepted, Boolean isDeleted){
+    public Member(String email, String userName, String  userImgUrl,String pw, Boolean isAccepted, Boolean isDeleted, Role role){
         this.email=email;
         this.userName=userName;
+        this.userImgUrl=userImgUrl;
         this.pw=pw;
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
-    }
-
-    @Builder
-    public Member(String email, String userName, String userImgUrl, String pw, Role role) {
-        this.email = email;
-        this.userName = userName;
-        this.userImgUrl = userImgUrl;
-        this.pw = pw;
         this.role = role;
     }
 

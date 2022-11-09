@@ -59,7 +59,7 @@ public class SocialGithubService {
         return GlobalResDto.success(null, "로그인이 완료되었습니다");
     }
 
-    private String issuedAccessToken(String code) throws JsonProcessingException {
+    private String issuedAccessToken(String code){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept","application/json");
 
@@ -142,6 +142,8 @@ public class SocialGithubService {
                     .userName(socialUserInfoDto.getNickname())
                     .userImgUrl(socialUserInfoDto.getUserImgUrl())
                     .pw(UUID.randomUUID().toString())
+                    .isAccepted(false)
+                    .isDeleted(false)
                     .role(role)
                     .build();
 

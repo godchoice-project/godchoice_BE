@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto;
+package com.team03.godchoice.dto.socialDto;
 
 import lombok.Builder;
 import lombok.Data;

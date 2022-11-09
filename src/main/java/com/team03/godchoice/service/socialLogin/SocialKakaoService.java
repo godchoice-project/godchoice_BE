@@ -93,9 +93,8 @@ public class SocialKakaoService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-        String accessToken = jsonNode.get("access_token").asText();
 
-        return accessToken;
+        return jsonNode.get("access_token").asText();
     }
 
     //access_token을 통해 사용자 정보가져오기
@@ -147,6 +146,8 @@ public class SocialKakaoService {
                     .userName(socialUserInfoDto.getNickname())
                     .userImgUrl(socialUserInfoDto.getUserImgUrl())
                     .pw(UUID.randomUUID().toString())
+                    .isAccepted(false)
+                    .isDeleted(false)
                     .role(role)
                     .build();
 
@@ -168,7 +169,7 @@ public class SocialKakaoService {
     public void createToken(Member member,HttpServletResponse response){
         TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountUserEmail(member.getEmail());
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(member.getEmail());
 
         if (refreshToken.isPresent()) {
             refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));

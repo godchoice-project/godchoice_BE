@@ -1,4 +1,4 @@
-package com.team03.godchoice.security;
+package com.team03.godchoice.security.jwt;
 
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.dto.TokenDto;
@@ -52,18 +52,18 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public TokenDto createAllToken(String userid) {
-        return new TokenDto(createToken(userid, "Access"), createToken(userid, "Refresh"));
+    public TokenDto createAllToken(String email) {
+        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
     }
 
-    public String createToken(String userid, String type) {
+    public String createToken(String email, String type) {
 
         Date date = new Date();
 
         long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
         return Jwts.builder()
-                .setSubject(userid)
+                .setSubject(email)
                 .setExpiration(new Date(date.getTime() + time))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
@@ -101,7 +101,7 @@ public class JwtUtil {
         if (!tokenValidation(token)) return false;
 
         // DB에 저장한 토큰 비교
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountUserId(getEmailFromToken(token));
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountUserEmail(getEmailFromToken(token));
 
         return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken());
     }

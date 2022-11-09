@@ -16,6 +16,9 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db
+    password:
+    username: sa
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
@@ -31,6 +34,32 @@ spring:
       ddl-auto: create-drop
   #    hibernate:
   #      ddl-auto: update
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ENC(GRwC4xDK2+Li+1SoOSTQjPCUBW1RBhQIEsPlm21/u1VCOQI4L0UzvwfBEQsnJ+vJ)
+            redirect-uri: http://localhost:8080/member/signup/kakao
+            client-authentication-method: POST
+            client-secret: ENC(J4KeBmKJFYx1iNmpI0Lx4DUUziK07zu3Qyzrb+Ph0IZRhvZXMyEM9NQaheLsw0PM)
+            authorization-grant-type: authorization_code
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
+            client-name: kakao
+          github :
+            client-id: ENC(kPT+Y+wbyQ33X2pxj8883ic6543VJ28mMF0u6wH85Gg=)
+            client-secret: ENC(LoQHy5dVgo+rHIXp51+8P03fgkZpWcv6a1lL186yLhZJkiM1NeSSL6jnN0e70Zgn6jw3IecNG3Q=)
+
+        provider:
+          kakao :
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: kakao_account
 
 jwt :
   secret:

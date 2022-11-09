@@ -1,5 +1,7 @@
 package com.team03.godchoice.domain;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
+@Data
 @Getter
 @Entity
 @NoArgsConstructor
@@ -20,16 +23,17 @@ public class RefreshToken {
     @NotBlank
     private String refreshToken;
     @NotBlank
-    private String accountUserId;
-
-    public RefreshToken(String token, String userid) {
-        this.refreshToken = token;
-        this.accountUserId = userid;
-    }
+    private String accountUserEmail;
 
     public RefreshToken updateToken(String token) {
         this.refreshToken = token;
         return this;
+    }
+
+    @Builder
+    public RefreshToken(String refreshToken, String accountUserEmail) {
+        this.refreshToken = refreshToken;
+        this.accountUserEmail = accountUserEmail;
     }
 
 }

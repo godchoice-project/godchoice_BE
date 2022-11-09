@@ -19,24 +19,18 @@ public class Member implements Serializable {
     @Column(name = "memberId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
-
     @Column(nullable = false)
     private String email;
-
     @Column(nullable = false)
     private String userName;
-
     private String userAddressTag;
-
     private String userImgUrl;
-
     //UUID 난수 암호화
     @Column(nullable = false)
     private String pw;
-
     //ADMIN , USER
     @Column(nullable = false)
-    private String role;
+    private String role = "ROLE_USER";
 
     //========================================================================
     public Member(String name, String email, String picture) {
@@ -44,12 +38,10 @@ public class Member implements Serializable {
         this.email = email;
         this.userImgUrl = picture;
     }
-
     public Member update(String name, String picture) {
         this.userName = name;
         this.userImgUrl = picture;
 
         return this;
-
     }
 }

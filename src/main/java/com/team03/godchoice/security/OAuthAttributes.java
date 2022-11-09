@@ -1,4 +1,4 @@
-package com.team03.godchoice.OAuth2;
+package com.team03.godchoice.security;
 
 import com.team03.godchoice.domain.Member;
 import lombok.Data;
@@ -68,6 +68,7 @@ public class OAuthAttributes {
 
     // .. getter/setter 생략
 
+    // 현재 OAuthAttributes 객체에서 요청하면 -> Member 객체로 변환
     public Member toEntity() {
         return new Member(userName, email, userImgUrl);
     }

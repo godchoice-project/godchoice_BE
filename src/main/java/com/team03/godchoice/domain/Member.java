@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,5 +51,19 @@ public class Member{
         this.pw=pw;
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
+    }
+
+    //========================================================================
+    public Member(String name, String email, String picture) {
+        this.userName = name;
+        this.email = email;
+        this.userImgUrl = picture;
+    }
+
+    public Member update(String name, String picture) {
+        this.userName = name;
+        this.userImgUrl = picture;
+
+        return this;
     }
 }

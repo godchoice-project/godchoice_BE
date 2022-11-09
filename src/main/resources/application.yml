@@ -10,6 +10,10 @@ spring:
     console:
       enabled: true
 
+  # --- application-oauth.yml 추가
+  profiles:
+    includes: oauth
+
   datasource:
     driver-class-name: org.h2.Driver
 

@@ -118,7 +118,7 @@ public class SocialGithubService {
     }
 
     public Member saveMember(SocialUserInfoDto socialUserInfoDto) {
-        Member kakaoMember = memberRepository.findByEmail(socialUserInfoDto.getEmail()).orElse(null);
+        Member kakaoMember = memberRepository.findByEmail("git_"+socialUserInfoDto.getEmail()).orElse(null);
 
         //없다면 저장
         if (kakaoMember == null) {

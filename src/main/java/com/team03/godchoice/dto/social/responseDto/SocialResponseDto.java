@@ -1,4 +1,5 @@
-package com.team03.godchoice.dto.responseDto.social;
+package com.team03.godchoice.dto.social.responseDto;
+
 
 import lombok.Builder;
 import lombok.Data;

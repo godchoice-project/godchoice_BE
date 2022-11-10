@@ -10,7 +10,6 @@ import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,10 +21,10 @@ public class AskPostService {
 
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
-    private final ImageRepository imageRepository;
+    private final AskPostImgRepository askPostImgRepository;
 
     @Transactional
-    public GlobalResDto createAskPost(
+    public GlobalResDto<?> createAskPost(
             AskPostRequestDto askPostRequestDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
 
         // 유저 정보로 Post객체 생성

@@ -30,7 +30,7 @@ public class AskPost {
     private Member member;
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Image> image;
+    private List<AskPostImg> askPostImg;
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostLike> likes = new ArrayList<>();

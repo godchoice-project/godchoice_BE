@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @Data
 @AllArgsConstructor
-public class Image {
+public class AskPostImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class Image {
     @JsonIgnore
     private AskPost askPost;
 
-    public Image(String image, AskPost askPost){
+    public AskPostImg(String image, AskPost askPost){
         this.image=image;
         this.askPost=askPost;
     }

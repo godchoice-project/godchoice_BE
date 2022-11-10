@@ -1,11 +1,11 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.AskPost;
-import com.team03.godchoice.domain.Image;
+import com.team03.godchoice.domain.AskPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
 import com.team03.godchoice.repository.AskPostRepository;
-import com.team03.godchoice.repository.ImageRepository;
+import com.team03.godchoice.repository.AskPostImgRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +21,10 @@ public class AskPostService {
 
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
-    private final ImageRepository imageRepository;
+    private final AskPostImgRepository askPostImgRepository;
 
 
-    public GlobalResDto createAskPost(
+    public GlobalResDto<?> createAskPost(
             AskPostRequestDto askPostRequestDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
 
         // 유저 정보로 Post객체 생성
@@ -39,8 +39,8 @@ public class AskPostService {
             for (MultipartFile file : multipartFile) {
                 String img = s3Uploader.uploadFiles(file, "testdir");
 
-                Image image = new Image(img, askPost);
-                imageRepository.save(image);
+                AskPostImg askPostImg = new AskPostImg(img, askPost);
+                askPostImgRepository.save(askPostImg);
             }
         }
 

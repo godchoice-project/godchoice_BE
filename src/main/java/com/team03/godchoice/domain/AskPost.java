@@ -29,7 +29,7 @@ public class AskPost {
     private Member member;
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Image> image;
+    private List<AskPostImg> askPostImg;
 
     public AskPost(AskPostRequestDto askPostRequestDto, Member member){
         this.title=askPostRequestDto.getTitle();

@@ -7,8 +7,8 @@ import com.google.gson.Gson;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.Role;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.userinfo.SocialUserInfoDto;
-import com.team03.godchoice.dto.userinfo.GithubReqDto;
+import com.team03.godchoice.dto.social.SocialUserInfoDto;
+import com.team03.godchoice.dto.social.responseDto.GithubResDto;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
 import com.team03.godchoice.security.jwt.JwtUtil;
@@ -84,8 +84,8 @@ public class SocialGithubService {
         // HTTP 응답 (JSON) -> 액세스 토큰 파싱
         String responseBody = response.getBody();
         Gson gson = new Gson();
-        GithubReqDto githubReqDto = gson.fromJson(responseBody,GithubReqDto.class);
-        return githubReqDto.getAccess_token();
+        GithubResDto githubResDto = gson.fromJson(responseBody, GithubResDto.class);
+        return githubResDto.getAccess_token();
     }
 
     private SocialUserInfoDto getGithubUserInfo(String accessToken) throws JsonProcessingException {

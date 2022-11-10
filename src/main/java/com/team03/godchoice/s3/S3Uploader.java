@@ -69,4 +69,12 @@ public class S3Uploader {
         }
         return Optional.empty();
     }
+
+    public String getImg(String path) {
+        return amazonS3Client.getUrl(bucket, path).toString();
+    }
+
+    public void delImg(String path) {
+        amazonS3Client.deleteObject(bucket, path);
+    }
 }

@@ -1,6 +1,7 @@
-package com.team03.godchoice.domain;
+package com.team03.godchoice.domain.askpost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

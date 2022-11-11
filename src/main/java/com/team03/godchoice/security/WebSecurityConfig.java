@@ -82,6 +82,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/member/**").permitAll()
+                .antMatchers("/**").permitAll()
 
                 .anyRequest().authenticated()
 

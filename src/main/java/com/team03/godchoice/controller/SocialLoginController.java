@@ -45,9 +45,8 @@ public class SocialLoginController {
     }
 
     @GetMapping("/naver")
-    public GlobalResDto<?> naverLogin(@RequestParam(value = "code") String code,
-                                      @RequestParam String state,
-                                      HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResDto<?> naverLogin(
+            @RequestParam(value = "code") String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
         return socialNaverService.naverLogin(code, state, response);
     }
 }

@@ -77,7 +77,7 @@ public class EventPostService {
         eventPost.update(eventPostPutReqDto, member, startPeriod, endPeriod, regionTag, eventStatus);
 
         String[] imgIdList = eventPostPutReqDto.getImgId().split(",");
-        if (imgIdList.length==eventPost.getPostImgUrl().size()) {  //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
+        if (imgIdList.length==eventPost.getPostImgUrl().size()) {//저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
             List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
             for(EventPostImg eventPostImg : eventPostImgs){
                 String imgUrl = eventPostImg.getImgUrl().substring(50);

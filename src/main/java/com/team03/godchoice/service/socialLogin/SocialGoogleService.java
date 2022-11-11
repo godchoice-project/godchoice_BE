@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
-import com.team03.godchoice.domain.Role;
+import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.social.GoogleUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;

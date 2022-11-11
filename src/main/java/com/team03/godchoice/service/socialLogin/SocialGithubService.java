@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.Role;
+import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
 import com.team03.godchoice.dto.social.responseDto.GithubResDto;
@@ -18,6 +18,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -38,6 +39,7 @@ public class SocialGithubService {
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
     private final SocialKakaoService socialKakaoService;
+    private final PasswordEncoder passwordEncoder;
     public final JwtUtil jwtUtil;
 
     public GlobalResDto<?> githubLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -141,7 +143,7 @@ public class SocialGithubService {
                     email(email)
                     .userName(socialUserInfoDto.getNickname())
                     .userImgUrl(socialUserInfoDto.getUserImgUrl())
-                    .pw(UUID.randomUUID().toString())
+                    .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
                     .isAccepted(false)
                     .isDeleted(false)
                     .role(role)

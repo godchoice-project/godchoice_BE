@@ -96,10 +96,10 @@ jasypt:
 cloud:
   aws:
     credentials:
-      secret-key: ''
-      access-key: ''
+      secret-key: GyBjC2fKtajehe027Pdysi/jg+jFBfaf+3yj7taa
+      access-key: AKIAWQWYEWRC4RDFKU35
     s3:
-      bucket: ''
+      bucket: kimbiibucket
     region:
       static: ap-northeast-2
     stack:

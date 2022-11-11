@@ -2,7 +2,6 @@ package com.team03.godchoice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.social.responseDto.SocialResponseDto;
 import com.team03.godchoice.service.socialLogin.SocialGithubService;
 import com.team03.godchoice.service.socialLogin.SocialGoogleService;
 import com.team03.godchoice.service.socialLogin.SocialKakaoService;
@@ -21,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RequestMapping("/member/signup")
 public class SocialLoginController {
-
 
     private final SocialGoogleService socialGoogleService;
     private final SocialGithubService socialGithubService;
@@ -47,9 +45,9 @@ public class SocialLoginController {
     }
 
     @GetMapping("/naver")
-    public SocialResponseDto naverLogin(@RequestParam(value = "code") String code,
-                                        @RequestParam String state,
-                                        HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResDto<?> naverLogin(@RequestParam(value = "code") String code,
+                                      @RequestParam String state,
+                                      HttpServletResponse response) throws JsonProcessingException {
         return socialNaverService.naverLogin(code, state, response);
     }
 }

@@ -4,12 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.dto.social.responseDto.SocialResponseDto;
+import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.responsedto.social.TokenFactory;
 import com.team03.godchoice.dto.social.NaverUserInfoDto;
+import com.team03.godchoice.dto.social.responseDto.SocialResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;
+import com.team03.godchoice.repository.RefreshTokenRepository;
+import com.team03.godchoice.security.jwt.JwtUtil;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
+import com.team03.godchoice.service.MemberService;
 import com.team03.godchoice.util.ComfortUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,9 +42,10 @@ public class SocialNaverService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final ComfortUtils comfortUtils;
+    private final MemberService memberService;
 
     @Transactional
-    public SocialResponseDto naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
+    public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
         try {
             //네이버에서 가져온 유저정보 + 임의 비밀번호 생성
             NaverUserInfoDto naverUserInfoDto = getNaverUserInfo(code, state);
@@ -70,18 +76,30 @@ public class SocialNaverService {
                 if (userDetails.getAccount().getIsDeleted().equals(true)) {
                     throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
                 }
+
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+
+
+//            토큰 관리
+            TokenFactory tokenFactory = memberService.accessAndRefreshTokenProcess(member.getEmail(), response);
+
+            String refreshToken =  tokenFactory.getRefreshToken();
+
 
             SocialResponseDto socialResponseDto = SocialResponseDto.builder()
                     .userName(member.getUserName())
                     .email(member.getEmail())
                     .userImgUrl(member.getUserImgUrl())
+                    .accessToken(tokenFactory.getAccessToken())
+                    .refreshToken(tokenFactory.getRefreshToken())
                     .build();
-            return socialResponseDto;
+
+            return GlobalResDto.success(socialResponseDto, "로그인이 완료되었습니다");
+
         } catch (IOException e) {
-            return null;
+            return GlobalResDto.fail("로그인실패");
         }
     }
 
@@ -149,5 +167,6 @@ public class SocialNaverService {
                 .getAsJsonObject().get("name"));
         return new NaverUserInfoDto(naverId, nickName, userEmail, access_token, refresh_token);
     }
+
 }
 

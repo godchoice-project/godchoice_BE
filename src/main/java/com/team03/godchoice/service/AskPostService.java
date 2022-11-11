@@ -1,13 +1,18 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.domain.Comment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
+import com.team03.godchoice.dto.responseDto.AskPostDetailResponseDto;
+import com.team03.godchoice.dto.responseDto.AskPostResponseDto;
+import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.repository.CommentRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
 import com.team03.godchoice.s3.S3Uploader;
@@ -18,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +33,7 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public GlobalResDto<?> createAskPost(
@@ -97,7 +104,7 @@ public class AskPostService {
     }
 
     @Transactional
-    public GlobalResDto deletePost(Long postId, UserDetailsImpl userDetails) {
+    public GlobalResDto<?> deletePost(Long postId, UserDetailsImpl userDetails) {
 
         Member member = userDetails.getMember();
 
@@ -115,5 +122,39 @@ public class AskPostService {
 
         return GlobalResDto.success(null,"success delete askPost");
 
+    }
+
+    @Transactional
+    public List<AskPostResponseDto> getAllAskPost() {
+
+        List<AskPost> askPostList = askPostRepository.findAllByOrderByCreatedAtDesc();
+
+        List<AskPostResponseDto> askPostResponseDtoList = new ArrayList<>();
+        for(AskPost askPost : askPostList){
+            askPostResponseDtoList.add(new AskPostResponseDto(askPost));
+        }
+
+        return askPostResponseDtoList;
+    }
+
+    @Transactional
+    public AskPostDetailResponseDto getOneAskPost(Long postId) {
+        AskPost askPost=askPostRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+        // 이미지 개수만큼 리스트에 추가
+        List<AskPostImg> askPostImgList = new ArrayList<>();
+        for (AskPostImg askPostImg : askPost.getAskPostImg()) {
+            askPostImgList.add(askPostImg);
+        }
+
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        for(Comment comment : askPost.getComments()){
+            if(comment.getParent() == null){
+                commentDtoList.add(new CommentDto(comment));
+            }
+        }
+
+        return new AskPostDetailResponseDto(askPost, askPostImgList, commentDtoList);
     }
 }

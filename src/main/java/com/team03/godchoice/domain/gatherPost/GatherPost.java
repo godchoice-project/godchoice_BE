@@ -2,11 +2,16 @@ package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
+import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,48 +19,73 @@ import javax.persistence.*;
 public class GatherPost {
 
     @Id
+    @Column(name = "gatherpotid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
-    @Column
+    @Column(nullable = false)
     private String category;
-    @Column
-    private String date;
-    @Column
+    @Column(nullable = false)
+    private LocalDate date;
+    @Column(nullable = false)
     private int number;
-    @Column
+    @Column(nullable = false)
     private String kakaoLink;
-    @Column
+    @Column(nullable = false)
     private String sex;
-    @Column
+    @Column(nullable = false)
     private int startAge;
-    @Column
+    @Column(nullable = false)
     private int endAge;
-    @Column
+    @Column(nullable = false)
     private String tittle;
-    @Column
+    @Column(nullable = false)
     private String content;
     @Column
     private String postLink;
     @Column
     private String postAddress;
+    @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
+    private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "memberId")
     @JsonIgnore
     private Member member;
+    @Column(nullable = false)
+    private RegionTag regionTag;
+    @Column(nullable = false)
+    private String eventStatus;
 
-
-    public GatherPost(GatherPostRequestDto gatherPostDto, Member member) {
+    public GatherPost(GatherPostRequestDto gatherPostDto, Member member, LocalDate date, RegionTag regionTag, String eventStatus) {
         this.category = gatherPostDto.getCategory();
-        this.date = gatherPostDto.getDate();
+        this.date = date;
         this.number = gatherPostDto.getNumber();
         this.kakaoLink = gatherPostDto.getKakaoLink();
         this.sex = gatherPostDto.getSex();
-        this.startAge = gatherPostDto.getStatAge();
+        this.startAge = gatherPostDto.getStartAge();
         this.endAge = gatherPostDto.getEndAge();
         this.tittle = gatherPostDto.getTitle();
         this.content = gatherPostDto.getContent();
         this.postLink = gatherPostDto.getPostLink();
         this.postAddress = gatherPostDto.getPostAddress();
         this.member = member;
+        this.regionTag = regionTag;
+        this.eventStatus = eventStatus;
+    }
+
+    public void update(GatherPostUpdateDto gatherPostDto, LocalDate date, RegionTag regionTag, String eventStatus) {
+        this.category = gatherPostDto.getCategory();
+        this.date = date;
+        this.number = gatherPostDto.getNumber();
+        this.kakaoLink = gatherPostDto.getKakaoLink();
+        this.sex = gatherPostDto.getSex();
+        this.startAge = gatherPostDto.getStartAge();
+        this.endAge = gatherPostDto.getEndAge();
+        this.tittle = gatherPostDto.getTitle();
+        this.content = gatherPostDto.getContent();
+        this.postLink = gatherPostDto.getPostLink();
+        this.postAddress = gatherPostDto.getPostAddress();
+//        this.member = member;
+        this.regionTag = regionTag;
+        this.eventStatus = eventStatus;
     }
 }

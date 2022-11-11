@@ -1,6 +1,7 @@
 package com.team03.godchoice.domain.askpost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.team03.godchoice.domain.Comment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.PostLike;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
@@ -33,6 +34,9 @@ public class AskPost {
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<AskPostImg> askPostImg;
+
+    @OneToMany(mappedBy = "askPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostLike> likes = new ArrayList<>();

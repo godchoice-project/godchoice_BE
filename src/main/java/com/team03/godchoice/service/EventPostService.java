@@ -39,7 +39,7 @@ public class EventPostService {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
-        //시작시간,만료시간 localdate로 바꾸고 주소 태그만들고
+        //시작시간,만료시간 localDate로 바꾸고 주소 태그만들고
         LocalDate startPeriod = LocalDate.parse(eventPostReqDto.getStartPeriod(), DateTimeFormatter.ISO_DATE);
         LocalDate endPeriod = LocalDate.parse(eventPostReqDto.getEndPeriod(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = toRegionTag(eventPostReqDto.getPostAddress());
@@ -77,7 +77,7 @@ public class EventPostService {
         eventPost.update(eventPostPutReqDto, member, startPeriod, endPeriod, regionTag, eventStatus);
 
         String[] imgIdList = eventPostPutReqDto.getImgId().split(",");
-        if (imgIdList.length==eventPost.getPostImgUrl().size()) {
+        if (imgIdList.length==eventPost.getPostImgUrl().size()) {  //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
             List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
             for(EventPostImg eventPostImg : eventPostImgs){
                 String imgUrl = eventPostImg.getImgUrl().substring(50);
@@ -90,7 +90,7 @@ public class EventPostService {
             EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
             eventPostImgRepository.save(eventPostImg);
 
-        }else if(imgIdList.length != 0){
+        }else if(imgIdList.length != 0){  //숫자리스트가 0이 아니라면 삭제할 사진이 존재하므로 사진 삭제
             for(String imgId : imgIdList){
                 Long eventPostId = Long.valueOf(imgId);
                 EventPostImg eventPostImg = eventPostImgRepository.findByEventPostImgId(eventPostId);
@@ -141,6 +141,7 @@ public class EventPostService {
         return post.orElse(null);
     }
 
+    //지역태그 만드는 메서드
     public RegionTag toRegionTag(String region) {
         if (region.startsWith("서")) {
             return RegionTag.서울;
@@ -159,6 +160,7 @@ public class EventPostService {
         }
     }
 
+    //행사가 진행중인 종료되었는지 판별하는 메서드
     public String toEventStatus(LocalDate endPeriod) {
         LocalDate now = LocalDate.now();
         if (endPeriod.isBefore(now)) {
@@ -167,6 +169,7 @@ public class EventPostService {
         return "진행중";
     }
 
+    //DB와 S3에 이미지를 저장하는 메서드
     public void saveImg(List<MultipartFile> multipartFiles,EventPost eventPost) throws IOException {
         String eventPostUrl;
         if (multipartFiles.size() != 0) {

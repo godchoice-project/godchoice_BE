@@ -15,7 +15,7 @@ public class CommentController {
     private final CommentService commentService;
 
     // 댓글 작성
-    @PostMapping("{postId}/comment")
+    @PostMapping("comments/{postId}")
     public GlobalResDto createComment(@PathVariable Long postId,
                                       @RequestBody CommentRequestDto commentRequestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -23,7 +23,7 @@ public class CommentController {
     }
 
 
-    @DeleteMapping("/comment/{commentId}")
+    @DeleteMapping("/comments/{postId}/{commentId}")
     public GlobalResDto deleteComment(@PathVariable Long commentId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteComment(commentId, userDetails.getAccount());

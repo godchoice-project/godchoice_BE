@@ -21,13 +21,11 @@ public class AskPostController {
     private final AskPostService askPostService;
 
     @PostMapping("/askposts")
-    public GlobalResDto createAskPost(@RequestPart(required = false)AskPostRequestDto askPostRequestDto,
+    public GlobalResDto<?> createAskPost(@RequestPart(required = false)AskPostRequestDto askPostRequestDto,
                                       @RequestPart(required = false) List<MultipartFile> multipartFile,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
         return askPostService.createAskPost(askPostRequestDto,multipartFile,userDetails);
     }
-
-
 
 }

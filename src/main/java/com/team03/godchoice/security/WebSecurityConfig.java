@@ -53,6 +53,7 @@ public class WebSecurityConfig {
         configuration.setAllowedHeaders(Arrays.asList("*")); //프론트에서 보내는 모든 해더 허용
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader("Access_Token"); //악시오스에서는 이런식으로 access_token으로 지정해줘야 보임 *사용불가
+        configuration.addExposedHeader("Refresh_Token");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -82,6 +83,7 @@ public class WebSecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/member/**").permitAll()
+                .antMatchers("/**").permitAll()
 
                 .anyRequest().authenticated()
 

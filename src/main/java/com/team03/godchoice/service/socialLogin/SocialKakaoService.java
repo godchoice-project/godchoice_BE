@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
-import com.team03.godchoice.domain.Role;
+import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -42,6 +43,7 @@ public class SocialKakaoService {
 
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
     public final JwtUtil jwtUtil;
 
     public GlobalResDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -145,7 +147,7 @@ public class SocialKakaoService {
                     email("k_" + socialUserInfoDto.getEmail())
                     .userName(socialUserInfoDto.getNickname())
                     .userImgUrl(socialUserInfoDto.getUserImgUrl())
-                    .pw(UUID.randomUUID().toString())
+                    .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
                     .isAccepted(false)
                     .isDeleted(false)
                     .role(role)

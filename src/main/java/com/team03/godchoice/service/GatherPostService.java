@@ -1,7 +1,7 @@
 package com.team03.godchoice.service;
 
-import com.team03.godchoice.domain.GatherPost;
-import com.team03.godchoice.domain.GatherPostImg;
+import com.team03.godchoice.domain.gatherPost.GatherPost;
+import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.exception.CustomException;
@@ -47,7 +47,7 @@ public class GatherPostService {
     public GlobalResDto<?> getGather(Long gatherPostId, UserDetailsImpl userDetails) {
 
         GatherPost gatherPost = gatherPostRepository.findById(gatherPostId).orElseThrow(
-                () -> new CustomException(ErrorCode.GATHERPOST_NOT_FOUND)
+                () -> new CustomException(ErrorCode.NOT_FOUND_POST)
         );
         if (gatherPost.getMember().getMemberId().equals(userDetails.getMember().getMemberId())) {
 

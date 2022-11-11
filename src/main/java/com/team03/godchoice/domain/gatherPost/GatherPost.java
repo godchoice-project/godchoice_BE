@@ -1,8 +1,8 @@
-package com.team03.godchoice.domain;
+package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

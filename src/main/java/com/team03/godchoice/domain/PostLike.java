@@ -1,5 +1,6 @@
 package com.team03.godchoice.domain;
 
+import com.team03.godchoice.domain.askpost.AskPost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -62,7 +62,7 @@ public class EventPostService {
 
         EventPost eventPost = isPresentPost(postId);
         if (eventPost == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_EVENTPOST);
+            throw new CustomException(ErrorCode.NOT_FOUND_POST);
         }
 
         if(!eventPost.getMember().getEmail().equals(member.getEmail())){
@@ -113,7 +113,7 @@ public class EventPostService {
 
         EventPost eventPost = isPresentPost(postId);
         if (eventPost == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_EVENTPOST);
+            throw new CustomException(ErrorCode.NOT_FOUND_POST);
         }
 
         if(!eventPost.getMember().getEmail().equals(member.getEmail())){

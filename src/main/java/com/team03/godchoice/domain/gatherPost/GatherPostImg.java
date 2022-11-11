@@ -1,4 +1,4 @@
-package com.team03.godchoice.domain;
+package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

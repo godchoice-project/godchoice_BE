@@ -1,16 +1,15 @@
 package com.team03.godchoice.service;
 
-import com.team03.godchoice.domain.AskPost;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.PostLike;
+import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.repository.AskPostRepository;
 import com.team03.godchoice.repository.PostLikeRepository;
+import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ public class PostLikeService {
     private final PostLikeRepository postLikeRepository;
 
     @Transactional
-    public GlobalResDto createPostLike(Long postId, String kind, UserDetailsImpl userDetails) {
+    public GlobalResDto<?> createPostLike(Long postId, String kind, UserDetailsImpl userDetails) {
 
         AskPost post = askPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));

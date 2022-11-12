@@ -13,7 +13,7 @@ public class NaverUserInfoDto {
     private String refreshToken;
 
     @Builder
-    public NaverUserInfoDto(String SocialId, String nickName, String userEmail, String userImgUrl,String access_token, String refresh_token) {
+    public NaverUserInfoDto(String nickName, String userEmail, String userImgUrl,String access_token, String refresh_token) {
         this.SocialId = SocialId;
         this.nickName = nickName;
         this.userEmail = userEmail;

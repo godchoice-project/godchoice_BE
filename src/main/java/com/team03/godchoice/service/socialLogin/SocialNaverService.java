@@ -157,8 +157,8 @@ public class SocialNaverService {
 
         // 엑세스 토큰 네이버에 전달하여 유저정보 가져옴
         JsonElement userInfoElement = jsonElement(tokenReqURL, access_token, null, null);
-        String SocialId = String.valueOf(userInfoElement.getAsJsonObject().get("response").getAsJsonObject()
-                .getAsJsonObject().get("id"));
+//        String SocialId = String.valueOf(userInfoElement.getAsJsonObject().get("response").getAsJsonObject()
+//                .getAsJsonObject().get("id"));
         String nickName = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("name"));
         String userEmail = String.valueOf(userInfoElement.getAsJsonObject().get("response")
@@ -166,7 +166,7 @@ public class SocialNaverService {
         String userImgUrl = String.valueOf(userInfoElement.getAsJsonObject().get("response")
                 .getAsJsonObject().get("img"));
 
-        return new NaverUserInfoDto(SocialId, nickName, userEmail, userImgUrl, access_token, refresh_token);
+        return new NaverUserInfoDto(nickName, userEmail, userImgUrl, access_token, refresh_token);
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {

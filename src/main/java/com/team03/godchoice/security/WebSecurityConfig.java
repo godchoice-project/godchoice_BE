@@ -87,6 +87,10 @@ public class WebSecurityConfig {
 
                 .anyRequest().authenticated()
 
+//                .and()
+//                .oauth2Login()
+//                .loginPage("/member/signup")
+
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 

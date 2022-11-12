@@ -48,7 +48,8 @@ spring:
         registration:
           kakao:
             client-id: ENC(GRwC4xDK2+Li+1SoOSTQjPCUBW1RBhQIEsPlm21/u1VCOQI4L0UzvwfBEQsnJ+vJ)
-            redirect-uri: http://localhost:8080/member/signup/kakao
+            redirect-uri: http://3.38.255.232/member/signup/kakao
+#            redirect-uri: http://localhost:8080/member/signup/kakao
             client-authentication-method: POST
             client-secret: ENC(J4KeBmKJFYx1iNmpI0Lx4DUUziK07zu3Qyzrb+Ph0IZRhvZXMyEM9NQaheLsw0PM)
             authorization-grant-type: authorization_code
@@ -69,6 +70,7 @@ spring:
             client-secret: ENC(LoQHy5dVgo+rHIXp51+8P03fgkZpWcv6a1lL186yLhZJkiM1NeSSL6jnN0e70Zgn6jw3IecNG3Q=)
           naver:
             authorization-grant-type: authorization_code
+#            redirect-uri: http://3.38.255.232/member/signup/naver
             redirect-uri: http://localhost:8080/member/signup/naver
             client-id: ENC(0AO0EaRVFK2ckWeWvfxYU5D+X2mGqstJymsN2ATI024=)
             client-secret: ENC(NQHyfJtQu7G5IfgZfko3e9WZte3HYjS1)

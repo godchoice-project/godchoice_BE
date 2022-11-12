@@ -68,7 +68,8 @@ public class SocialGithubService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_id", githubClientId);
-        body.add("redirect_uri","http://localhost:8080/member/signup/github");
+//        body.add("redirect_uri","http://localhost:8080/member/signup/github");
+        body.add("redirect_uri","http://localhost:3000/member/signup/github");
         body.add("code", code);
         body.add("client_secret",githubCClientSecret);
 
@@ -135,8 +136,9 @@ public class SocialGithubService {
             if(socialUserInfoDto.getEmail().isBlank()){
                 email = "git_"+socialUserInfoDto.getEmail();
             }else{
-                email = "git_"+UUID.randomUUID().toString().substring(0,7)+"@git.com";
-                System.out.println(email);
+                do {
+                    email = "git_" + UUID.randomUUID().toString().substring(0, 7) + "@git.com";
+                } while (memberRepository.findByEmail(email).isPresent());
             }
 
             Member member = Member.builder().

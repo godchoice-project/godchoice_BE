@@ -3,9 +3,8 @@ package com.team03.godchoice.dto.social;
 import lombok.*;
 
 @Data
-@AllArgsConstructor
+@Getter
 public class NaverUserInfoDto {
-
     private String SocialId;
     private String nickName;
     private String userEmail;
@@ -14,10 +13,11 @@ public class NaverUserInfoDto {
     private String refreshToken;
 
     @Builder
-    public NaverUserInfoDto(String naverId, String nickName, String userEmail, String access_token, String refresh_token) {
-        this.SocialId = naverId;
+    public NaverUserInfoDto(String nickName, String userEmail, String userImgUrl,String access_token, String refresh_token) {
+        this.SocialId = SocialId;
         this.nickName = nickName;
         this.userEmail = userEmail;
+        this.userImgUrl = userImgUrl;
         this.accessToken = access_token;
         this.refreshToken = refresh_token;
     }

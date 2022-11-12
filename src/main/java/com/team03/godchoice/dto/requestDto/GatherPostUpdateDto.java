@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GatherPostRequestDto {
+public class GatherPostUpdateDto {
+    private String imgId;
     private String category;
     private String date;
     private int number;

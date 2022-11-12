@@ -1,31 +1,30 @@
 package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-@Builder @Data
+@Builder
+@Getter
+@Setter
 @AllArgsConstructor
 public class GatherPostImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long imageId;
+    private Long gatherPostImgId;
     @Column
-    private String image;
+    private String imgUrl;
     @ManyToOne
-    @JoinColumn(name = "gatherPostId")
+    @JoinColumn(name = "gatherpostid")
     @JsonIgnore
     private GatherPost gatherPost;
 
     public GatherPostImg(String image, GatherPost gatherPost) {
-        this.image = image;
+        this.imgUrl = image;
         this.gatherPost = gatherPost;
     }
 }

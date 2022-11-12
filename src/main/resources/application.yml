@@ -16,11 +16,11 @@ spring:
 #    password:
 #    username: sa
 
-  datasource:
-    url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: 5509kong
+#  datasource:
+#    url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: admin
+#    password: 5509kong
 
 
   jpa:
@@ -102,10 +102,10 @@ jasypt:
 cloud:
   aws:
     s3:
-      bucket: eunibucket
+      bucket: kimbiibucket
     credentials:
-      access-key: ENC(5KqNdkB9YVnM2zTGJHqklpRSnxFQv15UmWqR36/if4o=)
-      secret-key: ENC(xLXDuOaAG9PpBPU8W5VzMYXMTDNwQKs/QY8cXrZi1ctn5JmpiUETEYQMvETrkrBc1lq3NRCkYZ0=)
+      access-key: ENC(OhFW/2FfibV77re8MTUXS+CqUkUZO7c0+JosNqr86s0=)
+      secret-key: ENC(uKUw8EN/kFEBIDEylQwejmWJzlrjsqBrD0UrubhOrDXZOKIBvZ+InhW0d2qh10E0Slp5UsaKROM=)
     region:
       static: ap-northeast-2
       auto: false

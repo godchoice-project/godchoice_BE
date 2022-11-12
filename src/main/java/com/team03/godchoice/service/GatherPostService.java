@@ -12,6 +12,7 @@ import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,12 +25,14 @@ public class GatherPostService {
     private final GatherPostRepository gatherPostRepository;
     private final S3Uploader s3Uploader;
     private final GatherPostImgRepository gatherPostImgRepository;
+
+    @Transactional
     public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
 
         GatherPost gatherPost = new GatherPost(gatherPostDto, userDetails.getMember());
-
+        gatherPostRepository.save(gatherPost);
         // List로 image받은후 저장
-        if(!(multipartFile.size()==0)) {
+        if (multipartFile.size() != 0) {
 
             System.out.println(multipartFile.get(0).getOriginalFilename());
 
@@ -40,7 +43,7 @@ public class GatherPostService {
                 gatherPostImgRepository.save(gatherPostImg);
             }
         }
-        gatherPostRepository.save(gatherPost);
+
         return GlobalResDto.success(null, "success create gatherPost");
     }
 
@@ -56,7 +59,6 @@ public class GatherPostService {
         }
 
 
-
-        return GlobalResDto.success(null,"");
+        return GlobalResDto.success(null, "");
     }
 }

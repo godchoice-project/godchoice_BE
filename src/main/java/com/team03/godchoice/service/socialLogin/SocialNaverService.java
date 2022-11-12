@@ -102,9 +102,9 @@ public class SocialNaverService {
             String sb = "grant_type=authorization_code" +
                     "&client_id" + client_id +
                     "&client_secret=" + client_secret +
-                    "&redirect_uri=http://localhost:8080/member/signup/naver" +
-//                    "&redirect_uri=http://localhost:3030/member/signup/naver" +
-//                    "&redirect_uri=https://추가우리도매인/member/signup/naver" +
+//                    "&redirect_uri=http://localhost:8080/member/signup/naver" +
+                    "&redirect_uri=http://localhost:3000/member/signup/naver" +
+//                    "&redirect_uri=https://3.38.255.232/member/signup/naver" +
                     "&code=" + code +
                     "&state=" + state;
             bw.write(sb);

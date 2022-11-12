@@ -5,6 +5,7 @@ import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.GatherPostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +20,9 @@ public class GatherPostController {
 
     private final GatherPostService gatherPostService;
 
-    @PostMapping("/")
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public GlobalResDto<?> createGatherPost(@RequestPart(required = false) GatherPostRequestDto gatherPostDto,
-                                            @RequestPart(required = false)List<MultipartFile> multipartFile,
+                                            @RequestPart(required = false) List<MultipartFile> multipartFile,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return gatherPostService.createGather(gatherPostDto,multipartFile,userDetails);
     }

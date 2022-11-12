@@ -16,6 +16,7 @@ import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class EventPostService {
     private final EventPostImgRepository eventPostImgRepository;
     private final S3Uploader s3Uploader;
 
+    @Transactional
     public GlobalResDto<?> createEventPost(UserDetailsImpl userDetails, EventPostReqDto eventPostReqDto, List<MultipartFile> multipartFiles) throws IOException {
         Member member = isPresentMember(userDetails);
         if (member == null) {
@@ -53,6 +55,7 @@ public class EventPostService {
         return GlobalResDto.success(null, "작성완료");
     }
 
+    @Transactional
     public GlobalResDto<?> putEventPost(UserDetailsImpl userDetails, Long postId, EventPostPutReqDto eventPostPutReqDto, List<MultipartFile> multipartFiles) throws IOException {
 
         Member member = isPresentMember(userDetails);
@@ -104,6 +107,7 @@ public class EventPostService {
         return GlobalResDto.success(null,"수정이 완료되었습니다");
     }
 
+    @Transactional
     public GlobalResDto<?> deleteEventPost(UserDetailsImpl userDetails, Long postId) {
 
         Member member = isPresentMember(userDetails);
@@ -121,10 +125,14 @@ public class EventPostService {
         }
 
         List<EventPostImg> eventPostImgs = eventPost.getPostImgUrl();
-        for(EventPostImg eventPostImg : eventPostImgs){
-            String imgUrl = eventPostImg.getImgUrl().substring(50);
-            s3Uploader.delImg(imgUrl);
+        if(!eventPostImgs.get(0).getImgUrl().equals("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg")){
+            for(EventPostImg eventPostImg : eventPostImgs){
+                List<String> list = List.of(eventPostImg.getImgUrl().split("/"));
+                String imgUrl = list.get(3)+"/"+list.get(4);
+                s3Uploader.delImg(imgUrl);
+            }
         }
+
 
         eventPostRepository.deleteById(postId);
 

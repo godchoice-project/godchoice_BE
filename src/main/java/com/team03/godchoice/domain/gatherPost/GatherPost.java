@@ -2,6 +2,7 @@ package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
@@ -23,7 +24,7 @@ public class GatherPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
     @Column(nullable = false)
-    private String category;
+    private Category category;
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
@@ -44,6 +45,7 @@ public class GatherPost {
     private String postLink;
     @Column
     private String postAddress;
+
     @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
     @ManyToOne
@@ -55,8 +57,8 @@ public class GatherPost {
     @Column(nullable = false)
     private String eventStatus;
 
-    public GatherPost(GatherPostRequestDto gatherPostDto, Member member, LocalDate date, RegionTag regionTag, String eventStatus) {
-        this.category = gatherPostDto.getCategory();
+    public GatherPost(GatherPostRequestDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String eventStatus) {
+        this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
         this.kakaoLink = gatherPostDto.getKakaoLink();
@@ -72,8 +74,8 @@ public class GatherPost {
         this.eventStatus = eventStatus;
     }
 
-    public void update(GatherPostUpdateDto gatherPostDto, LocalDate date, RegionTag regionTag, String eventStatus) {
-        this.category = gatherPostDto.getCategory();
+    public void update(GatherPostUpdateDto gatherPostDto, LocalDate date, RegionTag regionTag, String eventStatus, Category category) {
+        this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
         this.kakaoLink = gatherPostDto.getKakaoLink();

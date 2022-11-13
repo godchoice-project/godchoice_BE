@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-/src/main/resources/application-oauth.properties
+/src/main/resources/application.yml
 
 ### STS ###
 .apt_generated
@@ -37,7 +37,3 @@ GodchoiceApplicationTest.java
 
 ### VS Code ###
 .vscode/
-
-
-application-secret.yml
-application-oauth.yml

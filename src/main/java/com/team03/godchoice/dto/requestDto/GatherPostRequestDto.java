@@ -1,12 +1,14 @@
 package com.team03.godchoice.dto.requestDto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class GatherPostRequestDto {
-    private String category;
+//    private String category;
     private String date;
     private int number;
     private String kakaoLink;

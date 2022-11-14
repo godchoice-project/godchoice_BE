@@ -66,8 +66,8 @@ public class GatherPostService {
 
 //        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
             LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-            RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-            String eventStatus = toEventStatus(date);
+            RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+            String eventStatus = eventPostService.toEventStatus(date);
             gatherPost.update(gatherPostDto, date, regionTag, eventStatus,category);
 
             String[] imgIdlist = gatherPostDto.getImgId().split(",");
@@ -144,24 +144,5 @@ public class GatherPostService {
             GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
             gatherPostImgRepository.save(gatherPostImg);
         }
-    }
-
-    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFiles) {
-
-        GatherPost gatherPost = gatherPostRepository.findById(postId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_POST)
-        );
-        LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String eventStatus = toEventStatus(date);
-        gatherPost.update(gatherPostDto,date,regionTag,eventStatus);
-
-        String[] imgIdlist = gatherPostDto.getImgId().split(",");
-        //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
-//        if (imgIdlist.length==gatherPost.getGatherPostImgs().size()) {
-//
-//        }
-
-        return GlobalResDto.success(null,"수정이 완료되었습니다.");
     }
 }

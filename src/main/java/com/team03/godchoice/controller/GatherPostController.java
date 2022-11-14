@@ -44,8 +44,8 @@ public class GatherPostController {
         return gatherPostService.deleteGatherPost(postId);
     }
 
-    @GetMapping("{postId}")
-    public GlobalResDto<?> gatGatherPsot(@PathVariable Long postId) {
-        return gatherPostService.getGatherPost(postId);
-    }
+//    @GetMapping("{postId}")
+//    public GlobalResDto<?> gatGatherPsot(@PathVariable Long postId) {
+//        return gatherPostService.getGatherPost(postId);
+//    }
 }

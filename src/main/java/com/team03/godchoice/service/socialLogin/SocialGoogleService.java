@@ -93,7 +93,7 @@ public class SocialGoogleService {
         body.add("client_id", client_id);
         body.add("client_secret", clientSecret);
 //        body.add("redirect_uri", "http://localhost:8080/user/signin/google");
-        body.add("redirect_uri", "http://localhost:3000/user/signin/google");
+        body.add("redirect_uri", "http://localhost:3000/member/signup/google");
 //        body.add("redirect_uri", "https://www.chackcheck99.com/user/signin/google");
         body.add("code", code);
 
@@ -148,6 +148,7 @@ public class SocialGoogleService {
         String userName = jsonNode.get("name").asText();
         return new GoogleUserInfoDto(id, userName, userEmail);
     }
+//    https://www.googleapis.com/auth/userinfo.profile
 
     private Member signupGoogleUser(GoogleUserInfoDto googleUserInfoDto) {
         // 재가입 방지

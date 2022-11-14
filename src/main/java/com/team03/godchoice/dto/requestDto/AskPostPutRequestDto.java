@@ -11,5 +11,7 @@ public class AskPostPutRequestDto {
 
     private String content;
 
+    private String postAddress;
+
     private String imgId;
 }

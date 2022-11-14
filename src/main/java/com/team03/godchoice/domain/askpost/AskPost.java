@@ -29,6 +29,9 @@ public class AskPost extends Timestamped{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String postAddress;
+
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "memberId")
@@ -46,11 +49,13 @@ public class AskPost extends Timestamped{
     public AskPost(AskPostRequestDto askPostRequestDto, Member member){
         this.title=askPostRequestDto.getTitle();
         this.content=askPostRequestDto.getContent();
+        this.postAddress=askPostRequestDto.getPostAddress();
         this.member=member;
     }
 
     public void updateAskPost(AskPostPutRequestDto askPostPutRequestDto) {
         this.title= askPostPutRequestDto.getTitle();
         this.content= askPostPutRequestDto.getContent();
+        this.postAddress=askPostPutRequestDto.getPostAddress();
     }
 }

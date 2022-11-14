@@ -10,11 +10,11 @@ spring:
     console:
       enabled: true
 
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:db
-#    password:
-#    username: sa
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db
+    password:
+    username: sa
 
 #  datasource:
 #    url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
@@ -102,10 +102,10 @@ jasypt:
 cloud:
   aws:
     s3:
-      bucket: kimbiibucket
+      bucket: realbucket9
     credentials:
-      access-key: ENC(OhFW/2FfibV77re8MTUXS+CqUkUZO7c0+JosNqr86s0=)
-      secret-key: ENC(uKUw8EN/kFEBIDEylQwejmWJzlrjsqBrD0UrubhOrDXZOKIBvZ+InhW0d2qh10E0Slp5UsaKROM=)
+      access-key: AKIAX5IVUWAHM5G65Z6L
+      secret-key: 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
     region:
       static: ap-northeast-2
       auto: false

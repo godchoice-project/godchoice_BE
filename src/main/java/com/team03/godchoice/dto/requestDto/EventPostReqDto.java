@@ -12,5 +12,6 @@ public class EventPostReqDto {
     private String endPeriod;
     private String title;
     private String content;
+    private String postLink;
     private String postAddress;
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,8 +24,8 @@ public class AskPostController {
 
     @PostMapping("/askposts")
     public GlobalResDto<?> createAskPost(@RequestPart(required = false) AskPostRequestDto askPostRequestDto,
-                                      @RequestPart(required = false) List<MultipartFile> multipartFile,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+                                         @RequestPart(required = false) List<MultipartFile> multipartFile,
+                                         @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
         return askPostService.createAskPost(askPostRequestDto,multipartFile,userDetails);
     }
@@ -33,7 +34,7 @@ public class AskPostController {
     public GlobalResDto<?> updateAskPost(@RequestPart(required = false)AskPostPutRequestDto askPostPutRequestDto,
                                          @RequestPart(required = false) List<MultipartFile> multipartFile,
                                          @PathVariable Long postId,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+                                         @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
         return askPostService.updateAskPost(postId,askPostPutRequestDto,multipartFile,userDetails);
     }
@@ -41,7 +42,7 @@ public class AskPostController {
     // 삭제하기
     @DeleteMapping(value = "/askposts/{postId}")
     public GlobalResDto<?> deletePost(@PathVariable Long postId,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                      @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return askPostService.deletePost(postId, userDetails);
     }

@@ -28,6 +28,7 @@ out/
 !**/src/test/**/out/
 GodchoiceApplicationTest.java
 
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

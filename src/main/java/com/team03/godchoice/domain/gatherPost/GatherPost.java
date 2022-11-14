@@ -22,36 +22,51 @@ public class GatherPost {
     @Column(name = "gatherpotid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
+
     @Column(nullable = false)
     private String category;
+
     @Column(nullable = false)
     private LocalDate date;
+
     @Column(nullable = false)
     private int number;
+
     @Column(nullable = false)
     private String kakaoLink;
+
     @Column(nullable = false)
     private String sex;
+
     @Column(nullable = false)
     private int startAge;
+
     @Column(nullable = false)
     private int endAge;
+
     @Column(nullable = false)
     private String tittle;
+
     @Column(nullable = false)
     private String content;
+
     @Column
     private String postLink;
+
     @Column
     private String postAddress;
+
     @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "memberId")
     @JsonIgnore
     private Member member;
+
     @Column(nullable = false)
     private RegionTag regionTag;
+
     @Column(nullable = false)
     private String eventStatus;
 

@@ -9,14 +9,13 @@ import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.repository.GatherPostImgRepository;
-import com.team03.godchoice.repository.GatherPostRepository;
+import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
+import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class GatherPostService {
     private final MemberRepository memberRepository;
     private final GatherPostRepository gatherPostRepository;
     private final GatherPostImgRepository gatherPostImgRepository;
+    private final EventPostService eventPostService;
     private final S3Uploader s3Uploader;
 
     public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
@@ -39,8 +39,8 @@ public class GatherPostService {
         );
         // 만남시간, lacalDate로 바꾸고 주소 태그만들고
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String eventStatus = toEventStatus(date);
+        RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+        String eventStatus = eventPostService.toEventStatus(date);
 
         // dto내용과 사용자 저장
         GatherPost gatherPost = new GatherPost(gatherPostDto,member,date,regionTag,eventStatus);
@@ -69,8 +69,8 @@ public class GatherPostService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_POST)
         );
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String eventStatus = toEventStatus(date);
+        RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+        String eventStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto,date,regionTag,eventStatus);
 
         String[] imgIdlist = gatherPostDto.getImgId().split(",");
@@ -80,33 +80,5 @@ public class GatherPostService {
 //        }
 
         return GlobalResDto.success(null,"수정이 완료되었습니다.");
-    }
-
-    // 지역태그 만드는 메서드
-    public RegionTag toRegionTag(String region) {
-        if (region.startsWith("서")) {
-            return RegionTag.서울;
-        } else if (region.startsWith("경기")) {
-            return RegionTag.경기도;
-        } else if (region.startsWith("강")) {
-            return RegionTag.강원도;
-        } else if (region.startsWith("경")) {
-            return RegionTag.경상도;
-        } else if (region.startsWith("전")) {
-            return RegionTag.전라도;
-        } else if (region.startsWith("충")) {
-            return RegionTag.충청도;
-        } else {
-            return RegionTag.제주도;
-        }
-    }
-
-    //행사가 진행중인 종료되었는지 판별하는 메서드
-    public String toEventStatus(LocalDate date) {
-        LocalDate now = LocalDate.now();
-        if (date.isBefore(now)) {
-            return "종료";
-        }
-        return "진행중";
     }
 }

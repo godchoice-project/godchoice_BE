@@ -1,6 +1,8 @@
 package com.team03.godchoice.domain;
 
+import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.domainenum.Role;
+import com.team03.godchoice.dto.requestDto.MyPageReqDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,7 +25,7 @@ public class Member {
     @Column(nullable = false)
     private String userName;
 
-    private String userAddressTag;
+    private RegionTag userAddressTag;
 
     private String userImgUrl;
 
@@ -57,5 +59,11 @@ public class Member {
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
         this.role = role;
+    }
+
+    public void update(MyPageReqDto user, RegionTag regionTag, String userImgUrl) {
+        this.userName = user.getUserName();
+        this.userAddressTag = regionTag;
+        this.userImgUrl = userImgUrl;
     }
 }

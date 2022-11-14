@@ -81,15 +81,22 @@ public class WebSecurityConfig {
         //토큰없이 요청가능한 url 그외에는 권환학인 필수
         http
                 .authorizeRequests()
+                //H2 console 허용
                 .antMatchers("/h2-console/**").permitAll()
+                //swagger 허용
+                .antMatchers("/v2/api-docs",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**").permitAll()
+                //로그인,회원가입만 허용
                 .antMatchers("/member/**").permitAll()
-                .antMatchers("/**").permitAll()
 
                 .anyRequest().authenticated()
-
-//                .and()
-//                .oauth2Login()
-//                .loginPage("/member/signup")
 
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

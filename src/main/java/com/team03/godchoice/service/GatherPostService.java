@@ -1,6 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
@@ -15,15 +16,17 @@ import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GatherPostService {
@@ -32,21 +35,102 @@ public class GatherPostService {
     private final GatherPostImgRepository gatherPostImgRepository;
     private final S3Uploader s3Uploader;
 
-    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
+    @Transactional
+    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile,Category category) throws IOException {
 
-        Member member = memberRepository.findById(userDetails.getMember().getMemberId()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
-        );
+//        Member member = memberCheck(userDetails);
+
         // 만남시간, lacalDate로 바꾸고 주소 태그만들고
+        log.info("gatherPostDto");
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
         String eventStatus = toEventStatus(date);
 
         // dto내용과 사용자 저장
-        GatherPost gatherPost = new GatherPost(gatherPostDto,member,date,regionTag,eventStatus);
+        GatherPost gatherPost = new GatherPost(gatherPostDto, category,date,regionTag,eventStatus);
         gatherPostRepository.save(gatherPost);
 
         // List로 image받은후 저장
+        saveImg(multipartFile, gatherPost);
+
+        return GlobalResDto.success(null, "success create gatherPost");
+    }
+
+    @Transactional
+    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category) throws  IOException{
+
+//        Member member = memberCheck(userDetails);
+
+        GatherPost gatherPost = postCheck(postId);
+
+//        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
+            LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
+            RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
+            String eventStatus = toEventStatus(date);
+            gatherPost.update(gatherPostDto, date, regionTag, eventStatus,category);
+
+            String[] imgIdlist = gatherPostDto.getImgId().split(",");
+            //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
+            if (imgIdlist.length==gatherPost.getGatherPostImg().size()) {
+                List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
+                for (GatherPostImg gatherPostImg : gatherPostImgs) {
+                    String imgUrl = gatherPostImg.getImgUrl().substring(50);
+                    s3Uploader.delImg(imgUrl);
+                }
+                gatherPostImgRepository.deleteAllByGatherPost(gatherPost);
+                String gatherPostUrl = "https://kimbiibucket.s3.ap-northeast-2.amazonaws.com/normal_profile.jpg";
+                GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
+                gatherPostImgRepository.save(gatherPostImg);
+            } else if (imgIdlist.length != 0 ) {
+                for (String imgId : imgIdlist) {
+                    Long gatherPostId = Long.valueOf(imgId);
+                    GatherPostImg gatherPostImg = gatherPostImgRepository.findByGatherPostImgId(gatherPostId);
+                    String path = gatherPostImg.getImgUrl().substring(50);
+                    s3Uploader.delImg(path);
+                    gatherPostImgRepository.deleteById(gatherPostId);
+                }
+            }
+            saveImg(multipartFile, gatherPost);
+
+            return GlobalResDto.success(null,"수정이 완료되었습니다.");
+//        } else {
+//            throw new  CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+//        }
+    }
+
+    public GlobalResDto<?> deleteGatherPost(Long postId) {
+
+//        Member member = memberCheck(userDetails);
+
+        GatherPost gatherPost = postCheck(postId);
+
+        List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
+        for (GatherPostImg gatherPostImg : gatherPostImgs) {
+            String imgUrl = gatherPostImg.getImgUrl().substring(50);
+            s3Uploader.delImg(imgUrl);
+        }
+        gatherPostRepository.deleteById(postId);
+
+        return GlobalResDto.success(null, "삭제가 완료되었습니다.");
+//        } else {
+//            throw  new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+//        }
+    }
+
+
+    public Member memberCheck(UserDetailsImpl userDetails) {
+        return memberRepository.findById(userDetails.getMember().getMemberId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+    }
+
+    public GatherPost postCheck(Long postId) {
+        return gatherPostRepository.findById(postId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_POST)
+        );
+    }
+
+    public void saveImg(List<MultipartFile> multipartFile, GatherPost gatherPost) throws IOException {
         String gatherPostUrl;
         if (multipartFile.size() != 0) {
             for (MultipartFile file : multipartFile) {
@@ -59,30 +143,9 @@ public class GatherPostService {
             GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
             gatherPostImgRepository.save(gatherPostImg);
         }
-
-        return GlobalResDto.success(null, "success create gatherPost");
     }
-
-    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFiles) {
-
-        GatherPost gatherPost = gatherPostRepository.findById(postId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_POST)
-        );
-        LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String eventStatus = toEventStatus(date);
-        gatherPost.update(gatherPostDto,date,regionTag,eventStatus);
-
-        String[] imgIdlist = gatherPostDto.getImgId().split(",");
-        //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
-//        if (imgIdlist.length==gatherPost.getGatherPostImgs().size()) {
-//
-//        }
-
-        return GlobalResDto.success(null,"수정이 완료되었습니다.");
-    }
-
     // 지역태그 만드는 메서드
+
     public RegionTag toRegionTag(String region) {
         if (region.startsWith("서")) {
             return RegionTag.서울;
@@ -100,8 +163,8 @@ public class GatherPostService {
             return RegionTag.제주도;
         }
     }
-
     //행사가 진행중인 종료되었는지 판별하는 메서드
+
     public String toEventStatus(LocalDate date) {
         LocalDate now = LocalDate.now();
         if (date.isBefore(now)) {
@@ -109,4 +172,21 @@ public class GatherPostService {
         }
         return "진행중";
     }
+
+    public GlobalResDto<?> getGatherPost(Long postId) {
+        return null;
+    }
 }
+
+
+
+/*//        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
+            List<GatherPostImg> gatherPostImgs = gatherPost.getGatherPostImg();
+            if (!gatherPostImgs.get(0).getImgUrl().equals("https://kimbiibucket.s3.ap-northeast-2.amazonaws.com/normal_profile.jpg")) {
+                for (GatherPostImg gatherPostImg : gatherPostImgs) {
+                    List<String> list = List.of(gatherPostImg.getImgUrl().split("/"));
+                    String imgUrl = list.get(3)+"/"+list.get(4);
+                    s3Uploader.delImg(imgUrl);
+                }
+            }
+            gatherPostRepository.deleteById(postId);*/

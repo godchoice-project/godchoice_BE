@@ -67,8 +67,8 @@ public class SocialNaverService {
                         .userImgUrl(naverUser.getUserImgUrl())
                         .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
                         .provider(provider)
-                        .isAccepted(false) // ?!?!??!?
-                        .isDeleted(false) // ?!?!?!?!
+                        .isAccepted(false)
+                        .isDeleted(false)
                         .role(role)
                         .build();
                 memberRepository.save(naverMember);

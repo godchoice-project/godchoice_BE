@@ -1,5 +1,6 @@
 package com.team03.godchoice.dto.requestDto;
 
+import com.team03.godchoice.domain.domainenum.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GatherPostUpdateDto {
     private String imgId;
-    private String category;
     private String date;
     private int number;
     private String kakaoLink;
@@ -18,4 +18,5 @@ public class GatherPostUpdateDto {
     private String content;
     private String postLink;
     private String postAddress;
+
 }

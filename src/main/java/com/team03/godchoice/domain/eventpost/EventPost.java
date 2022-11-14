@@ -47,6 +47,8 @@ public class EventPost extends Timestamped {
     @Column(length = 5000)
     private String content;
 
+    private String postLink;
+
     @Column(nullable = false)
     private String postAddress;
 
@@ -66,6 +68,7 @@ public class EventPost extends Timestamped {
         this.endPeriod = endPeriod;
         this.title = eventPostReqDto.getTitle();
         this.content = eventPostReqDto.getContent();
+        this.postLink = eventPostReqDto.getPostLink();
         this.postAddress = eventPostReqDto.getPostAddress();
         this.regionTag = regionTag;
         this.eventStatus = eventStatus;
@@ -77,8 +80,13 @@ public class EventPost extends Timestamped {
         this.endPeriod = endPeriod;
         this.title = eventPostPutReqDto.getTitle();
         this.content = eventPostPutReqDto.getContent();
+        this.postLink = eventPostPutReqDto.getPostLink();
         this.postAddress = eventPostPutReqDto.getPostAddress();
         this.regionTag = regionTag;
+        this.eventStatus = eventStatus;
+    }
+
+    public void setEventStatus(String eventStatus) {
         this.eventStatus = eventStatus;
     }
 }

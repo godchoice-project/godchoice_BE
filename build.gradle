@@ -63,6 +63,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
+    //스웨거 적용
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
 }
 
 tasks.named('test') {

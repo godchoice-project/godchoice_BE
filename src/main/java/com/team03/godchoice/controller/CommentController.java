@@ -7,6 +7,7 @@ import com.team03.godchoice.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,14 +19,14 @@ public class CommentController {
     @PostMapping("comments/{postId}")
     public GlobalResDto createComment(@PathVariable Long postId,
                                       @RequestBody CommentRequestDto commentRequestDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                      @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.createComment(postId, commentRequestDto, userDetails.getAccount());
     }
 
 
     @DeleteMapping("/comments/{postId}/{commentId}")
     public GlobalResDto deleteComment(@PathVariable Long commentId,
-                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                      @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteComment(commentId, userDetails.getAccount());
     }
 

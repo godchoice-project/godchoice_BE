@@ -4,10 +4,14 @@ import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
+import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.GatherPostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 import java.util.List;

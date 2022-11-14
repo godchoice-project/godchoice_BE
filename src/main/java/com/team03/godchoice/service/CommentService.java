@@ -21,7 +21,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final AskPostRepository askPostRepository;
 
-    public GlobalResDto createComment(Long postId, CommentRequestDto commentRequestDto, Member account) {
+    public GlobalResDto<?> createComment(Long postId, CommentRequestDto commentRequestDto, Member account) {
         AskPost askPost = askPostRepository.findById(postId).orElseThrow(
                 ()-> new CustomException(ErrorCode.NOT_FOUND_POST)
         );
@@ -38,7 +38,7 @@ public class CommentService {
         return GlobalResDto.success(null,"Success create comment");
     }
 
-    public GlobalResDto deleteComment(Long commentId, Member member) {
+    public GlobalResDto<?> deleteComment(Long commentId, Member member) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
         );

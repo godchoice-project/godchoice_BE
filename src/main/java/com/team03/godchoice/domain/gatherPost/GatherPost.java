@@ -45,7 +45,6 @@ public class GatherPost {
     private String postLink;
     @Column
     private String postAddress;
-
     @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
     @ManyToOne

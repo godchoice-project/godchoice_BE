@@ -7,6 +7,7 @@ import com.team03.godchoice.domain.eventpost.EventPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.EventPostPutReqDto;
 import com.team03.godchoice.dto.requestDto.EventPostReqDto;
+import com.team03.godchoice.dto.responseDto.EventPostResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -139,6 +141,27 @@ public class EventPostService {
         return GlobalResDto.success(null,"삭제가 완료되었습니다");
     }
 
+    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId) {
+
+        Member member = isPresentMember(userDetails);
+        if (member == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+        }
+
+        EventPost eventPost = eventPostRepository.findByEventPostId(postId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+
+        List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
+        List<String> imgUrl = new ArrayList<>();
+        for(EventPostImg eventPostImg: eventPostImgs){
+            imgUrl.add(eventPostImg.getImgUrl());
+        }
+
+        EventPostResDto eventPostResDto = new EventPostResDto(eventPost,imgUrl);
+
+        return GlobalResDto.success(eventPostResDto,null);
+    }
+
     public Member isPresentMember(UserDetailsImpl userDetails) {
         Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
         return member.orElse(null);
@@ -152,19 +175,19 @@ public class EventPostService {
     //지역태그 만드는 메서드
     public RegionTag toRegionTag(String region) {
         if (region.startsWith("서")) {
-            return RegionTag.서울;
+            return RegionTag.Seoul;
         } else if (region.startsWith("경기")) {
-            return RegionTag.경기도;
+            return RegionTag.Gyeonggi;
         } else if (region.startsWith("강")) {
-            return RegionTag.강원도;
+            return RegionTag.Gangwon;
         } else if (region.startsWith("경")) {
-            return RegionTag.경상도;
+            return RegionTag.Gyeongsang;
         } else if (region.startsWith("전")) {
-            return RegionTag.전라도;
+            return RegionTag.Jeolla;
         } else if (region.startsWith("충")) {
-            return RegionTag.충청도;
+            return RegionTag.Chungcheong;
         } else {
-            return RegionTag.제주도;
+            return RegionTag.Jeju;
         }
     }
 

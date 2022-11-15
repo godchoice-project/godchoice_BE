@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.responseDto;
+package com.team03.godchoice.dto.responsedto;
 
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
@@ -13,9 +13,9 @@ public class AskPostDetailResponseDto {
     private String title;
     private String content;
     private List<AskPostImg> askPostImgList;
-    private List<CommentDto> commentDtoList;
+    private List<com.team03.godchoice.dto.responseDto.CommentDto> commentDtoList;
 
-    public AskPostDetailResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList){
+    public AskPostDetailResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<com.team03.godchoice.dto.responseDto.CommentDto> commentDtoList){
 
         this.postId=askPost.getAskPostId();
         this.title=askPost.getTitle();

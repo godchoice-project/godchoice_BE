@@ -2,6 +2,7 @@ package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.Timestamped;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
@@ -17,10 +18,10 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class GatherPost {
+public class GatherPost extends Timestamped {
 
     @Id
-    @Column(name = "gatherpotid")
+    @Column(name = "gatherpostid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
     @Column(nullable = false)
@@ -39,24 +40,24 @@ public class GatherPost {
     private int endAge;
     @Column(nullable = false)
     private String tittle;
-    @Column(nullable = false)
+    @Column(length = 5000)
     private String content;
     @Column
     private String postLink;
     @Column
     private String postAddress;
-    @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
+    @OneToMany(mappedBy = "gatherPost",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
     @ManyToOne
-    @JoinColumn(name = "memberId")
+    @JoinColumn(name = "memberid")
     @JsonIgnore
     private Member member;
     @Column(nullable = false)
     private RegionTag regionTag;
     @Column(nullable = false)
-    private String eventStatus;
+    private String postStatus;
 
-    public GatherPost(GatherPostRequestDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String eventStatus) {
+    public GatherPost(GatherPostRequestDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
@@ -70,10 +71,10 @@ public class GatherPost {
         this.postAddress = gatherPostDto.getPostAddress();
         this.member = member;
         this.regionTag = regionTag;
-        this.eventStatus = eventStatus;
+        this.postStatus = gatherStatus;
     }
 
-    public void update(GatherPostUpdateDto gatherPostDto, LocalDate date, RegionTag regionTag, String eventStatus, Category category) {
+    public void update(GatherPostUpdateDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
@@ -85,8 +86,8 @@ public class GatherPost {
         this.content = gatherPostDto.getContent();
         this.postLink = gatherPostDto.getPostLink();
         this.postAddress = gatherPostDto.getPostAddress();
-//        this.member = member;
+        this.member = member;
         this.regionTag = regionTag;
-        this.eventStatus = eventStatus;
+        this.postStatus = gatherStatus;
     }
 }

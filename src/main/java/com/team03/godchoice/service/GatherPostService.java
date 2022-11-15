@@ -8,6 +8,7 @@ import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
+import com.team03.godchoice.dto.responsedto.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
@@ -24,6 +25,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -37,18 +39,19 @@ public class GatherPostService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile,Category category) throws IOException {
+    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile,Category category, UserDetailsImpl userDetails) throws IOException {
 
-//        Member member = memberCheck(userDetails);
+        Member member = memberCheck(userDetails);
 
         // 만남시간, lacalDate로 바꾸고 주소 태그만들고
         log.info("gatherPostDto");
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
-        String eventStatus = eventPostService.toEventStatus(date);
+        String gatherStatus = toGatherStatus(date);
 
         // dto내용과 사용자 저장
-        GatherPost gatherPost = new GatherPost(gatherPostDto, category,date,regionTag,eventStatus);
+        GatherPost gatherPost = new GatherPost(gatherPostDto, category, date, regionTag, gatherStatus, member);
+
         gatherPostRepository.save(gatherPost);
 
         // List로 image받은후 저장
@@ -58,18 +61,18 @@ public class GatherPostService {
     }
 
     @Transactional
-    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category) throws  IOException{
+    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws  IOException{
 
-//        Member member = memberCheck(userDetails);
+        Member member = memberCheck(userDetails);
 
         GatherPost gatherPost = postCheck(postId);
 
-//        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
-            LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-            RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
-            String eventStatus = eventPostService.toEventStatus(date);
-            gatherPost.update(gatherPostDto, date, regionTag, eventStatus,category);
+        LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
+        RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+        String gatherStatus = toGatherStatus(date);
+        gatherPost.update(gatherPostDto, category, date, regionTag, gatherStatus, member);
 
+        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
             String[] imgIdlist = gatherPostDto.getImgId().split(",");
             //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
             if (imgIdlist.length==gatherPost.getGatherPostImg().size()) {
@@ -93,29 +96,47 @@ public class GatherPostService {
             }
             saveImg(multipartFile, gatherPost);
 
-            return GlobalResDto.success(null,"수정이 완료되었습니다.");
-//        } else {
-//            throw new  CustomException(ErrorCode.NO_PERMISSION_CHANGE);
-//        }
+            return GlobalResDto.success(null,"success update gatherpost");
+        } else {
+            throw new  CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+        }
     }
 
-    public GlobalResDto<?> deleteGatherPost(Long postId) {
+    @Transactional
+    public GlobalResDto<?> deleteGatherPost(Long postId, UserDetailsImpl userDetails) {
 
-//        Member member = memberCheck(userDetails);
+        Member member = memberCheck(userDetails);
+
+        GatherPost gatherPost = postCheck(postId);
+
+        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
+            List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
+            for (GatherPostImg gatherPostImg : gatherPostImgs) {
+                String imgUrl = gatherPostImg.getImgUrl().substring(50);
+                s3Uploader.delImg(imgUrl);
+            }
+            gatherPostRepository.deleteById(postId);
+
+            return GlobalResDto.success(null, "success delete gatherpost");
+        } else {
+            throw  new CustomException(ErrorCode.NO_PERMISSION_DELETE);
+        }
+    }
+
+    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails) {
+        memberCheck(userDetails);
 
         GatherPost gatherPost = postCheck(postId);
 
         List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
+        List<String> imgUrl = new ArrayList<>();
         for (GatherPostImg gatherPostImg : gatherPostImgs) {
-            String imgUrl = gatherPostImg.getImgUrl().substring(50);
-            s3Uploader.delImg(imgUrl);
+            imgUrl.add(gatherPostImg.getImgUrl());
         }
-        gatherPostRepository.deleteById(postId);
 
-        return GlobalResDto.success(null, "삭제가 완료되었습니다.");
-//        } else {
-//            throw  new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
-//        }
+        GatherPostResponseDto gatherPostDto = new GatherPostResponseDto(gatherPost, imgUrl);
+
+        return GlobalResDto.success(gatherPostDto, null);
     }
 
 
@@ -145,4 +166,13 @@ public class GatherPostService {
             gatherPostImgRepository.save(gatherPostImg);
         }
     }
+
+    private String toGatherStatus(LocalDate date) {
+        LocalDate now = LocalDate.now();
+        if (date.isBefore(now)) {
+            return "종료";
+        }
+        return "모집중";
+    }
+
 }

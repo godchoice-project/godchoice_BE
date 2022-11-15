@@ -33,9 +33,6 @@ public class Member {
     @Column(nullable = false)
     private String pw;
 
-    @Column
-    private String provider;
-
     //ADMIN , USER
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,15 +44,12 @@ public class Member {
     @Column
     private Boolean isDeleted;
 
-
-
     @Builder
-    public Member(String email, String userName, String  userImgUrl,String pw, String provider,Boolean isAccepted, Boolean isDeleted, Role role){
+    public Member(String email, String userName, String  userImgUrl,String pw,Boolean isAccepted, Boolean isDeleted, Role role){
         this.email=email;
         this.userName=userName;
         this.userImgUrl=userImgUrl;
         this.pw=pw;
-        this.provider = provider;
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
         this.role = role;

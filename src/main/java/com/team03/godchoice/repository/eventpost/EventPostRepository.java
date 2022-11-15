@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface EventPostRepository extends JpaRepository<EventPost,Long> {
+public interface EventPostRepository extends JpaRepository<EventPost,Long>{
     List<EventPost> findAllByMember(Member member);
 
 

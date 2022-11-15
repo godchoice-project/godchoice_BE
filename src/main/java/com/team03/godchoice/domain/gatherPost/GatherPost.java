@@ -56,6 +56,9 @@ public class GatherPost {
     @Column
     private String postAddress;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private long viewCount;
+
     @OneToMany(mappedBy = "gatherPost") //,fetch=FetchType.LAZY, cascade=CascadeType.ALL
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
 
@@ -99,8 +102,11 @@ public class GatherPost {
         this.content = gatherPostDto.getContent();
         this.postLink = gatherPostDto.getPostLink();
         this.postAddress = gatherPostDto.getPostAddress();
-//        this.member = member;
         this.regionTag = regionTag;
         this.eventStatus = eventStatus;
+    }
+
+    public void viewCountUp(){
+        this.viewCount++;
     }
 }

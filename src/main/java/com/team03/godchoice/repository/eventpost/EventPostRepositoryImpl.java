@@ -50,13 +50,6 @@ public class EventPostRepositoryImpl extends QuerydslRepositorySupport {
                 for (int i = tags.size(); i < 7; i++) {
                     tags.add(i, "없음");
                 }
-                System.out.println("0"+tags.get(0));
-                System.out.println("0"+tags.get(1));
-                System.out.println("0"+tags.get(2));
-                System.out.println("0"+tags.get(3));
-                System.out.println("0"+tags.get(4));
-                System.out.println("0"+tags.get(5));
-                System.out.println("0"+tags.get(6));
 
                 return toRegionTag(tags.get(0))
                         .or(toRegionTag(tags.get(1)))

@@ -48,15 +48,14 @@ public class AskPostController {
     }
 
     //전체 조회
-    @GetMapping(value = "/allposts")
-    private List<AskPostResponseDto> getAllAskPost(){
-        return askPostService.getAllAskPost();
-    }
+//    @GetMapping(value = "/allposts")
+//    private List<AskPostResponseDto> getAllAskPost(){
+//        return askPostService.getAllAskPost();
+//    }
 
     // 상세 조회
     @GetMapping(value = "/askposts/{postId}")
     public AskPostDetailResponseDto getOneAskPost(@PathVariable Long postId) {
-
         return askPostService.getOneAskPost(postId);
     }
 

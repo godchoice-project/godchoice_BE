@@ -58,6 +58,9 @@ public class EventPost extends Timestamped {
     @Column(nullable = false)
     private String eventStatus;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private long viewCount;
+
     @OneToMany(mappedBy = "eventPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EventPostImg> postImgUrl = new ArrayList<>();
 
@@ -88,5 +91,9 @@ public class EventPost extends Timestamped {
 
     public void setEventStatus(String eventStatus) {
         this.eventStatus = eventStatus;
+    }
+
+    public void viewCountUp(){
+        this.viewCount++;
     }
 }

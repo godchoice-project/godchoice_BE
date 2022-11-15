@@ -24,36 +24,50 @@ public class GatherPost extends Timestamped {
     @Column(name = "gatherpostid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
+
     @Column(nullable = false)
     private Category category;
     @Column(nullable = false)
     private LocalDate date;
+
     @Column(nullable = false)
     private int number;
+
     @Column(nullable = false)
     private String kakaoLink;
+
     @Column(nullable = false)
     private String sex;
+
     @Column(nullable = false)
     private int startAge;
+
     @Column(nullable = false)
     private int endAge;
+
     @Column(nullable = false)
     private String tittle;
     @Column(length = 5000)
     private String content;
+
     @Column
     private String postLink;
+
     @Column
     private String postAddress;
     @OneToMany(mappedBy = "gatherPost",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private long viewCount;
+
     @ManyToOne
     @JoinColumn(name = "memberid")
     @JsonIgnore
     private Member member;
+
     @Column(nullable = false)
     private RegionTag regionTag;
+
     @Column(nullable = false)
     private String postStatus;
 
@@ -89,5 +103,9 @@ public class GatherPost extends Timestamped {
         this.member = member;
         this.regionTag = regionTag;
         this.postStatus = gatherStatus;
+    }
+
+    public void viewCountUp(){
+        this.viewCount++;
     }
 }

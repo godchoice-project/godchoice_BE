@@ -44,16 +44,27 @@ public class EventPostRepositoryImpl extends QuerydslRepositorySupport {
 
     public BooleanExpression listTag(List<String> tags) {
         if (tags.size() >= 1 && tags.size()<7) {
-            for (int i = tags.size(); i < 7; i++) {
-                tags.add(i, "없음");
-            }
+            if(tags.get(0).equals("")){
+                return toRegionTag("전국");
+            }else{
+                for (int i = tags.size(); i < 7; i++) {
+                    tags.add(i, "없음");
+                }
+                System.out.println("0"+tags.get(0));
+                System.out.println("0"+tags.get(1));
+                System.out.println("0"+tags.get(2));
+                System.out.println("0"+tags.get(3));
+                System.out.println("0"+tags.get(4));
+                System.out.println("0"+tags.get(5));
+                System.out.println("0"+tags.get(6));
 
-            return toRegionTag(tags.get(0))
-                    .or(toRegionTag(tags.get(1)))
-                    .or(toRegionTag(tags.get(2)))
-                    .or(toRegionTag(tags.get(3)))
-                    .or(toRegionTag(tags.get(4)))
-                    .or(toRegionTag(tags.get(5)));
+                return toRegionTag(tags.get(0))
+                        .or(toRegionTag(tags.get(1)))
+                        .or(toRegionTag(tags.get(2)))
+                        .or(toRegionTag(tags.get(3)))
+                        .or(toRegionTag(tags.get(4)))
+                        .or(toRegionTag(tags.get(5)));
+            }
         } else {
             return toRegionTag("전국");
         }

@@ -20,6 +20,7 @@ import java.util.List;
 public class AskPost extends Timestamped{
 
     @Id
+    @Column(name = "askpostid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long askPostId;
 
@@ -31,6 +32,9 @@ public class AskPost extends Timestamped{
 
     @Column(nullable = false)
     private String postAddress;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private long viewCount;
 
     @ManyToOne
     @JsonIgnore
@@ -57,5 +61,9 @@ public class AskPost extends Timestamped{
         this.title= askPostPutRequestDto.getTitle();
         this.content= askPostPutRequestDto.getContent();
         this.postAddress=askPostPutRequestDto.getPostAddress();
+    }
+
+    public void viewCountUp(){
+        this.viewCount++;
     }
 }

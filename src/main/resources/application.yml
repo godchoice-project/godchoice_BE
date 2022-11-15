@@ -14,28 +14,18 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-  #  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:db
-#    password:
-#    username: sa
-
-#  datasource:
-#    url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: admin
-#    password: 5509kong
-
+  datasource:
+    url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: admin
+    password: 5509kong
 
   jpa:
-#    database-platform: org.hibernate.dialect.H2Dialect
     properties:
       hibernate:
         format_sql: true
         show_sql: true
         #나중에 지워야함
-#    hibernate:
-#      ddl-auto: create-drop
 
   #h2 테이블 만들어지는 규칙?
     hibernate:
@@ -94,8 +84,6 @@ spring:
   profiles:
     include: secret
 
-
-
 jwt :
   secret:
     key : ENC(tlpTNg1TYeUptcB4XxvUNWsvuz5CF2BgcHsrKTaFMbTagKjtCyY2/7GXPL+jqTc9eJapoEvm/3mVlxaKwQItMKrd2zlwo5jyN58VTFodm6t6Jqn7QOSR91MGQug19AgRMoNNO9v9xyabpnjawL22hL63yFRj+m+QP6nHposThKk6QmhYRNh7v75i6XjN58ER5aZX5FzQDRPPR1IA+N52jjOtFXw9pzf8+IDiRf7ptAJEjQTDjhFJ0x1TO7n467qcuL0zNt19jxVS61k5YmvOHWGXabAHTxnXZSp/4Fx5OMHNXO5MsXYs2YnvNZQb3MBCzjhQkNFH8hc+1nRtsMauCXXGx+u5AQWN)
@@ -104,23 +92,23 @@ jasypt:
   secret:
     key: "my_jasypt_key"
 
-#s3
-cloud:
-  aws:
-    s3:
-      bucket: kimbiibucket
-    credentials:
-      access-key: ENC(OhFW/2FfibV77re8MTUXS+CqUkUZO7c0+JosNqr86s0=)
-      secret-key: ENC(uKUw8EN/kFEBIDEylQwejmWJzlrjsqBrD0UrubhOrDXZOKIBvZ+InhW0d2qh10E0Slp5UsaKROM=)
-    region:
-      static: ap-northeast-2
-      auto: false
-    stack:
-      auto: false
-
-logging:
-  level:
-    com:
-      amazonaws:
-        util:
-          EC2MetadataUtils: ERROR
+##s3
+#cloud:
+#  aws:
+#    s3:
+#      bucket: kimbiibucket
+#    credentials:
+#      access-key: ENC(OhFW/2FfibV77re8MTUXS+CqUkUZO7c0+JosNqr86s0=)
+#      secret-key: ENC(uKUw8EN/kFEBIDEylQwejmWJzlrjsqBrD0UrubhOrDXZOKIBvZ+InhW0d2qh10E0Slp5UsaKROM=)
+#    region:
+#      static: ap-northeast-2
+#      auto: false
+#    stack:
+#      auto: false
+#
+#logging:
+#  level:
+#    com:
+#      amazonaws:
+#        util:
+#          EC2MetadataUtils: ERROR

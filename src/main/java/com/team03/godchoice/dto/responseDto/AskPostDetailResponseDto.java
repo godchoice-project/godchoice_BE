@@ -1,12 +1,16 @@
-package com.team03.godchoice.dto.responsedto;
+package com.team03.godchoice.dto.responseDto;
 
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AskPostDetailResponseDto {
 
     private Long postId;

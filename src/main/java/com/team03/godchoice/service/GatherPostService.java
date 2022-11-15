@@ -8,7 +8,7 @@ import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
-import com.team03.godchoice.dto.responsedto.GatherPostResponseDto;
+import com.team03.godchoice.dto.responseDto.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
@@ -21,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -39,7 +42,7 @@ public class GatherPostService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile,Category category, UserDetailsImpl userDetails) throws IOException {
+    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws IOException {
 
         Member member = memberCheck(userDetails);
 
@@ -61,7 +64,7 @@ public class GatherPostService {
     }
 
     @Transactional
-    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws  IOException{
+    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws IOException {
 
         Member member = memberCheck(userDetails);
 
@@ -75,7 +78,7 @@ public class GatherPostService {
         if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
             String[] imgIdlist = gatherPostDto.getImgId().split(",");
             //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
-            if (imgIdlist.length==gatherPost.getGatherPostImg().size()) {
+            if (imgIdlist.length == gatherPost.getGatherPostImg().size()) {
                 List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
                 for (GatherPostImg gatherPostImg : gatherPostImgs) {
                     String imgUrl = gatherPostImg.getImgUrl().substring(50);
@@ -85,7 +88,7 @@ public class GatherPostService {
                 String gatherPostUrl = "https://kimbiibucket.s3.ap-northeast-2.amazonaws.com/normal_profile.jpg";
                 GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
                 gatherPostImgRepository.save(gatherPostImg);
-            } else if (imgIdlist.length != 0 ) {
+            } else if (imgIdlist.length != 0) {
                 for (String imgId : imgIdlist) {
                     Long gatherPostId = Long.valueOf(imgId);
                     GatherPostImg gatherPostImg = gatherPostImgRepository.findByGatherPostImgId(gatherPostId);
@@ -96,9 +99,9 @@ public class GatherPostService {
             }
             saveImg(multipartFile, gatherPost);
 
-            return GlobalResDto.success(null,"success update gatherpost");
+            return GlobalResDto.success(null, "success update gatherpost");
         } else {
-            throw new  CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+            throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
         }
     }
 
@@ -119,11 +122,13 @@ public class GatherPostService {
 
             return GlobalResDto.success(null, "success delete gatherpost");
         } else {
-            throw  new CustomException(ErrorCode.NO_PERMISSION_DELETE);
+            throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
         }
     }
 
-    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails) {
+    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
+        viewCountUp(postId, req, res);
+
         memberCheck(userDetails);
 
         GatherPost gatherPost = postCheck(postId);
@@ -173,6 +178,44 @@ public class GatherPostService {
             return "종료";
         }
         return "모집중";
+    }
+
+    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
+
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
+                viewCountUp(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                res.addCookie(oldCookie);
+            }
+        } else {
+            viewCountUp(id);
+            Cookie newCookie = new Cookie("postView","[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            res.addCookie(newCookie);
+        }
+    }
+
+    @Transactional
+    public void viewCountUp(Long gatherPostId) {
+        GatherPost gatherPost = gatherPostRepository.findByGatherPostId(gatherPostId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        gatherPost.viewCountUp();
+        gatherPostRepository.save(gatherPost);
     }
 
 }

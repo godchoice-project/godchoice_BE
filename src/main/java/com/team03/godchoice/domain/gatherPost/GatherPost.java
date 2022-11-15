@@ -47,6 +47,7 @@ public class GatherPost extends Timestamped {
 
     @Column(nullable = false)
     private String tittle;
+
     @Column(length = 5000)
     private String content;
 
@@ -55,8 +56,9 @@ public class GatherPost extends Timestamped {
 
     @Column
     private String postAddress;
-    @OneToMany(mappedBy = "gatherPost",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "gatherPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
+
     @Column(columnDefinition = "integer default 0", nullable = false)
     private long viewCount;
 
@@ -71,7 +73,7 @@ public class GatherPost extends Timestamped {
     @Column(nullable = false)
     private String postStatus;
 
-    public GatherPost(GatherPostRequestDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
+    public GatherPost(GatherPostRequestDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
@@ -88,7 +90,7 @@ public class GatherPost extends Timestamped {
         this.postStatus = gatherStatus;
     }
 
-    public void update(GatherPostUpdateDto gatherPostDto, Category category,LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
+    public void update(GatherPostUpdateDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;
         this.date = date;
         this.number = gatherPostDto.getNumber();
@@ -105,7 +107,7 @@ public class GatherPost extends Timestamped {
         this.postStatus = gatherStatus;
     }
 
-    public void viewCountUp(){
+    public void viewCountUp() {
         this.viewCount++;
     }
 }

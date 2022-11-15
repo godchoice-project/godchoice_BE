@@ -1,6 +1,5 @@
 package com.team03.godchoice.domain.domainenum;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

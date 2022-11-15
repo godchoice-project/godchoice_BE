@@ -3,8 +3,7 @@ package com.team03.godchoice.controller;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
-import com.team03.godchoice.dto.responseDto.AskPostResponseDto;
-import com.team03.godchoice.dto.responsedto.AskPostDetailResponseDto;
+import com.team03.godchoice.dto.responseDto.AskPostDetailResponseDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.AskPostService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -47,16 +48,12 @@ public class AskPostController {
         return askPostService.deletePost(postId, userDetails);
     }
 
-    //전체 조회
-//    @GetMapping(value = "/allposts")
-//    private List<AskPostResponseDto> getAllAskPost(){
-//        return askPostService.getAllAskPost();
-//    }
-
     // 상세 조회
     @GetMapping(value = "/askposts/{postId}")
-    public AskPostDetailResponseDto getOneAskPost(@PathVariable Long postId) {
-        return askPostService.getOneAskPost(postId);
+    public AskPostDetailResponseDto getOneAskPost(@PathVariable Long postId,
+                                                  @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                  HttpServletRequest req, HttpServletResponse res) {
+        return askPostService.getOneAskPost(postId,req,res);
     }
 
 }

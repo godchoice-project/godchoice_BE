@@ -1,7 +1,6 @@
 package com.team03.godchoice.dto.responseDto.mypageResDto;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

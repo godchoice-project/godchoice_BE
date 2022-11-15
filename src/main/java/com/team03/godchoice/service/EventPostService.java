@@ -221,7 +221,7 @@ public class EventPostService {
         }
     }
 
-    private void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
+    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
 
         Cookie oldCookie = null;
 

@@ -45,7 +45,6 @@ public class EventPostRepositoryImpl extends QuerydslRepositorySupport {
     public BooleanExpression listTag(List<String> tags) {
         if (tags.size() >= 1 && tags.size()<7) {
             for (int i = tags.size(); i < 7; i++) {
-                System.out.println(1);
                 tags.add(i, "없음");
             }
 

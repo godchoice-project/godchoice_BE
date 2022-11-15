@@ -5,8 +5,6 @@ import com.team03.godchoice.dto.requestDto.EventPostPutReqDto;
 import com.team03.godchoice.dto.requestDto.EventPostReqDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.EventPostService;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

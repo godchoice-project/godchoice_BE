@@ -11,7 +11,6 @@ import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.CommentRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,6 +1,5 @@
 package com.team03.godchoice.dto.requestDto;
 
-import com.team03.godchoice.domain.domainenum.Category;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

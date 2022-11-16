@@ -69,7 +69,6 @@ public class S3Uploader {
         }
         return Optional.empty();
     }
-
     public String getImg(String path) {
         return amazonS3Client.getUrl(bucket, path).toString();
     }

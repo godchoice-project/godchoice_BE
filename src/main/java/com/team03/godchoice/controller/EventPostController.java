@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,7 +46,8 @@ public class EventPostController {
 
     @GetMapping("/eventposts/{postId}")
     public GlobalResDto<?> getOneEventPost(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                           @PathVariable Long postId) {
-        return eventPostService.getOneEventPost(userDetails,postId);
+                                           @PathVariable Long postId,
+                                           HttpServletRequest req, HttpServletResponse res) {
+        return eventPostService.getOneEventPost(userDetails, postId, req, res);
     }
 }

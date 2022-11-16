@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +55,7 @@ public class EventPostService {
         EventPost eventPost = new EventPost(eventPostReqDto, member, startPeriod, endPeriod, regionTag, eventStatus);
         eventPostRepository.save(eventPost);
 
-        saveImg(multipartFiles,eventPost);
+        saveImg(multipartFiles, eventPost);
 
         return GlobalResDto.success(null, "작성완료");
     }
@@ -70,7 +73,7 @@ public class EventPostService {
             throw new CustomException(ErrorCode.NOT_FOUND_POST);
         }
 
-        if(!eventPost.getMember().getEmail().equals(member.getEmail())){
+        if (!eventPost.getMember().getEmail().equals(member.getEmail())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
         }
 
@@ -82,9 +85,9 @@ public class EventPostService {
         eventPost.update(eventPostPutReqDto, member, startPeriod, endPeriod, regionTag, eventStatus);
 
         String[] imgIdList = eventPostPutReqDto.getImgId().split(",");
-        if (imgIdList.length==eventPost.getPostImgUrl().size()) {//저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
+        if (imgIdList.length == eventPost.getPostImgUrl().size()) {//저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
             List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
-            for(EventPostImg eventPostImg : eventPostImgs){
+            for (EventPostImg eventPostImg : eventPostImgs) {
                 String imgUrl = eventPostImg.getImgUrl().substring(50);
                 s3Uploader.delImg(imgUrl);
             }
@@ -95,8 +98,8 @@ public class EventPostService {
             EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
             eventPostImgRepository.save(eventPostImg);
 
-        }else if(imgIdList.length != 0){  //숫자리스트가 0이 아니라면 삭제할 사진이 존재하므로 사진 삭제
-            for(String imgId : imgIdList){
+        } else if (imgIdList.length != 0) {  //숫자리스트가 0이 아니라면 삭제할 사진이 존재하므로 사진 삭제
+            for (String imgId : imgIdList) {
                 Long eventPostId = Long.valueOf(imgId);
                 EventPostImg eventPostImg = eventPostImgRepository.findByEventPostImgId(eventPostId);
                 String path = eventPostImg.getImgUrl().substring(50);
@@ -105,8 +108,8 @@ public class EventPostService {
             }
         }
 
-        saveImg(multipartFiles,eventPost);
-        return GlobalResDto.success(null,"수정이 완료되었습니다");
+        saveImg(multipartFiles, eventPost);
+        return GlobalResDto.success(null, "수정이 완료되었습니다");
     }
 
     @Transactional
@@ -122,15 +125,15 @@ public class EventPostService {
             throw new CustomException(ErrorCode.NOT_FOUND_POST);
         }
 
-        if(!eventPost.getMember().getEmail().equals(member.getEmail())){
+        if (!eventPost.getMember().getEmail().equals(member.getEmail())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
         }
 
         List<EventPostImg> eventPostImgs = eventPost.getPostImgUrl();
-        if(!eventPostImgs.get(0).getImgUrl().equals("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg")){
-            for(EventPostImg eventPostImg : eventPostImgs){
+        if (!eventPostImgs.get(0).getImgUrl().equals("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg")) {
+            for (EventPostImg eventPostImg : eventPostImgs) {
                 List<String> list = List.of(eventPostImg.getImgUrl().split("/"));
-                String imgUrl = list.get(3)+"/"+list.get(4);
+                String imgUrl = list.get(3) + "/" + list.get(4);
                 s3Uploader.delImg(imgUrl);
             }
         }
@@ -138,10 +141,12 @@ public class EventPostService {
 
         eventPostRepository.deleteById(postId);
 
-        return GlobalResDto.success(null,"삭제가 완료되었습니다");
+        return GlobalResDto.success(null, "삭제가 완료되었습니다");
     }
 
-    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId) {
+    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId,
+                                           HttpServletRequest req, HttpServletResponse res) {
+        viewCountUp(postId,req,res);
 
         Member member = isPresentMember(userDetails);
         if (member == null) {
@@ -153,13 +158,13 @@ public class EventPostService {
 
         List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
         List<String> imgUrl = new ArrayList<>();
-        for(EventPostImg eventPostImg: eventPostImgs){
+        for (EventPostImg eventPostImg : eventPostImgs) {
             imgUrl.add(eventPostImg.getImgUrl());
         }
 
-        EventPostResDto eventPostResDto = new EventPostResDto(eventPost,imgUrl);
+        EventPostResDto eventPostResDto = new EventPostResDto(eventPost, imgUrl);
 
-        return GlobalResDto.success(eventPostResDto,null);
+        return GlobalResDto.success(eventPostResDto, null);
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
@@ -201,7 +206,7 @@ public class EventPostService {
     }
 
     //DB와 S3에 이미지를 저장하는 메서드
-    public void saveImg(List<MultipartFile> multipartFiles,EventPost eventPost) throws IOException {
+    public void saveImg(List<MultipartFile> multipartFiles, EventPost eventPost) throws IOException {
         String eventPostUrl;
         if (multipartFiles.size() != 0) {
             for (MultipartFile file : multipartFiles) {
@@ -214,5 +219,43 @@ public class EventPostService {
             EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
             eventPostImgRepository.save(eventPostImg);
         }
+    }
+
+    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
+
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
+                viewCountUp(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                res.addCookie(oldCookie);
+            }
+        } else {
+            viewCountUp(id);
+            Cookie newCookie = new Cookie("postView","[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            res.addCookie(newCookie);
+        }
+    }
+
+    @Transactional
+    public void viewCountUp(Long eventPostId) {
+        EventPost eventPost = eventPostRepository.findByEventPostId(eventPostId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        eventPost.viewCountUp();
+        eventPostRepository.save(eventPost);
     }
 }

@@ -13,8 +13,8 @@ import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.CommentRepository;
-import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
+import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +141,9 @@ public class AskPostService {
     }
 
     @Transactional
-    public AskPostDetailResponseDto getOneAskPost(Long postId) {
+    public AskPostDetailResponseDto getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
+        viewCountUp(postId, req, res);
+
         AskPost askPost=askPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
@@ -156,5 +161,43 @@ public class AskPostService {
         }
 
         return new AskPostDetailResponseDto(askPost, askPostImgList, commentDtoList);
+    }
+
+    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
+
+        Cookie oldCookie = null;
+
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
+                viewCountUp(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24);
+                res.addCookie(oldCookie);
+            }
+        } else {
+            viewCountUp(id);
+            Cookie newCookie = new Cookie("postView","[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24);
+            res.addCookie(newCookie);
+        }
+    }
+
+    @javax.transaction.Transactional
+    public void viewCountUp(Long askPostId) {
+        AskPost askPost = askPostRepository.findByAskPostId(askPostId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        askPost.viewCountUp();
+        askPostRepository.save(askPost);
     }
 }

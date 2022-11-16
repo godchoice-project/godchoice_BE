@@ -5,7 +5,10 @@ import com.team03.godchoice.domain.gatherPost.GatherPost;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GatherPostRepository extends JpaRepository <GatherPost, Long> {
     List<GatherPost> findAllByMember(Member member);
+
+    Optional<GatherPost> findByGatherPostId(Long gatherPostId);
 }

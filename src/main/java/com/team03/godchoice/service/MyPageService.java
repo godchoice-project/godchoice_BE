@@ -47,10 +47,10 @@ public class MyPageService {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
-        Member member1 =memberRepository.findByUserName(user.getUserName());
-        if(member1!=null){
-            throw new CustomException(ErrorCode.DUPLICATION_NICKNAME);
-        }
+//        Member member1 =memberRepository.findByUserName(user.getUserName());
+//        if(member1!=null){
+//            throw new CustomException(ErrorCode.DUPLICATION_NICKNAME);
+//        }
 
         String userImgUrl;
         if(multipartFile!=null){

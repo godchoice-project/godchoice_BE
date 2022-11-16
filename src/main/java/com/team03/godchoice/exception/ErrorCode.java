@@ -18,9 +18,6 @@ public enum ErrorCode {
     NO_PERMISSION_DELETE(HttpStatus.BAD_REQUEST.value(), "P002","게시물을 삭제할 권한이 없습니다."),
     NO_PERMISSION_CHANGE(HttpStatus.BAD_REQUEST.value(), "P003","게시물을 수정할 권한이 없습니다"),
 
-    EXPIRE_REFRESH_TOKEN(HttpStatus.FORBIDDEN.value(),"T001" ,"refresh token이 유효하지 않습니다." ),
-    NOT_EXIST_REFRESHTOKEN(HttpStatus.BAD_REQUEST.value(), "T002","올바른 RefreshToken을 헤더에 넣어주세요." ),
-
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다.")
 
     ;

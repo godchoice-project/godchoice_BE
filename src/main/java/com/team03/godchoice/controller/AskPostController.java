@@ -24,15 +24,15 @@ public class AskPostController {
     private final AskPostService askPostService;
 
     @PostMapping("/askposts")
-    public GlobalResDto<?> createAskPost(@RequestPart(required = false) AskPostRequestDto askPostRequestDto,
-                                         @RequestPart(required = false) List<MultipartFile> multipartFile,
+    public GlobalResDto<?> createAskPost(@RequestPart(value="post", required = false) AskPostRequestDto askPostRequestDto,
+                                         @RequestParam(value="image",required = false) List<MultipartFile> multipartFile,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
 
         return askPostService.createAskPost(askPostRequestDto,multipartFile,userDetails);
     }
 
     @PostMapping("/askposts/{postId}")
-    public GlobalResDto<?> updateAskPost(@RequestPart(required = false)AskPostPutRequestDto askPostPutRequestDto,
+    public GlobalResDto<?> updateAskPost(@RequestPart(required = false) AskPostPutRequestDto askPostPutRequestDto,
                                          @RequestPart(required = false) List<MultipartFile> multipartFile,
                                          @PathVariable Long postId,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{

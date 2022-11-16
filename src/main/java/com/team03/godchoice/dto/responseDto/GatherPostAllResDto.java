@@ -20,7 +20,7 @@ public class GatherPostAllResDto {
 
     public static GatherPostAllResDto toGPARD(GatherPost gatherPost) {
         return new GatherPostAllResDto(
-                gatherPost.getTittle(),
+                gatherPost.getTitle(),
                 gatherPost.getCategory().toString(),
                 gatherPost.getNumber(),
                 gatherPost.getStartAge(),

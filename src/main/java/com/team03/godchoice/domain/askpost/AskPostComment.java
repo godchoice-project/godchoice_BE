@@ -1,7 +1,7 @@
-package com.team03.godchoice.domain;
+package com.team03.godchoice.domain.askpost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.team03.godchoice.domain.askpost.AskPost;
+import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.domainenum.DeleteStatus;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Comment {
+public class AskPostComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -39,13 +39,13 @@ public class Comment {
     // 상위 댓글
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Comment parent;
+    private AskPostComment parent;
 
     // 하위 댓글
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
-    private List<Comment> children = new ArrayList<>();
+    private List<AskPostComment> children = new ArrayList<>();
 
-    public Comment(CommentRequestDto commentRequestDto, AskPost askPost, Member member, Comment parentComment) {
+    public AskPostComment(CommentRequestDto commentRequestDto, AskPost askPost, Member member, AskPostComment parentComment) {
         this.content = commentRequestDto.getContent();
         this.askPost = askPost;
         this.member = member;

@@ -1,6 +1,6 @@
 package com.team03.godchoice.service;
 
-import com.team03.godchoice.domain.Comment;
+import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
@@ -12,7 +12,7 @@ import com.team03.godchoice.dto.responseDto.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.repository.CommentRepository;
+import com.team03.godchoice.repository.askpost.AskPostCommentRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
@@ -36,7 +36,7 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
-    private final CommentRepository commentRepository;
+    private final AskPostCommentRepository askPostCommentRepository;
 
     @Transactional
     public GlobalResDto<?> createAskPost(
@@ -128,19 +128,6 @@ public class AskPostService {
     }
 
     @Transactional
-    public List<AskPostResponseDto> getAllAskPost() {
-
-        List<AskPost> askPostList = askPostRepository.findAllByOrderByCreatedAtDesc();
-
-        List<AskPostResponseDto> askPostResponseDtoList = new ArrayList<>();
-        for(AskPost askPost : askPostList){
-            askPostResponseDtoList.add(new AskPostResponseDto(askPost));
-        }
-
-        return askPostResponseDtoList;
-    }
-
-    @Transactional
     public AskPostDetailResponseDto getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
         viewCountUp(postId, req, res);
 
@@ -154,7 +141,7 @@ public class AskPostService {
         }
 
         List<CommentDto> commentDtoList = new ArrayList<>();
-        for(Comment comment : askPost.getComments()){
+        for(AskPostComment comment : askPost.getComments()){
             if(comment.getParent() == null){
                 commentDtoList.add(new CommentDto(comment));
             }

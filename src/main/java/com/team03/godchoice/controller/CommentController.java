@@ -1,6 +1,7 @@
 package com.team03.godchoice.controller;
 
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.requestDto.CommentDeleteRequestDto;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.CommentService;
@@ -26,8 +27,9 @@ public class CommentController {
 
     @DeleteMapping("/comments/{postId}/{commentId}")
     public GlobalResDto deleteComment(@PathVariable Long commentId,
+                                      @RequestBody CommentDeleteRequestDto commentDeleteRequestDto,
                                       @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.deleteComment(commentId, userDetails.getAccount());
+        return commentService.deleteComment(commentId, commentDeleteRequestDto, userDetails.getAccount());
     }
 
 }

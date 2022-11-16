@@ -17,9 +17,9 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
 
     @PostMapping("/likes/{kind}/{postId}")
-    public GlobalResDto createPostLike(@PathVariable Long postId,
-                                       @PathVariable String kind,
-                                       @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public GlobalResDto<?> createPostLike(@PathVariable Long postId,
+                                          @PathVariable String kind,
+                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         return postLikeService.createPostLike(postId, kind, userDetails);
     }

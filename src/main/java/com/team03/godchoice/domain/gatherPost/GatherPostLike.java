@@ -1,6 +1,7 @@
-package com.team03.godchoice.domain;
+package com.team03.godchoice.domain.gatherPost;
 
-import com.team03.godchoice.domain.askpost.AskPost;
+import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.eventpost.EventPost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,8 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PostLike {
+public class GatherPostLike {
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long postLikeId;
@@ -18,11 +20,10 @@ public class PostLike {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private AskPost askPost;
+    private GatherPost gatherPost;
 
-    public PostLike(Member member, AskPost askPost){
+    public GatherPostLike(Member member, GatherPost gatherPost){
         this.member=member;
-        this.askPost=askPost;
+        this.gatherPost=gatherPost;
     }
-
 }

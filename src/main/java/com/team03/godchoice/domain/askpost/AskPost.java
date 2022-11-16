@@ -2,7 +2,6 @@ package com.team03.godchoice.domain.askpost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.PostLike;
 import com.team03.godchoice.domain.Timestamped;
 import com.team03.godchoice.dto.requestDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
@@ -47,7 +46,7 @@ public class AskPost extends Timestamped{
     private List<AskPostComment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "askPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<PostLike> likes = new ArrayList<>();
+    private List<AskPostLike> likes = new ArrayList<>();
 
     public AskPost(AskPostRequestDto askPostRequestDto, Member member){
         this.title=askPostRequestDto.getTitle();

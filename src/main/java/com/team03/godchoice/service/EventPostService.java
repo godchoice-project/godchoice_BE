@@ -9,7 +9,7 @@ import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostPutReqDto;
 import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostReqDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
-import com.team03.godchoice.dto.responseDto.EventPostResDto;
+import com.team03.godchoice.dto.responseDto.eventpost.EventPostResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;

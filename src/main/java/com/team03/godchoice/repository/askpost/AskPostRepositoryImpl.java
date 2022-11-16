@@ -4,7 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.godchoice.domain.askpost.AskPost;
-import com.team03.godchoice.dto.responseDto.AskPostAllResDto;
+import com.team03.godchoice.dto.responseDto.askpost.AskPostAllResDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.responseDto;
+package com.team03.godchoice.dto.responseDto.askpost;
 
 import com.team03.godchoice.domain.askpost.AskPost;
 import lombok.AllArgsConstructor;

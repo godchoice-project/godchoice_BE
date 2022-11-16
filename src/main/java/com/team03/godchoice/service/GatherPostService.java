@@ -10,6 +10,7 @@ import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
 import com.team03.godchoice.dto.responseDto.*;
+import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;

@@ -1,6 +1,7 @@
-package com.team03.godchoice.dto.responseDto;
+package com.team03.godchoice.dto.responseDto.eventpost;
 
 import com.team03.godchoice.domain.eventpost.EventPost;
+import com.team03.godchoice.dto.responseDto.CommentDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

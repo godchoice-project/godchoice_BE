@@ -6,7 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
-import com.team03.godchoice.dto.responseDto.EventPostAllResDto;
+import com.team03.godchoice.dto.responseDto.eventpost.EventPostAllResDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

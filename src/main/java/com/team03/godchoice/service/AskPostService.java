@@ -7,11 +7,10 @@ import com.team03.godchoice.domain.askpost.AskPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
-import com.team03.godchoice.dto.responseDto.AskPostDetailResponseDto;
+import com.team03.godchoice.dto.responseDto.askpost.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.repository.askpost.AskPostCommentRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
@@ -145,7 +144,7 @@ public class AskPostService {
             }
         }
 
-        return GlobalResDto.success(new AskPostDetailResponseDto(askPost, askPostImgList, commentDtoList),null);
+        return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList),null);
     }
 
     public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {

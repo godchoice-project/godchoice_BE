@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.responseDto;
+package com.team03.godchoice.dto.responseDto.gatherpost;
 
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import lombok.AllArgsConstructor;

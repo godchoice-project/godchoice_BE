@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.requestDto;
+package com.team03.godchoice.dto.requestDto.gatherpostDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

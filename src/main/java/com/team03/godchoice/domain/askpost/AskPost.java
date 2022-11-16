@@ -3,8 +3,8 @@ package com.team03.godchoice.domain.askpost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.Timestamped;
-import com.team03.godchoice.dto.requestDto.AskPostPutRequestDto;
-import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
+import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
+import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

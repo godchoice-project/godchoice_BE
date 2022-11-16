@@ -21,9 +21,10 @@ public class EventPostResDto {
     private String postLink;
     private String postAddress;
     private String postState;
-//    private List<Comment> comment;
 
-    public EventPostResDto(EventPost eventPost, List<String> imgUrl) {
+    private List<CommentDto> commentDtoList;
+
+    public EventPostResDto(EventPost eventPost, List<String> imgUrl, List<CommentDto> commentDtoList) {
         this.username = eventPost.getMember().getUserName();
         this.postImgUrl = imgUrl;
         this.category = eventPost.getCategory().toString();
@@ -34,5 +35,6 @@ public class EventPostResDto {
         this.postLink = eventPost.getPostLink();
         this.postAddress = eventPost.getPostAddress();
         this.postState = eventPost.getEventStatus();
+        this.commentDtoList=commentDtoList;
     }
 }

@@ -5,10 +5,9 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.requestDto.AskPostPutRequestDto;
-import com.team03.godchoice.dto.requestDto.AskPostRequestDto;
+import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
+import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
 import com.team03.godchoice.dto.responseDto.AskPostDetailResponseDto;
-import com.team03.godchoice.dto.responseDto.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
@@ -36,7 +35,6 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
-    private final AskPostCommentRepository askPostCommentRepository;
 
     @Transactional
     public GlobalResDto<?> createAskPost(
@@ -77,7 +75,7 @@ public class AskPostService {
         // 게시글 수정
         askPost.updateAskPost(askPostPutRequestDto);
 
-        String[] imgIdList = {};
+        String[] imgIdList;
 
         if (askPostPutRequestDto.getImgId().length() == 1)  {
             imgIdList = new String[]{askPostPutRequestDto.getImgId()};
@@ -128,7 +126,7 @@ public class AskPostService {
     }
 
     @Transactional
-    public AskPostDetailResponseDto getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
+    public GlobalResDto<?> getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
         viewCountUp(postId, req, res);
 
         AskPost askPost=askPostRepository.findById(postId)
@@ -147,7 +145,7 @@ public class AskPostService {
             }
         }
 
-        return new AskPostDetailResponseDto(askPost, askPostImgList, commentDtoList);
+        return GlobalResDto.success(new AskPostDetailResponseDto(askPost, askPostImgList, commentDtoList),null);
     }
 
     public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {

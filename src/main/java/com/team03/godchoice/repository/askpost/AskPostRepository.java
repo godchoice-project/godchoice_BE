@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface AskPostRepository extends JpaRepository<AskPost, Long> {
 
-    List<AskPost> findAllByOrderByCreatedAtDesc();
-
     List<AskPost> findAllByMember(Member member);
 
     Optional<AskPost> findByAskPostId(Long askPostId);

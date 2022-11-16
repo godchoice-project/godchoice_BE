@@ -5,8 +5,8 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.Timestamped;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
-import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
-import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
+import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
+import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -75,6 +75,9 @@ public class GatherPost extends Timestamped {
 
     @OneToMany(mappedBy = "gatherPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<GatherPostComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "gatherPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<GatherPostLike> likes = new ArrayList<>();
 
     public GatherPost(GatherPostRequestDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;

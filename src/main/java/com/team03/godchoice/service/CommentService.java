@@ -9,7 +9,6 @@ import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.requestDto.CommentDeleteRequestDto;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
@@ -69,9 +68,9 @@ public class CommentService {
         return GlobalResDto.success(null, "Success create comment");
     }
 
-    public GlobalResDto<?> deleteComment(Long commentId, CommentDeleteRequestDto commentDeleteRequestDto, Member member) {
+    public GlobalResDto<?> deleteComment(Long commentId, String  kind, Member member) {
 
-        if(commentDeleteRequestDto.getPostName().equals("askPost")){
+        if(kind.equals("ask")){
             AskPostComment comment = askPostCommentRepository.findById(commentId).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
             );
@@ -87,7 +86,7 @@ public class CommentService {
                     askPostCommentRepository.delete(comment);
                 }
             }
-        }else if(commentDeleteRequestDto.getPostName().equals("eventPost")){
+        }else if(kind.equals("event")){
             EventPostComment comment = eventPostCommentRepository.findById(commentId).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
             );

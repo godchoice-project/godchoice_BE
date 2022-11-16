@@ -1,15 +1,14 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
-import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
+import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
+import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
 import com.team03.godchoice.dto.responseDto.*;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
@@ -52,7 +51,7 @@ public class GatherPostService {
         log.info("gatherPostDto");
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
-        String gatherStatus = toGatherStatus(date);
+        String gatherStatus = eventPostService.toEventStatus(date);
 
         // dto내용과 사용자 저장
         GatherPost gatherPost = new GatherPost(gatherPostDto, category, date, regionTag, gatherStatus, member);
@@ -74,7 +73,7 @@ public class GatherPostService {
 
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
-        String gatherStatus = toGatherStatus(date);
+        String gatherStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto, category, date, regionTag, gatherStatus, member);
 
         if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
@@ -128,7 +127,7 @@ public class GatherPostService {
         }
     }
 
-    public GatherPostDetailResponseDto getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
+    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
         viewCountUp(postId, req, res);
 
         memberCheck(userDetails);
@@ -148,10 +147,9 @@ public class GatherPostService {
             }
         }
 
-        return new GatherPostDetailResponseDto(gatherPost, imgUrl, commentDtoList);
+        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, imgUrl, commentDtoList),null);
 
     }
-
 
     public Member memberCheck(UserDetailsImpl userDetails) {
         return memberRepository.findById(userDetails.getMember().getMemberId()).orElseThrow(
@@ -178,14 +176,6 @@ public class GatherPostService {
             GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
             gatherPostImgRepository.save(gatherPostImg);
         }
-    }
-
-    private String toGatherStatus(LocalDate date) {
-        LocalDate now = LocalDate.now();
-        if (date.isBefore(now)) {
-            return "종료";
-        }
-        return "모집중";
     }
 
     public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {

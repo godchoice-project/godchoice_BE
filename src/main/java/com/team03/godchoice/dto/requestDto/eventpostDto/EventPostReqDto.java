@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.requestDto;
+package com.team03.godchoice.dto.requestDto.eventpostDto;
 
 import com.team03.godchoice.domain.domainenum.Category;
 import io.swagger.annotations.ApiModelProperty;

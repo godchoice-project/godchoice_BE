@@ -1,17 +1,14 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.eventpost.EventPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.dto.requestDto.EventPostPutReqDto;
-import com.team03.godchoice.dto.requestDto.EventPostReqDto;
-import com.team03.godchoice.dto.responseDto.AskPostDetailResponseDto;
+import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostPutReqDto;
+import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostReqDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
-import com.team03.godchoice.dto.responseDto.EventPostDetailResponseDto;
 import com.team03.godchoice.dto.responseDto.EventPostResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
@@ -149,7 +146,7 @@ public class EventPostService {
         return GlobalResDto.success(null, "삭제가 완료되었습니다");
     }
 
-    public EventPostDetailResponseDto getOneEventPost(UserDetailsImpl userDetails, Long postId,
+    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId,
                                            HttpServletRequest req, HttpServletResponse res) {
         viewCountUp(postId,req,res);
 
@@ -174,7 +171,7 @@ public class EventPostService {
             }
         }
 
-        return new EventPostDetailResponseDto(eventPost, imgUrl, commentDtoList);
+        return GlobalResDto.success(new EventPostResDto(eventPost, imgUrl, commentDtoList),null);
 
     }
 

@@ -3,7 +3,6 @@ package com.team03.godchoice.controller;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.SearchPostService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -18,13 +17,11 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 public class SearchPostController {
 
     private final SearchPostService searchPostService;
-
 
     @ApiOperation(value = "검색", notes = "tag는 빈값일때 한칸띄어쓰기로 보내시면 오류가 생기지 않습니다.")
     @ApiImplicitParams({

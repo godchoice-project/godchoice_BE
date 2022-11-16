@@ -23,8 +23,9 @@ public class GatherPostResponseDto {
     private String postLink;
     private String postAddress;
     private String postState;
-    //    private List<Comment> comments;
-    public GatherPostResponseDto(GatherPost gatherPost, List<String> imgUrl) {
+
+    private List<CommentDto> commentDtoList;
+    public GatherPostResponseDto(GatherPost gatherPost, List<String> imgUrl,List<CommentDto> commentDtoList) {
         this.userName = gatherPost.getMember().getUserName();
         this.postImgUrl = imgUrl;
         this.category = gatherPost.getCategory().toString();
@@ -39,5 +40,6 @@ public class GatherPostResponseDto {
         this.postLink = gatherPost.getPostLink();
         this.postAddress = gatherPost.getPostAddress();
         this.postState = gatherPost.getPostStatus();
+        this.commentDtoList=commentDtoList;
     }
 }

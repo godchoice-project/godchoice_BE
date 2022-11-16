@@ -21,7 +21,8 @@ public class SearchPostService {
 
     public GlobalResDto<?> searchPost(String main, List<String> tag, String progress, String sort, String search, Pageable pageable, UserDetailsImpl userDetails) {
         if(userDetails!=null){
-
+            //토큰있고 지역 저장했으면 지역으로 보여줌
+            //토큰없으면 기본
         }
 
         if(main.equals("event")){  //행사글 찾는 곳

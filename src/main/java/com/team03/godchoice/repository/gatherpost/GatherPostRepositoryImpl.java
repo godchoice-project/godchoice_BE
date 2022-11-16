@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import static com.team03.godchoice.domain.askpost.QAskPost.askPost;
 import static com.team03.godchoice.domain.gatherPost.QGatherPost.gatherPost;
 
 import java.util.ArrayList;
@@ -32,8 +33,7 @@ public class GatherPostRepositoryImpl extends QuerydslRepositorySupport {
                 .selectFrom(gatherPost)
                 .where(listTag(tag),
                         gatherPost.postStatus.eq(progress)
-                                .and(gatherPost.title.contains(search)
-                                        .or(gatherPost.content.contains(search))))
+                                .and(searchKeyword(search)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(listSort(sort),gatherPost.gatherPostId.desc())
@@ -77,6 +77,15 @@ public class GatherPostRepositoryImpl extends QuerydslRepositorySupport {
                 return gatherPost.regionTag.eq(RegionTag.Jeju);
             default:
                 return null;
+        }
+    }
+
+    public BooleanExpression searchKeyword(String search){
+        if(search==null){
+            return null;
+        }else{
+            return gatherPost.title.contains(search)
+                    .or(gatherPost.content.contains(search));
         }
     }
 

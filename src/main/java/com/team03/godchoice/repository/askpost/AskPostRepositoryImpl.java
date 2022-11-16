@@ -2,6 +2,7 @@ package com.team03.godchoice.repository.askpost;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.dto.responseDto.askpost.AskPostAllResDto;
@@ -29,8 +30,7 @@ public class AskPostRepositoryImpl extends QuerydslRepositorySupport {
 
         List<AskPost> askPostList = queryFactory
                 .selectFrom(askPost)
-                .where(askPost.title.contains(search)
-                        .or(askPost.content.contains(search)))
+                .where(searchKeyword(search))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(listSort(sort), askPost.askPostId.desc())
@@ -45,6 +45,15 @@ public class AskPostRepositoryImpl extends QuerydslRepositorySupport {
             return new OrderSpecifier<>(Order.DESC, askPost.askPostId);
         }
         return new OrderSpecifier<>(Order.DESC, askPost.viewCount);
+    }
+
+    public BooleanExpression searchKeyword(String search){
+        if(search==null){
+            return null;
+        }else{
+            return askPost.title.contains(search)
+                    .or(askPost.content.contains(search));
+        }
     }
 
     private PageImpl toPage(List<AskPost> askPostList) {

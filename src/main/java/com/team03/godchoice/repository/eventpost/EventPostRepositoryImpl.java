@@ -31,8 +31,7 @@ public class EventPostRepositoryImpl extends QuerydslRepositorySupport {
                 .selectFrom(eventPost)
                 .where(listTag(tag),
                         eventPost.eventStatus.eq(progress)
-                                .and(eventPost.title.contains(search)
-                                        .or(eventPost.content.contains(search))
+                                .and(searchKeyword(search)
                                 ))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -81,6 +80,15 @@ public class EventPostRepositoryImpl extends QuerydslRepositorySupport {
                 return eventPost.regionTag.eq(RegionTag.Jeju);
             default:
                 return null;
+        }
+    }
+
+    public BooleanExpression searchKeyword(String search){
+        if(search==null){
+            return null;
+        }else{
+            return eventPost.title.contains(search)
+                    .or(eventPost.content.contains(search));
         }
     }
 

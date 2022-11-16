@@ -9,15 +9,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyPageUserResDto {
+    private String domain;
     private String email;
     private String nickName;
     private String  addressTag;
     private String userImg;
 
-    public MyPageUserResDto(Member member) {
-        this.email = member.getEmail();
+    public MyPageUserResDto(Member member,String[] userEmail) {
+        this.domain = userEmail[0];
+        this.email = userEmail[1];
         this.nickName = member.getUserName();
-        this.addressTag = member.getUserAddressTag().getRegion();
+        this.addressTag = regionTag(member);
         this.userImg = member.getUserImgUrl();
+    }
+
+    public String regionTag(Member member){
+        if(member.getUserAddressTag()==null){
+            return null;
+        }else{
+            return member.getUserAddressTag().getRegion();
+        }
     }
 }

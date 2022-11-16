@@ -73,7 +73,8 @@ public class MyPageService {
         }
 
         //유저정보 가져와서 DTO에 저장
-        MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member);
+        String[] userEmail = toEmail(member);
+        MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member,userEmail);
 
         //내가 쓴 행사글 가져와서 Dto 저장
         List<EventPost> eventPostList = eventPostRepository.findAllByMember(member);
@@ -108,5 +109,27 @@ public class MyPageService {
     public Member isPresentMember(UserDetailsImpl userDetails) {
         Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
         return member.orElse(null);
+    }
+
+
+    public String[] toEmail(Member member){
+        String[] result = new String[2];
+        if(member.getEmail().startsWith("k_")){
+            result[0] = "kakao";
+            result[1] = member.getEmail().replace("k_","");
+            return result;
+        }else if(member.getEmail().startsWith("g_")){
+            result[0] = "google";
+            result[1] = member.getEmail().replace("g_","");
+            return result;
+        }else if(member.getEmail().startsWith("n_")){
+            result[0] = "naver";
+            result[1] = member.getEmail().replace("n_","");
+            return result;
+        }else {
+            result[0] = "github";
+            result[1] = member.getEmail().replace("git_","");
+            return result;
+        }
     }
 }

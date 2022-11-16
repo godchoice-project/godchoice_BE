@@ -1,10 +1,17 @@
 package com.team03.godchoice.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -21,9 +28,12 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
+    TypeResolver typeResolver = new TypeResolver();
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
+                .alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class),typeResolver.resolve(Page.class) ))
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
@@ -31,6 +41,13 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());
+    }
+
+    @Getter
+    @Setter @ApiModel
+    static class Page{
+        @ApiModelProperty(value = "페이지번호(0 ~ N)")
+        private int page;
     }
 
     private ApiInfo apiInfo() {

@@ -17,9 +17,9 @@ public class AskPostDetailResponseDto {
     private String title;
     private String content;
     private List<AskPostImg> askPostImgList;
-    private List<com.team03.godchoice.dto.responseDto.CommentDto> commentDtoList;
+    private List<CommentDto> commentDtoList;
 
-    public AskPostDetailResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<com.team03.godchoice.dto.responseDto.CommentDto> commentDtoList){
+    public AskPostDetailResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList){
 
         this.postId=askPost.getAskPostId();
         this.title=askPost.getTitle();

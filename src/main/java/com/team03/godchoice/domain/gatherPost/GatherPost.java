@@ -46,7 +46,7 @@ public class GatherPost extends Timestamped {
     private int endAge;
 
     @Column(nullable = false)
-    private String tittle;
+    private String title;
 
     @Column(length = 5000)
     private String content;
@@ -73,6 +73,9 @@ public class GatherPost extends Timestamped {
     @Column(nullable = false)
     private String postStatus;
 
+    @OneToMany(mappedBy = "gatherPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<GatherPostComment> comments = new ArrayList<>();
+
     public GatherPost(GatherPostRequestDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
         this.category = category;
         this.date = date;
@@ -81,7 +84,7 @@ public class GatherPost extends Timestamped {
         this.sex = gatherPostDto.getSex();
         this.startAge = gatherPostDto.getStartAge();
         this.endAge = gatherPostDto.getEndAge();
-        this.tittle = gatherPostDto.getTitle();
+        this.title = gatherPostDto.getTitle();
         this.content = gatherPostDto.getContent();
         this.postLink = gatherPostDto.getPostLink();
         this.postAddress = gatherPostDto.getPostAddress();
@@ -98,7 +101,7 @@ public class GatherPost extends Timestamped {
         this.sex = gatherPostDto.getSex();
         this.startAge = gatherPostDto.getStartAge();
         this.endAge = gatherPostDto.getEndAge();
-        this.tittle = gatherPostDto.getTitle();
+        this.title = gatherPostDto.getTitle();
         this.content = gatherPostDto.getContent();
         this.postLink = gatherPostDto.getPostLink();
         this.postAddress = gatherPostDto.getPostAddress();

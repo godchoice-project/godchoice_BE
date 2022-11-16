@@ -1,6 +1,8 @@
 package com.team03.godchoice.dto.responseDto;
 
-import com.team03.godchoice.domain.Comment;
+import com.team03.godchoice.domain.askpost.AskPostComment;
+import com.team03.godchoice.domain.eventpost.EventPostComment;
+import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,12 +17,28 @@ public class CommentDto {
     private String userName;
     private String content;
 
-    private List<Comment> children = new ArrayList<>();
+    private List<AskPostComment> askPostCommentChildren = new ArrayList<>();
+    private List<EventPostComment> eventPostCommentChildren = new ArrayList<>();
+    private List<GatherPostComment> gatherPostCommentChildren = new ArrayList<>();
 
-    public CommentDto(Comment comment){
+    public CommentDto(AskPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
         this.content=comment.getContent();
-        this.children=comment.getChildren();
+        this.askPostCommentChildren=comment.getChildren();
+    }
+
+    public CommentDto(EventPostComment comment){
+        this.commentId=comment.getCommentId();
+        this.userName=comment.getMember().getUserName();
+        this.content=comment.getContent();
+        this.eventPostCommentChildren=comment.getChildren();
+    }
+
+    public CommentDto(GatherPostComment comment){
+        this.commentId=comment.getCommentId();
+        this.userName=comment.getMember().getUserName();
+        this.content=comment.getContent();
+        this.gatherPostCommentChildren=comment.getChildren();
     }
 }

@@ -32,7 +32,7 @@ public class GatherPostRepositoryImpl extends QuerydslRepositorySupport {
                 .selectFrom(gatherPost)
                 .where(listTag(tag),
                         gatherPost.postStatus.eq(progress)
-                                .and(gatherPost.tittle.contains(search)
+                                .and(gatherPost.title.contains(search)
                                         .or(gatherPost.content.contains(search))))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

@@ -1,14 +1,16 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
+import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.GatherPostUpdateDto;
-import com.team03.godchoice.dto.responseDto.GatherPostResponseDto;
+import com.team03.godchoice.dto.responseDto.*;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
@@ -126,7 +128,7 @@ public class GatherPostService {
         }
     }
 
-    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
+    public GatherPostDetailResponseDto getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
         viewCountUp(postId, req, res);
 
         memberCheck(userDetails);
@@ -139,9 +141,15 @@ public class GatherPostService {
             imgUrl.add(gatherPostImg.getImgUrl());
         }
 
-        GatherPostResponseDto gatherPostDto = new GatherPostResponseDto(gatherPost, imgUrl);
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        for(GatherPostComment comment : gatherPost.getComments()){
+            if(comment.getParent() == null){
+                commentDtoList.add(new CommentDto(comment));
+            }
+        }
 
-        return GlobalResDto.success(gatherPostDto, null);
+        return new GatherPostDetailResponseDto(gatherPost, imgUrl, commentDtoList);
+
     }
 
 

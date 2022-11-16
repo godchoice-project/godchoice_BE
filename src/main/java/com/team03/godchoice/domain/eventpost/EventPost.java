@@ -3,6 +3,7 @@ package com.team03.godchoice.domain.eventpost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.Timestamped;
+import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.dto.requestDto.EventPostPutReqDto;
@@ -63,6 +64,9 @@ public class EventPost extends Timestamped {
 
     @OneToMany(mappedBy = "eventPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EventPostImg> postImgUrl = new ArrayList<>();
+
+    @OneToMany(mappedBy = "eventPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<EventPostComment> comments = new ArrayList<>();
 
     public EventPost(EventPostReqDto eventPostReqDto, Member member, LocalDate startPeriod, LocalDate endPeriod, RegionTag regionTag, String eventStatus) {
         this.member = member;

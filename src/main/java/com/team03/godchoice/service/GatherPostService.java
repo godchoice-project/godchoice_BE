@@ -1,7 +1,6 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
@@ -9,13 +8,12 @@ import com.team03.godchoice.domain.gatherPost.GatherPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
-import com.team03.godchoice.dto.responseDto.*;
 import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
-import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +42,7 @@ public class GatherPostService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws IOException {
+    public GlobalResDto<?> createGather(GatherPostRequestDto gatherPostDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
 
         Member member = memberCheck(userDetails);
 
@@ -55,7 +53,7 @@ public class GatherPostService {
         String gatherStatus = eventPostService.toEventStatus(date);
 
         // dto내용과 사용자 저장
-        GatherPost gatherPost = new GatherPost(gatherPostDto, category, date, regionTag, gatherStatus, member);
+        GatherPost gatherPost = new GatherPost(gatherPostDto, date, regionTag, gatherStatus, member);
 
         gatherPostRepository.save(gatherPost);
 
@@ -66,7 +64,7 @@ public class GatherPostService {
     }
 
     @Transactional
-    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, Category category, UserDetailsImpl userDetails) throws IOException {
+    public GlobalResDto<?> updateGatherPost(Long postId, GatherPostUpdateDto gatherPostDto, List<MultipartFile> multipartFile, UserDetailsImpl userDetails) throws IOException {
 
         Member member = memberCheck(userDetails);
 
@@ -75,7 +73,7 @@ public class GatherPostService {
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
         String gatherStatus = eventPostService.toEventStatus(date);
-        gatherPost.update(gatherPostDto, category, date, regionTag, gatherStatus, member);
+        gatherPost.update(gatherPostDto, date, regionTag, gatherStatus, member);
 
         if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
             String[] imgIdlist = gatherPostDto.getImgId().split(",");
@@ -141,10 +139,10 @@ public class GatherPostService {
             imgUrl.add(gatherPostImg.getImgUrl());
         }
 
-        List<CommentDto> commentDtoList = new ArrayList<>();
+        List<com.team03.godchoice.dto.responseDto.CommentDto> commentDtoList = new ArrayList<>();
         for(GatherPostComment comment : gatherPost.getComments()){
             if(comment.getParent() == null){
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(new com.team03.godchoice.dto.responseDto.CommentDto(comment));
             }
         }
 

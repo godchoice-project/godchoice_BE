@@ -28,18 +28,16 @@ public class GatherPostController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public GlobalResDto<?> createGatherPost(@RequestPart(required = false) GatherPostRequestDto gatherPostDto,
                                             @RequestPart(required = false) List<MultipartFile> multipartFile,
-                                            Category category,
                                             @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return gatherPostService.createGather(gatherPostDto, multipartFile, category, userDetails);
+        return gatherPostService.createGather(gatherPostDto, multipartFile,  userDetails);
     }
 
     @PutMapping("/{postId}")
     public GlobalResDto<?> putGatherPost(@PathVariable Long postId,
                                          @RequestPart GatherPostUpdateDto gatherPostDto,
                                          @RequestPart List<MultipartFile> multipartFile,
-                                         Category category,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        return gatherPostService.updateGatherPost(postId, gatherPostDto, multipartFile, category, userDetails);
+        return gatherPostService.updateGatherPost(postId, gatherPostDto, multipartFile, userDetails);
     }
 
     @DeleteMapping("/{postId}")

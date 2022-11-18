@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyPageUserResDto {
+    private Long userId;
     private String domain;
     private String email;
     private String nickName;
@@ -16,6 +17,7 @@ public class MyPageUserResDto {
     private String userImg;
 
     public MyPageUserResDto(Member member,String[] userEmail) {
+        this.userId = member.getMemberId();
         this.domain = userEmail[0];
         this.email = userEmail[1];
         this.nickName = member.getUserName();

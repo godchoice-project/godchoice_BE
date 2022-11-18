@@ -12,4 +12,6 @@ public interface EventPostImgRepository extends JpaRepository<EventPostImg,Long>
     void deleteAllByEventPost(EventPost eventPost);
 
     List<EventPostImg> findAllByEventPost(EventPost eventPost);
+
+    void deleteByEventPostImgId(Long eventPostId);
 }

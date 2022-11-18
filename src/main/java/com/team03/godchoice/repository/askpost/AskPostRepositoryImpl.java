@@ -4,6 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.dto.responseDto.askpost.AskPostAllResDto;
 import org.springframework.data.domain.PageImpl;
@@ -20,13 +21,15 @@ import java.util.List;
 public class AskPostRepositoryImpl extends QuerydslRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
+    private final AskPostLikeRepository askPostLikeRepository;
 
-    public AskPostRepositoryImpl(JPAQueryFactory queryFactory) {
+    public AskPostRepositoryImpl(JPAQueryFactory queryFactory, AskPostLikeRepository askPostLikeRepository) {
         super(AskPost.class);
         this.queryFactory = queryFactory;
+        this.askPostLikeRepository = askPostLikeRepository;
     }
 
-    public Object searchAskPost(String sort, String search, Pageable pageable) {
+    public Object searchAskPost(String sort, String search, Pageable pageable, Member member) {
 
         List<AskPost> askPostList = queryFactory
                 .selectFrom(askPost)
@@ -36,7 +39,7 @@ public class AskPostRepositoryImpl extends QuerydslRepositorySupport {
                 .orderBy(listSort(sort), askPost.askPostId.desc())
                 .fetch();
 
-        return toPage(askPostList);
+        return toPage(askPostList,member);
 
     }
 
@@ -56,10 +59,16 @@ public class AskPostRepositoryImpl extends QuerydslRepositorySupport {
         }
     }
 
-    private PageImpl toPage(List<AskPost> askPostList) {
+    private PageImpl toPage(List<AskPost> askPostList,Member member) {
         List<AskPostAllResDto> askPostAllResDtos = new ArrayList<>();
         for (AskPost askPost : askPostList) {
-            askPostAllResDtos.add(AskPostAllResDto.toAPARD(askPost));
+            boolean bookmark;
+            if(member!=null){
+                bookmark = askPostLikeRepository.existsByMemberAndAskPost(member,askPost);
+            }else{
+                bookmark = false;
+            }
+            askPostAllResDtos.add(AskPostAllResDto.toAPARD(askPost,bookmark));
         }
         return new PageImpl<>(askPostAllResDtos);
     }

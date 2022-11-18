@@ -18,9 +18,9 @@ public enum ErrorCode {
     NO_PERMISSION_DELETE(HttpStatus.BAD_REQUEST.value(), "P002","게시물을 삭제할 권한이 없습니다."),
     NO_PERMISSION_CHANGE(HttpStatus.BAD_REQUEST.value(), "P003","게시물을 수정할 권한이 없습니다"),
 
-    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다.")
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다."),
 
-    ;
+    NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." );
 
 
     private final int status;

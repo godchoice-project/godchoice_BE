@@ -2,6 +2,7 @@ package com.team03.godchoice.dto.responseDto.gatherpost;
 
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.dto.responseDto.CommentDto;
+import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,8 +11,11 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class GatherPostResponseDto {
+
+    private Long userId;
+    private String userImg;
     private String userName;
-    private List<String> postImgUrl;
+    private List<PostImgResDto> postImgInfo;
     private String category;
     private String date;
     private int number;
@@ -26,9 +30,11 @@ public class GatherPostResponseDto {
     private String postState;
 
     private List<CommentDto> commentDtoList;
-    public GatherPostResponseDto(GatherPost gatherPost, List<String> imgUrl,List<CommentDto> commentDtoList) {
+    public GatherPostResponseDto(GatherPost gatherPost, List<PostImgResDto> postImgResDtos,List<CommentDto> commentDtoList) {
+        this.userId = gatherPost.getMember().getMemberId();
+        this.userImg = gatherPost.getMember().getUserImgUrl();
         this.userName = gatherPost.getMember().getUserName();
-        this.postImgUrl = imgUrl;
+        this.postImgInfo = postImgResDtos;
         this.category = gatherPost.getCategory().toString();
         this.date = gatherPost.getDate().toString();
         this.number = gatherPost.getNumber();

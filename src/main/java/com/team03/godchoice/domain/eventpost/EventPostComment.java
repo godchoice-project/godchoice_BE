@@ -41,10 +41,12 @@ public class EventPostComment {
     // 상위 댓글
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private EventPostComment parent;
 
     // 하위 댓글
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @JsonIgnore
     private List<EventPostComment> children = new ArrayList<>();
 
     public EventPostComment(CommentRequestDto commentRequestDto, EventPost eventPost, Member member, EventPostComment parentComment) {

@@ -5,10 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.TokenDto;
+import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
 import com.team03.godchoice.dto.social.responseDto.GithubResDto;
+import com.team03.godchoice.interfacepackage.LoginInterface;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
 import com.team03.godchoice.security.jwt.JwtUtil;
@@ -25,11 +29,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class SocialGithubService {
+public class SocialGithubService implements LoginInterface {
 
     @Value("${spring.security.oauth2.client.registration.github.client-id}")
     private String githubClientId;
@@ -39,6 +44,7 @@ public class SocialGithubService {
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
     private final SocialKakaoService socialKakaoService;
+    private final SocialGoogleService socialGoogleService;
     private final PasswordEncoder passwordEncoder;
     public final JwtUtil jwtUtil;
 
@@ -53,12 +59,14 @@ public class SocialGithubService {
         Member member = saveMember(socialUserInfoDto);
 
         //강제로그인처리
-        socialKakaoService.forceLoginSocialUser(member);
+        forceLoginUser(member);
 
         //리프레쉬, 액세스 토큰 만든후 반환
-        socialKakaoService.createToken(member,response);
+        createToken(member,response);
 
-        return GlobalResDto.success(null, "로그인이 완료되었습니다");
+        UserInfoDto userInfoDto = new UserInfoDto(member);
+
+        return GlobalResDto.success(userInfoDto, "로그인이 완료되었습니다");
     }
 
     private String issuedAccessToken(String code){
@@ -157,5 +165,21 @@ public class SocialGithubService {
 
         //있다면 member 반환
         return kakaoMember;
+    }
+
+    @Override
+    public void createToken(Member member,HttpServletResponse response){
+        TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
+
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(member.getEmail());
+
+        if (refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        } else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), member.getEmail());
+            refreshTokenRepository.save(newToken);
+        }
+
+        setHeader(response, tokenDto);
     }
 }

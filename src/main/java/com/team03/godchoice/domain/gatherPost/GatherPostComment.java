@@ -42,10 +42,12 @@ public class GatherPostComment {
     // 상위 댓글
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private GatherPostComment parent;
 
     // 하위 댓글
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @JsonIgnore
     private List<GatherPostComment> children = new ArrayList<>();
 
     public GatherPostComment(CommentRequestDto commentRequestDto, GatherPost gatherPost, Member member, GatherPostComment parentComment) {

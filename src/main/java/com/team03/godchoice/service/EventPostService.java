@@ -9,9 +9,11 @@ import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostPutReqDto;
 import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostReqDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
+import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import com.team03.godchoice.dto.responseDto.eventpost.EventPostResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.eventpost.EventPostImgRepository;
 import com.team03.godchoice.repository.eventpost.EventPostRepository;
@@ -28,13 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class EventPostService {
+public class EventPostService implements MakeRegionTag {
 
     private final MemberRepository memberRepository;
     private final EventPostRepository eventPostRepository;
@@ -86,31 +86,22 @@ public class EventPostService {
 
         eventPost.update(eventPostPutReqDto, member, startPeriod, endPeriod, regionTag, eventStatus);
 
-        String[] imgIdList = eventPostPutReqDto.getImgId().split(",");
-        if (imgIdList.length == eventPost.getPostImgUrl().size()) {//저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
-            List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
-            for (EventPostImg eventPostImg : eventPostImgs) {
-                String imgUrl = eventPostImg.getImgUrl().substring(50);
-                s3Uploader.delImg(imgUrl);
+        String[] imgIdList;
+
+        if (eventPostPutReqDto.getImgId() != null) {
+            imgIdList = eventPostPutReqDto.getImgId().split(",");
+            for (String imgUrl : imgIdList) {
+                Long imgId = Long.valueOf(imgUrl);
+                EventPostImg eventPostImg = eventPostImgRepository.findById(imgId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_IMG));
+                String s3Path = toImgPath(eventPostImg);
+                s3Uploader.delImg(s3Path);
+                eventPostImgRepository.deleteById(imgId);
             }
 
-            eventPostImgRepository.deleteAllByEventPost(eventPost);
-
-            String eventPostUrl = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
-            EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
-            eventPostImgRepository.save(eventPostImg);
-
-        } else if (imgIdList.length != 0) {  //숫자리스트가 0이 아니라면 삭제할 사진이 존재하므로 사진 삭제
-            for (String imgId : imgIdList) {
-                Long eventPostId = Long.valueOf(imgId);
-                EventPostImg eventPostImg = eventPostImgRepository.findByEventPostImgId(eventPostId);
-                String path = eventPostImg.getImgUrl().substring(50);
-                s3Uploader.delImg(path);
-                eventPostImgRepository.deleteById(eventPostId);
-            }
         }
 
         saveImg(multipartFiles, eventPost);
+
         return GlobalResDto.success(null, "수정이 완료되었습니다");
     }
 
@@ -132,23 +123,26 @@ public class EventPostService {
         }
 
         List<EventPostImg> eventPostImgs = eventPost.getPostImgUrl();
-        if (!eventPostImgs.get(0).getImgUrl().equals("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg")) {
+        if (eventPostImgs.size() != 0) {
             for (EventPostImg eventPostImg : eventPostImgs) {
-                List<String> list = List.of(eventPostImg.getImgUrl().split("/"));
-                String imgUrl = list.get(3) + "/" + list.get(4);
+                String imgUrl = toImgPath(eventPostImg);
                 s3Uploader.delImg(imgUrl);
             }
         }
-
 
         eventPostRepository.deleteById(postId);
 
         return GlobalResDto.success(null, "삭제가 완료되었습니다");
     }
 
+    public String toImgPath(EventPostImg eventPostImg) {
+        List<String> list = List.of(eventPostImg.getImgUrl().split("/"));
+        return list.get(3) + "/" + list.get(4);
+    }
+
     public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId,
                                            HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId,req,res);
+        viewCountUp(postId, req, res);
 
         Member member = isPresentMember(userDetails);
         if (member == null) {
@@ -158,20 +152,24 @@ public class EventPostService {
         EventPost eventPost = eventPostRepository.findByEventPostId(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
-        List<EventPostImg> eventPostImgs = eventPostImgRepository.findAllByEventPost(eventPost);
-        List<String> imgUrl = new ArrayList<>();
-        for (EventPostImg eventPostImg : eventPostImgs) {
-            imgUrl.add(eventPostImg.getImgUrl());
+        List<EventPostImg> eventPostImgs = new ArrayList<>(eventPost.getPostImgUrl());
+        List<PostImgResDto> postImgResDtos = new ArrayList<>();
+        if (eventPostImgs.size() == 0) {
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+        } else {
+            for (EventPostImg eventPostImg : eventPostImgs) {
+                postImgResDtos.add(new PostImgResDto(eventPostImg.getImgUrl(), eventPostImg.getEventPostImgId().toString()));
+            }
         }
 
         List<CommentDto> commentDtoList = new ArrayList<>();
-        for(EventPostComment comment : eventPost.getComments()){
-            if(comment.getParent() == null){
+        for (EventPostComment comment : eventPost.getComments()) {
+            if (comment.getParent() == null) {
                 commentDtoList.add(new CommentDto(comment));
             }
         }
 
-        return GlobalResDto.success(new EventPostResDto(eventPost, imgUrl, commentDtoList),null);
+        return GlobalResDto.success(new EventPostResDto(eventPost, postImgResDtos, commentDtoList), null);
 
     }
 
@@ -185,30 +183,11 @@ public class EventPostService {
         return post.orElse(null);
     }
 
-    //지역태그 만드는 메서드
-    public RegionTag toRegionTag(String region) {
-        if (region.startsWith("서")) {
-            return RegionTag.Seoul;
-        } else if (region.startsWith("경기")) {
-            return RegionTag.Gyeonggi;
-        } else if (region.startsWith("강")) {
-            return RegionTag.Gangwon;
-        } else if (region.startsWith("경")) {
-            return RegionTag.Gyeongsang;
-        } else if (region.startsWith("전")) {
-            return RegionTag.Jeolla;
-        } else if (region.startsWith("충")) {
-            return RegionTag.Chungcheong;
-        } else {
-            return RegionTag.Jeju;
-        }
-    }
-
     //행사가 진행중인 종료되었는지 판별하는 메서드
     public String toEventStatus(LocalDate endPeriod) {
         LocalDate now = LocalDate.now();
         if (endPeriod.isBefore(now)) {
-            return "종료";
+            return "마감";
         }
         return "진행중";
     }
@@ -216,16 +195,12 @@ public class EventPostService {
     //DB와 S3에 이미지를 저장하는 메서드
     public void saveImg(List<MultipartFile> multipartFiles, EventPost eventPost) throws IOException {
         String eventPostUrl;
-        if (multipartFiles.size() != 0) {
+        if (multipartFiles != null) {
             for (MultipartFile file : multipartFiles) {
                 eventPostUrl = s3Uploader.uploadFiles(file, "testdir");
                 EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
                 eventPostImgRepository.save(eventPostImg);
             }
-        } else {
-            eventPostUrl = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
-            EventPostImg eventPostImg = new EventPostImg(eventPostUrl, eventPost);
-            eventPostImgRepository.save(eventPostImg);
         }
     }
 
@@ -252,7 +227,7 @@ public class EventPostService {
             }
         } else {
             viewCountUp(id);
-            Cookie newCookie = new Cookie("postView","[" + id + "]");
+            Cookie newCookie = new Cookie("postView", "[" + id + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24);
             res.addCookie(newCookie);

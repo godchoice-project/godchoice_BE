@@ -1,5 +1,6 @@
 package com.team03.godchoice.dto.responseDto.gatherpost;
 
+import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GatherPostAllResDto {
+    private Long postId;
     private String title;
     private String category;
     private int number;
@@ -17,9 +19,12 @@ public class GatherPostAllResDto {
     private String date;
     private String sex;
     private String imgUrl;
+    private long viewCount;
+    private boolean bookMarkStatus;
 
-    public static GatherPostAllResDto toGPARD(GatherPost gatherPost) {
+    public static GatherPostAllResDto toGPARD(GatherPost gatherPost,boolean bookMarkStatus) {
         return new GatherPostAllResDto(
+                gatherPost.getGatherPostId(),
                 gatherPost.getTitle(),
                 gatherPost.getCategory().toString(),
                 gatherPost.getNumber(),
@@ -27,7 +32,17 @@ public class GatherPostAllResDto {
                 gatherPost.getEndAge(),
                 gatherPost.getDate().toString(),
                 gatherPost.getSex(),
-                gatherPost.getGatherPostImg().get(0).getImgUrl()
+                toImgUrl(gatherPost),
+                gatherPost.getViewCount(),
+                bookMarkStatus
         );
+    }
+
+    public static String toImgUrl(GatherPost gatherPost){
+        if(gatherPost.getGatherPostImg()!=null){
+            return gatherPost.getGatherPostImg().get(0).getImgUrl();
+        }else{
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+        }
     }
 }

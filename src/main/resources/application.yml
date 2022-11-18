@@ -92,6 +92,7 @@ jasypt:
   secret:
     key: "my_jasypt_key"
 
+
 ##s3
 #cloud:
 #  aws:

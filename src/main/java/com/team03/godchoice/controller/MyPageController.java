@@ -27,8 +27,23 @@ public class MyPageController {
         return myPageService.changeUserInfo(user, multipartFile, userDetails);
     }
 
-    @GetMapping
-    public GlobalResDto<?> getMyPage(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return myPageService.getMyPage(userDetails);
+    @GetMapping("/user")
+    public GlobalResDto<?> getUser(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return myPageService.getUser(userDetails);
+    }
+
+    @GetMapping("/mypost")
+    public GlobalResDto<?> getMyPost(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return myPageService.getMyPost(userDetails);
+    }
+
+    @GetMapping("/mycomment")
+    public GlobalResDto<?> getMyComment(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return myPageService.getMyComment(userDetails);
+    }
+
+    @GetMapping("/myscrap")
+    public GlobalResDto<?> getMyScrap(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return myPageService.getMyScrap(userDetails);
     }
 }

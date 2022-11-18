@@ -7,10 +7,12 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.GoogleUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.interfacepackage.LoginInterface;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
 import com.team03.godchoice.security.jwt.JwtUtil;
@@ -34,7 +36,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class SocialGoogleService {
+public class SocialGoogleService implements LoginInterface {
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String client_id;
@@ -46,6 +48,8 @@ public class SocialGoogleService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final ComfortUtils comfortUtils;
+
+//    private final SocialKakaoService socialKakaoService;
 
     public GlobalResDto<?> googleLogin(String code, HttpServletResponse response)
     throws JsonProcessingException {
@@ -59,7 +63,7 @@ public class SocialGoogleService {
         Member member = signupGoogleUser(googleUserInfo);
 
         //4. 강제 로그인 처리
-        forceLoginGoogleUser(member);
+        forceLoginUser(member);
 
         //토큰 발급
         TokenDto tokenDto = jwtUtil.createAllToken(googleUserInfo.getUserEmail());
@@ -78,8 +82,12 @@ public class SocialGoogleService {
         //토큰을 header에 넣어서 클라이언트에게 전달하기
         setHeader(response, tokenDto);
 
+//        socialKakaoService.createToken(member,response);
 
-        return GlobalResDto.success(null, "Success Google login");
+        UserInfoDto userInfoDto = new UserInfoDto(member);
+
+
+        return GlobalResDto.success(userInfoDto, "Success Google login");
     }
 
     //header 에 Content-type 지정
@@ -117,7 +125,7 @@ public class SocialGoogleService {
 
         String accessToken = jsonNode.get("access_token").asText();
 //        String refreshToken = jsonNode.get("refresh_token").asText();
-        String refreshToken = null;
+//        String refreshToken = null;
 //        return new TokenFactory(accessToken, refreshToken);
         return accessToken;
     }
@@ -181,18 +189,18 @@ public class SocialGoogleService {
         return findGoogle;
     }
 
-    public void forceLoginGoogleUser(Member googleMember) {
-        UserDetails userDetails = new UserDetailsImpl(googleMember);
-        if (googleMember.getIsDeleted().equals(true)) {
-            throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
-        }
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-    }
+//    public void forceLoginUser(Member googleMember) {
+//        UserDetails userDetails = new UserDetailsImpl(googleMember);
+//        if (googleMember.getIsDeleted().equals(true)) {
+//            throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
+//        }
+//        Authentication authentication =
+//                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//    }
+//
+//    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//    }
 }

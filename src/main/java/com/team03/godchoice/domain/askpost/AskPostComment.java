@@ -39,10 +39,12 @@ public class AskPostComment {
     // 상위 댓글
     @ManyToOne
     @JoinColumn(name = "parent_id")
+    @JsonIgnore
     private AskPostComment parent;
 
     // 하위 댓글
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @JsonIgnore
     private List<AskPostComment> children = new ArrayList<>();
 
     public AskPostComment(CommentRequestDto commentRequestDto, AskPost askPost, Member member, AskPostComment parentComment) {

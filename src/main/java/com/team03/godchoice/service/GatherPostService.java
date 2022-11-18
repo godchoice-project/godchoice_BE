@@ -3,6 +3,7 @@ package com.team03.godchoice.service;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.domain.eventpost.EventPostImg;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
@@ -13,6 +14,7 @@ import com.team03.godchoice.dto.responseDto.*;
 import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import com.team03.godchoice.repository.MemberRepository;
@@ -36,7 +38,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GatherPostService {
+public class GatherPostService implements MakeRegionTag {
     private final MemberRepository memberRepository;
     private final GatherPostRepository gatherPostRepository;
     private final GatherPostImgRepository gatherPostImgRepository;
@@ -51,7 +53,7 @@ public class GatherPostService {
         // 만남시간, lacalDate로 바꾸고 주소 태그만들고
         log.info("gatherPostDto");
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
         String gatherStatus = eventPostService.toEventStatus(date);
 
         // dto내용과 사용자 저장
@@ -72,39 +74,32 @@ public class GatherPostService {
 
         GatherPost gatherPost = postCheck(postId);
 
+        if (!gatherPost.getMember().getEmail().equals(member.getEmail())) {
+            throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+        }
+
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-        RegionTag regionTag = eventPostService.toRegionTag(gatherPostDto.getPostAddress());
+        RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
         String gatherStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto, category, date, regionTag, gatherStatus, member);
 
-        if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
-            String[] imgIdlist = gatherPostDto.getImgId().split(",");
-            //저장되어있는 사진 리스트 크기와 받아온 숫자 리스트 크기가 같다면 올린 사진을 모두 삭제하는것이므로 기본이미지 넣기
-            if (imgIdlist.length == gatherPost.getGatherPostImg().size()) {
-                List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
-                for (GatherPostImg gatherPostImg : gatherPostImgs) {
-                    String imgUrl = gatherPostImg.getImgUrl().substring(50);
-                    s3Uploader.delImg(imgUrl);
-                }
-                gatherPostImgRepository.deleteAllByGatherPost(gatherPost);
-                String gatherPostUrl = "https://kimbiibucket.s3.ap-northeast-2.amazonaws.com/normal_profile.jpg";
-                GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
-                gatherPostImgRepository.save(gatherPostImg);
-            } else if (imgIdlist.length != 0) {
-                for (String imgId : imgIdlist) {
-                    Long gatherPostId = Long.valueOf(imgId);
-                    GatherPostImg gatherPostImg = gatherPostImgRepository.findByGatherPostImgId(gatherPostId);
-                    String path = gatherPostImg.getImgUrl().substring(50);
-                    s3Uploader.delImg(path);
-                    gatherPostImgRepository.deleteById(gatherPostId);
-                }
-            }
-            saveImg(multipartFile, gatherPost);
+        String[] imgIdList;
 
-            return GlobalResDto.success(null, "success update gatherpost");
-        } else {
-            throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
+        if (gatherPostDto.getImgId() != null) {
+            imgIdList = gatherPostDto.getImgId().split(",");
+
+            for (String imgUrl : imgIdList) {
+                Long imgId = Long.valueOf(imgUrl);
+                GatherPostImg gatherPostImg = gatherPostImgRepository.findById(imgId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_IMG));
+                String s3Path = toImgPath(gatherPostImg);
+                s3Uploader.delImg(s3Path);
+                gatherPostImgRepository.deleteById(imgId);
+            }
+
         }
+
+        saveImg(multipartFile, gatherPost);
+        return GlobalResDto.success(null, "수정이 완료되었습니다");
     }
 
     @Transactional
@@ -116,10 +111,13 @@ public class GatherPostService {
 
         if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
             List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
-            for (GatherPostImg gatherPostImg : gatherPostImgs) {
-                String imgUrl = gatherPostImg.getImgUrl().substring(50);
-                s3Uploader.delImg(imgUrl);
+            if (gatherPostImgs.size() != 0) {
+                for (GatherPostImg gatherPostImg : gatherPostImgs) {
+                    String imgUrl = toImgPath(gatherPostImg);
+                    s3Uploader.delImg(imgUrl);
+                }
             }
+
             gatherPostRepository.deleteById(postId);
 
             return GlobalResDto.success(null, "success delete gatherpost");
@@ -135,20 +133,24 @@ public class GatherPostService {
 
         GatherPost gatherPost = postCheck(postId);
 
-        List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
-        List<String> imgUrl = new ArrayList<>();
-        for (GatherPostImg gatherPostImg : gatherPostImgs) {
-            imgUrl.add(gatherPostImg.getImgUrl());
+        List<GatherPostImg> gatherPostImgs = new ArrayList<>(gatherPost.getGatherPostImg());
+        List<PostImgResDto> postImgResDtos = new ArrayList<>();
+        if (gatherPostImgs.size() == 0) {
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+        } else {
+            for (GatherPostImg gatherPostImg : gatherPostImgs) {
+                postImgResDtos.add(new PostImgResDto(gatherPostImg.getImgUrl(), gatherPostImg.getGatherPostImgId().toString()));
+            }
         }
 
         List<CommentDto> commentDtoList = new ArrayList<>();
-        for(GatherPostComment comment : gatherPost.getComments()){
-            if(comment.getParent() == null){
+        for (GatherPostComment comment : gatherPost.getComments()) {
+            if (comment.getParent() == null) {
                 commentDtoList.add(new CommentDto(comment));
             }
         }
 
-        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, imgUrl, commentDtoList),null);
+        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, postImgResDtos, commentDtoList), null);
 
     }
 
@@ -166,17 +168,18 @@ public class GatherPostService {
 
     public void saveImg(List<MultipartFile> multipartFile, GatherPost gatherPost) throws IOException {
         String gatherPostUrl;
-        if (multipartFile.size() != 0) {
+        if (multipartFile != null) {
             for (MultipartFile file : multipartFile) {
                 gatherPostUrl = s3Uploader.uploadFiles(file, "testdir");
                 GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
                 gatherPostImgRepository.save(gatherPostImg);
             }
-        } else {
-            gatherPostUrl = "https://kimbiibucket.s3.ap-northeast-2.amazonaws.com/normal_profile.jpg";
-            GatherPostImg gatherPostImg = new GatherPostImg(gatherPostUrl, gatherPost);
-            gatherPostImgRepository.save(gatherPostImg);
         }
+    }
+
+    public String toImgPath(GatherPostImg gatherPostImg) {
+        List<String> list = List.of(gatherPostImg.getImgUrl().split("/"));
+        return list.get(3) + "/" + list.get(4);
     }
 
     public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
@@ -202,7 +205,7 @@ public class GatherPostService {
             }
         } else {
             viewCountUp(id);
-            Cookie newCookie = new Cookie("postView","[" + id + "]");
+            Cookie newCookie = new Cookie("postView", "[" + id + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24);
             res.addCookie(newCookie);

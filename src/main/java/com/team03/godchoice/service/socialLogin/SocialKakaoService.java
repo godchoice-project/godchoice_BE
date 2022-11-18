@@ -7,8 +7,12 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
+import com.team03.godchoice.exception.CustomException;
+import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.interfacepackage.LoginInterface;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
 import com.team03.godchoice.security.jwt.JwtUtil;
@@ -22,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,7 +39,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class SocialKakaoService {
+public class SocialKakaoService implements LoginInterface {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
@@ -43,6 +48,7 @@ public class SocialKakaoService {
 
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
+    public final SocialGoogleService socialGoogleService;
     private final PasswordEncoder passwordEncoder;
     public final JwtUtil jwtUtil;
 
@@ -58,13 +64,15 @@ public class SocialKakaoService {
         Member member = saveMember(socialUserInfoDto);
 
         //강제 로그인 처리
-        forceLoginSocialUser(member);
+        forceLoginUser(member);
 
         //리프레쉬, 액세스 토큰 만들기
         //토큰 발급후 response
         createToken(member,response);
 
-        return GlobalResDto.success(null, "로그인이 완료되었습니다");
+        UserInfoDto userInfoDto = new UserInfoDto(member);
+
+        return GlobalResDto.success(userInfoDto, "로그인이 완료되었습니다");
     }
 
     //인가코드를 통해 access_token 발급받기
@@ -163,11 +171,15 @@ public class SocialKakaoService {
     }
 
     //강제로그인
-    public void forceLoginSocialUser(Member member) {
-        UserDetailsImpl userDetails = new UserDetailsImpl(member);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
+//    public void forceLoginUser(Member member) {
+//        UserDetails userDetails = new UserDetailsImpl(member);
+//        if (member.getIsDeleted().equals(true)) {
+//            throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
+//        }
+//        Authentication authentication =
+//                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//    }
 
     public void createToken(Member member,HttpServletResponse response){
         TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
@@ -184,8 +196,8 @@ public class SocialKakaoService {
         setHeader(response, tokenDto);
     }
 
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
-    }
+//    public void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+//        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+//        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+//    }
 }

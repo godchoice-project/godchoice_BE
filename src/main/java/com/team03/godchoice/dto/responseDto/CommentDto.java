@@ -17,28 +17,28 @@ public class CommentDto {
     private String userName;
     private String content;
 
-    private List<AskPostComment> askPostCommentChildren = new ArrayList<>();
-    private List<EventPostComment> eventPostCommentChildren = new ArrayList<>();
-    private List<GatherPostComment> gatherPostCommentChildren = new ArrayList<>();
+    private List<CommentChildDto> askPostCommentChildren = new ArrayList<>();
+    private List<CommentChildDto> eventPostCommentChildren = new ArrayList<>();
+    private List<CommentChildDto> gatherPostCommentChildren = new ArrayList<>();
 
     public CommentDto(AskPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
         this.content=comment.getContent();
-        this.askPostCommentChildren=comment.getChildren();
+        this.askPostCommentChildren=CommentChildDto.toAskPostCommentChildDto(comment.getChildren());
     }
 
     public CommentDto(EventPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
         this.content=comment.getContent();
-        this.eventPostCommentChildren=comment.getChildren();
+        this.eventPostCommentChildren=CommentChildDto.toEventPostCommentChildDto(comment.getChildren());
     }
 
     public CommentDto(GatherPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
         this.content=comment.getContent();
-        this.gatherPostCommentChildren=comment.getChildren();
+        this.gatherPostCommentChildren=CommentChildDto.toGatherPostCommentChildDto(comment.getChildren());
     }
 }

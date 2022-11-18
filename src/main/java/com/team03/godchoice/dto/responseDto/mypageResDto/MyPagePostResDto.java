@@ -13,19 +13,23 @@ import lombok.NoArgsConstructor;
 public class MyPagePostResDto {
     private Long postId;
     private String postImg;
+    private String postTitle;
 
     public MyPagePostResDto(EventPost eventPost) {
         this.postId = eventPost.getEventPostId();
         this.postImg = eventPost.getPostImgUrl().get(0).getImgUrl();
+        this.postTitle = eventPost.getTitle();
     }
 
     public MyPagePostResDto(GatherPost gatherPost) {
         this.postId = gatherPost.getGatherPostId();
         this.postImg = gatherPost.getGatherPostImg().get(0).getImgUrl();
+        this.postTitle = gatherPost.getTitle();
     }
 
     public MyPagePostResDto(AskPost askPost) {
         this.postId = askPost.getAskPostId();
         this.postImg = askPost.getAskPostImg().get(0).getImage();
+        this.postTitle = askPost.getTitle();
     }
 }

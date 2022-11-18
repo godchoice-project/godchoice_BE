@@ -14,6 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class AskPostResponseDto {
 
+    private Long userId;
+    private String userImg;
+    private String userName;
     private Long postId;
     private String title;
     private String content;
@@ -21,7 +24,9 @@ public class AskPostResponseDto {
     private List<CommentDto> commentDtoList;
 
     public AskPostResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList){
-
+        this.userId = askPost.getMember().getMemberId();
+        this.userImg = askPost.getMember().getUserImgUrl();
+        this.userName = askPost.getMember().getUserName();
         this.postId=askPost.getAskPostId();
         this.title=askPost.getTitle();
         this.content=askPost.getContent();

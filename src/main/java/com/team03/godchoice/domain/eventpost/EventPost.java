@@ -61,7 +61,7 @@ public class EventPost extends Timestamped {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private long viewCount;
 
-    @OneToMany(mappedBy = "eventPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "eventPost", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     private List<EventPostImg> postImgUrl = new ArrayList<>();
 
     @OneToMany(mappedBy = "eventPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)

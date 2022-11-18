@@ -2,6 +2,7 @@ package com.team03.godchoice.dto.responseDto.eventpost;
 
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.dto.responseDto.CommentDto;
+import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventPostResDto {
+    private Long userId;
+    private String userImg;
     private String username;
-    private List<String> postImgUrl;
+    private List<PostImgResDto> postImgInfo;
     private String category;
     private String startPeriod;
     private String endPeriod;
@@ -25,9 +28,11 @@ public class EventPostResDto {
 
     private List<CommentDto> commentDtoList;
 
-    public EventPostResDto(EventPost eventPost, List<String> imgUrl, List<CommentDto> commentDtoList) {
+    public EventPostResDto(EventPost eventPost, List<PostImgResDto> postImgResDtos, List<CommentDto> commentDtoList) {
+        this.userId = eventPost.getMember().getMemberId();
+        this.userImg = eventPost.getMember().getUserImgUrl();
         this.username = eventPost.getMember().getUserName();
-        this.postImgUrl = imgUrl;
+        this.postImgInfo = postImgResDtos;
         this.category = eventPost.getCategory().toString();
         this.endPeriod = eventPost.getEndPeriod().toString();
         this.startPeriod = eventPost.getStartPeriod().toString();

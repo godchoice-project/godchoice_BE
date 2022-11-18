@@ -11,4 +11,6 @@ public interface GatherPostRepository extends JpaRepository <GatherPost, Long> {
     List<GatherPost> findAllByMember(Member member);
 
     Optional<GatherPost> findByGatherPostId(Long gatherPostId);
+
+    List<GatherPost> findAllByMemberOrderByGatherPostIdDesc(Member member);
 }

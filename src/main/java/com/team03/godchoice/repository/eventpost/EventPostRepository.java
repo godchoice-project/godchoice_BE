@@ -12,4 +12,6 @@ public interface EventPostRepository extends JpaRepository<EventPost,Long>{
 
 
     Optional<EventPost> findByEventPostId(Long postId);
+
+    List<EventPost> findAllByMemberOrderByEventPostIdDesc(Member member);
 }

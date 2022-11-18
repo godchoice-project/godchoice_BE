@@ -7,6 +7,7 @@ import com.team03.godchoice.domain.askpost.AskPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
+import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import com.team03.godchoice.dto.responseDto.askpost.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
@@ -44,7 +45,7 @@ public class AskPostService {
         askPostRepository.save(askPost);
 
         // List로 image받은후 저장
-        if(!(multipartFile.size()==0)) {
+        if(multipartFile!=null) {
 
             for (MultipartFile file : multipartFile) {
                 String img = s3Uploader.uploadFiles(file, "testdir");
@@ -85,6 +86,9 @@ public class AskPostService {
         // 기존에 있는 Image삭제
         for(String imgId : imgIdList) {
             Long imageId = Long.parseLong(imgId);
+            AskPostImg askPostImg = askPostImgRepository.findById(imageId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_IMG));
+            String s3Path = toImgPath(askPostImg);
+            s3Uploader.delImg(s3Path);
             askPostImgRepository.deleteById(imageId);
         }
 
@@ -116,6 +120,14 @@ public class AskPostService {
             throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
         }
 
+        List<AskPostImg> askPostImgList = askPost.getAskPostImg();
+        if(askPostImgList.size()!=0){
+            for(AskPostImg askPostImg : askPostImgList){
+                String imgUrl = toImgPath(askPostImg);
+                s3Uploader.delImg(imgUrl);
+            }
+        }
+
         // 삭제
         askPostRepository.deleteById(postId);
 
@@ -132,9 +144,14 @@ public class AskPostService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
         // 이미지 개수만큼 리스트에 추가
-        List<AskPostImg> askPostImgList = new ArrayList<>();
-        for (AskPostImg askPostImg : askPost.getAskPostImg()) {
-            askPostImgList.add(askPostImg);
+        List<AskPostImg> askPostImgList = new ArrayList<>(askPost.getAskPostImg());
+        List<PostImgResDto> postImgResDtos = new ArrayList<>();
+        if(askPostImgList.size()==0){
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg",null));
+        }else{
+            for(AskPostImg askPostImg : askPostImgList){
+                postImgResDtos.add(new PostImgResDto(askPostImg.getImage(),askPostImg.getImageId().toString()));
+            }
         }
 
         List<CommentDto> commentDtoList = new ArrayList<>();
@@ -145,6 +162,11 @@ public class AskPostService {
         }
 
         return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList),null);
+    }
+
+    public String toImgPath(AskPostImg askPostImg){
+        List<String> list = List.of(askPostImg.getImage().split("/"));
+        return list.get(3)+"/"+list.get(4);
     }
 
     public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {

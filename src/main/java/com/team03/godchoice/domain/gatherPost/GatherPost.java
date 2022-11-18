@@ -56,7 +56,7 @@ public class GatherPost extends Timestamped {
 
     @Column
     private String postAddress;
-    @OneToMany(mappedBy = "gatherPost", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "gatherPost", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     private final List<GatherPostImg> gatherPostImg = new ArrayList<>();
 
     @Column(columnDefinition = "integer default 0", nullable = false)

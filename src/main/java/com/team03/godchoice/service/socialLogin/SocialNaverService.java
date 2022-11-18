@@ -7,6 +7,7 @@ import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.TokenDto;
+import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.NaverUserInfoDto;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
@@ -40,6 +41,7 @@ public class SocialNaverService {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SocialKakaoService socialKakaoService;
 
     public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) {
 
@@ -91,8 +93,12 @@ public class SocialNaverService {
 
             //토큰을 header에 넣어서 클라이언트에게 전달하기
             setHeader(response, tokenDto);
+//
+//            socialKakaoService.createToken(naverMember,response);
 
-            return GlobalResDto.success(null, "Success Naver Login");
+            UserInfoDto userInfoDto = new UserInfoDto(naverMember);
+
+            return GlobalResDto.success(userInfoDto, "Success Naver Login");
 
         } catch (IOException e) {
             throw new RuntimeException(e);

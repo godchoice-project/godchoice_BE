@@ -20,6 +20,8 @@ public class AskPostResponseDto {
     private Long postId;
     private String title;
     private String content;
+    private String postAddress;
+    private String postLink;
     private List<AskPostImg> askPostImgList;
     private List<CommentDto> commentDtoList;
 
@@ -30,6 +32,8 @@ public class AskPostResponseDto {
         this.postId=askPost.getAskPostId();
         this.title=askPost.getTitle();
         this.content=askPost.getContent();
+        this.postAddress=askPost.getPostAddress();
+        this.postLink=askPost.getPostLink();
         this.askPostImgList=askPostImgList;
         this.commentDtoList=commentDtoList;
     }

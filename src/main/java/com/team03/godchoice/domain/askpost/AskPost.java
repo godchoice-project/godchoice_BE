@@ -31,6 +31,9 @@ public class AskPost extends Timestamped{
     @Column(nullable = false)
     private String postAddress;
 
+    @Column(nullable = false)
+    private String postLink;
+
     @Column(columnDefinition = "integer default 0", nullable = false)
     private long viewCount;
 
@@ -52,6 +55,7 @@ public class AskPost extends Timestamped{
         this.title=askPostRequestDto.getTitle();
         this.content=askPostRequestDto.getContent();
         this.postAddress=askPostRequestDto.getPostAddress();
+        this.postLink=askPostRequestDto.getPostLink();
         this.member=member;
     }
 
@@ -59,6 +63,7 @@ public class AskPost extends Timestamped{
         this.title= askPostPutRequestDto.getTitle();
         this.content= askPostPutRequestDto.getContent();
         this.postAddress=askPostPutRequestDto.getPostAddress();
+        this.postLink=askPostPutRequestDto.getPostLink();
     }
 
     public void viewCountUp(){

@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.responseDto.mypageResDto;
+package com.team03.godchoice.dto.responsedto.mypageResDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,5 @@
-package com.team03.godchoice.dto.responseDto.mypageResDto;
+package com.team03.godchoice.dto.responsedto.mypageResDto;
+
 
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.eventpost.EventPost;

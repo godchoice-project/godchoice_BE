@@ -25,16 +25,16 @@ public class AskPostResponseDto {
     private List<AskPostImg> askPostImgList;
     private List<CommentDto> commentDtoList;
 
-    public AskPostResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList){
+    public AskPostResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList) {
         this.userId = askPost.getMember().getMemberId();
         this.userImg = askPost.getMember().getUserImgUrl();
         this.userName = askPost.getMember().getUserName();
-        this.postId=askPost.getAskPostId();
-        this.title=askPost.getTitle();
-        this.content=askPost.getContent();
-        this.postAddress=askPost.getPostAddress();
-        this.postLink=askPost.getPostLink();
-        this.askPostImgList=askPostImgList;
-        this.commentDtoList=commentDtoList;
+        this.postId = askPost.getAskPostId();
+        this.title = askPost.getTitle();
+        this.content = askPost.getContent();
+        this.postAddress = askPost.getPostAddress();
+        this.postLink = askPost.getPostLink();
+        this.askPostImgList = askPostImgList;
+        this.commentDtoList = commentDtoList;
     }
 }

@@ -30,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class SocialNaverService {
-
+// 네이버 로그인 수정
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String client_id;
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")

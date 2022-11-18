@@ -12,4 +12,6 @@ public class AskPostRequestDto {
     private String content;
 
     private String postAddress;
+
+    private String postLink;
 }

@@ -2,9 +2,7 @@ package com.team03.godchoice.domain.gatherPost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.DeleteStatus;
-import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,5 @@
 package com.team03.godchoice.dto.responseDto.gatherpost;
 
-import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -3,7 +3,6 @@ package com.team03.godchoice.service;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.domainenum.Category;
 import com.team03.godchoice.domain.domainenum.RegionTag;
-import com.team03.godchoice.domain.eventpost.EventPostImg;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;

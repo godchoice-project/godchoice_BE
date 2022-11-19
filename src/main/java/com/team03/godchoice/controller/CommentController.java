@@ -17,11 +17,12 @@ public class CommentController {
     private final CommentService commentService;
 
     // 댓글 작성
-    @PostMapping("/{postId}")
+    @PostMapping("/{postId}/{kind}")
     public GlobalResDto<?> createComment(@PathVariable Long postId,
+                                         @PathVariable String kind,
                                          @RequestBody CommentRequestDto commentRequestDto,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.createComment(postId, commentRequestDto, userDetails.getAccount());
+        return commentService.createComment(postId, kind, commentRequestDto, userDetails.getAccount());
     }
 
 

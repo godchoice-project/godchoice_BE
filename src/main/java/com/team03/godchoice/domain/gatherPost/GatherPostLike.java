@@ -1,7 +1,6 @@
 package com.team03.godchoice.domain.gatherPost;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.eventpost.EventPost;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

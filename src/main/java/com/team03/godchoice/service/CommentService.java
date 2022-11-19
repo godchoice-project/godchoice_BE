@@ -32,9 +32,9 @@ public class CommentService {
     private final EventPostRepository eventPostRepository;
     private final GatherPostRepository gatherPostRepository;
 
-    public GlobalResDto<?> createComment(Long postId, CommentRequestDto commentRequestDto, Member account) {
+    public GlobalResDto<?> createComment(Long postId, String kind, CommentRequestDto commentRequestDto, Member account) {
 
-        if (commentRequestDto.getPostName().equals("askPost")) {
+        if (kind.equals("askPost")) {
             AskPost askPost = askPostRepository.findById(postId).orElseThrow(
                     () -> new CustomException(ErrorCode.NOT_FOUND_POST)
             );
@@ -44,7 +44,7 @@ public class CommentService {
             AskPostComment askPostComment = new AskPostComment(commentRequestDto, askPost, account, parentComment);
 
             askPostCommentRepository.save(askPostComment);
-        }else if(commentRequestDto.getPostName().equals("eventPost")){
+        }else if(kind.equals("eventPost")){
             EventPost eventPost = eventPostRepository.findById(postId).orElseThrow(
                     ()-> new CustomException(ErrorCode.NOT_FOUND_POST)
             );

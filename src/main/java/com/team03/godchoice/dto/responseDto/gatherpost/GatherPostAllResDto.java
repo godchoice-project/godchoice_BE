@@ -39,10 +39,10 @@ public class GatherPostAllResDto {
     }
 
     public static String toImgUrl(GatherPost gatherPost){
-        if(gatherPost.getGatherPostImg()!=null){
-            return gatherPost.getGatherPostImg().get(0).getImgUrl();
-        }else{
+        if(gatherPost.getGatherPostImg()==null || gatherPost.getGatherPostImg().isEmpty()){
             return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+        }else{
+            return gatherPost.getGatherPostImg().get(0).getImgUrl();
         }
     }
 }

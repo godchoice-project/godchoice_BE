@@ -1,7 +1,10 @@
 package com.team03.godchoice.interfacepackage;
 
+import com.team03.godchoice.dto.GlobalResDto;
+
 public interface PostInterface {
-    default void createPost() {
+    default GlobalResDto<?> createPost() {
+        return null;
     }
 
     default void putPost() {

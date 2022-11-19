@@ -17,7 +17,7 @@ public class AskPostAllResDto {
     private String content;
     private boolean bookMarkStatus;
 
-    public static AskPostAllResDto toAPARD(AskPost askPost,boolean bookMarkStatus) {
+    public static AskPostAllResDto toAPARD(AskPost askPost, boolean bookMarkStatus) {
         return new AskPostAllResDto(
                 askPost.getAskPostId(),
                 askPost.getViewCount(),
@@ -28,11 +28,11 @@ public class AskPostAllResDto {
         );
     }
 
-    public static String toImgUrl(AskPost askPost){
-        if(askPost.getAskPostImg()!=null){
-            return askPost.getAskPostImg().get(0).getImage();
-        }else{
+    public static String toImgUrl(AskPost askPost) {
+        if (askPost.getAskPostImg() == null || askPost.getAskPostImg().isEmpty()) {
             return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+        } else {
+            return askPost.getAskPostImg().get(0).getImage();
         }
     }
 }

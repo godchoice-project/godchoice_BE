@@ -35,12 +35,15 @@ public class SocialNaverService {
     private String client_id;
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String client_secret;
+    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
+    private String user_url;
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
+    private String redirect_uri;
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-
     public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) {
 
         try {
@@ -66,8 +69,8 @@ public class SocialNaverService {
                         .userName(naverUser.getNickName())
                         .userImgUrl(naverUser.getUserImgUrl())
                         .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
-                        .isAccepted(false) // ?!?!??!?
-                        .isDeleted(false) // ?!?!?!?!
+                        .isAccepted(false)
+                        .isDeleted(false)
                         .role(role)
                         .build();
                 memberRepository.save(naverMember);
@@ -81,7 +84,6 @@ public class SocialNaverService {
             // 토큰 관리
             TokenDto tokenDto = jwtUtil.createAllToken(naverMember.getEmail());
             Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(naverMember.getEmail());
-
             if (refreshToken.isPresent()) {
                 refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
             } else {
@@ -116,9 +118,7 @@ public class SocialNaverService {
             String sb = "grant_type=authorization_code" +
                     "&client_id=" + client_id +
                     "&client_secret=" + client_secret +
-//                    "&redirect_uri=http://localhost:8080/member/signup/naver" +
-                    "&redirect_uri=http://localhost:3000/member/signup/naver" +
-//                    "&redirect_uri=https://우리도매인/member/signup/naver" +
+                    "&redirect_uri=" + redirect_uri +
                     "&code=" + code +
                     "&state=" + state;
             bw.write(sb);
@@ -144,8 +144,8 @@ public class SocialNaverService {
 
     // 네이버에 요청해서 회원정보 받는 메소드
     private NaverUserInfoDto getNaverUserInfo(String code, String state) throws IOException {
-        String codeReqURL = "https://nid.naver.com/oauth2.0/token";
-        String tokenReqURL = "https://openapi.naver.com/v1/nid/me";
+        String codeReqURL = redirect_uri;
+        String tokenReqURL = user_url;
 
         // 코드를 네이ㅣ버에 전달하여 엑세스 토큰 가져옴
         JsonElement tokenElement = jsonElement(codeReqURL, null, code, state);

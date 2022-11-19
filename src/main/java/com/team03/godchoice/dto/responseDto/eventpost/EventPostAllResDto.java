@@ -34,10 +34,10 @@ public class EventPostAllResDto {
     }
 
     public static String toImgUrl(EventPost eventPost){
-        if(eventPost.getPostImgUrl()!=null){
-            return eventPost.getPostImgUrl().get(0).getImgUrl();
-        }else{
+        if(eventPost.getPostImgUrl()==null || eventPost.getPostImgUrl().isEmpty()){
             return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+        }else{
+            return eventPost.getPostImgUrl().get(0).getImgUrl();
         }
     }
 }

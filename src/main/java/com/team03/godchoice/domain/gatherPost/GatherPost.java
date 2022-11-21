@@ -116,4 +116,8 @@ public class GatherPost extends Timestamped {
     public void viewCountUp() {
         this.viewCount++;
     }
+
+    public void setPostStatus(String postStatus) {
+        this.postStatus = postStatus;
+    }
 }

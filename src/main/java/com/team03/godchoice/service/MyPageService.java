@@ -77,7 +77,13 @@ public class MyPageService implements MakeRegionTag {
             userImgUrl = member.getUserImgUrl();
         }
 
-        RegionTag regionTag = toRegionTag(user.getUserAddress());
+        RegionTag regionTag;
+        if(user.getUserAddress()!=null || !user.getUserAddress().trim().isBlank()){
+            regionTag= toRegionTag(user.getUserAddress());
+        }else{
+            regionTag = null;
+        }
+
 
         member.update(user,regionTag,userImgUrl);
         memberRepository.save(member);

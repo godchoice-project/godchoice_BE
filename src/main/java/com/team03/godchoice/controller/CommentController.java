@@ -5,10 +5,12 @@ import com.team03.godchoice.dto.requestDto.CommentRequestDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/comments")

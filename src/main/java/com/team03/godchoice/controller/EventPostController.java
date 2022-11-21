@@ -6,6 +6,7 @@ import com.team03.godchoice.dto.requestDto.eventpostDto.EventPostReqDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.EventPostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/eventposts")

@@ -6,6 +6,7 @@ import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.AskPostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/askposts")

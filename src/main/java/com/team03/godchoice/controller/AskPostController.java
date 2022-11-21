@@ -31,7 +31,7 @@ public class AskPostController {
         return askPostService.createAskPost(askPostRequestDto,multipartFile,userDetails);
     }
 
-    @PostMapping("/{postId}")
+    @PutMapping("/{postId}")
     public GlobalResDto<?> updateAskPost(@RequestPart(required = false) AskPostPutRequestDto askPostPutRequestDto,
                                          @RequestPart(required = false) List<MultipartFile> multipartFile,
                                          @PathVariable Long postId,

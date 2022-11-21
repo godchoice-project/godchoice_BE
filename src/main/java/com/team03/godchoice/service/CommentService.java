@@ -53,6 +53,13 @@ public class CommentService {
 
             EventPostComment eventPostComment = new EventPostComment(commentRequestDto, eventPost, account, parentComment);
 
+            if(parentComment!=null){
+                if(!parentComment.getEventPost().getEventPostId().equals(eventPostComment.getEventPost().getEventPostId())){
+                    throw  new CustomException(ErrorCode.COMMENT_ERROR);
+                }
+            }
+
+
             eventPostCommentRepository.save(eventPostComment);
         } else{
             GatherPost gatherPost = gatherPostRepository.findById(postId).orElseThrow(

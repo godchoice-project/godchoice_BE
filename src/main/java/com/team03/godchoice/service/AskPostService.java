@@ -153,7 +153,7 @@ public class AskPostService {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for(AskPostComment comment : askPost.getComments()){
             if(comment.getParent() == null){
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(0,new CommentDto(comment));
             }
         }
 

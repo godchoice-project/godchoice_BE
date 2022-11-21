@@ -79,8 +79,8 @@ public class GatherPost extends Timestamped {
     @OneToMany(mappedBy = "gatherPost", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<GatherPostLike> likes = new ArrayList<>();
 
-    public GatherPost(GatherPostRequestDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
-        this.category = category;
+    public GatherPost(GatherPostRequestDto gatherPostDto, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
+        this.category = gatherPostDto.getCategory();
         this.date = date;
         this.number = gatherPostDto.getNumber();
         this.kakaoLink = gatherPostDto.getKakaoLink();
@@ -96,8 +96,8 @@ public class GatherPost extends Timestamped {
         this.postStatus = gatherStatus;
     }
 
-    public void update(GatherPostUpdateDto gatherPostDto, Category category, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
-        this.category = category;
+    public void update(GatherPostUpdateDto gatherPostDto, LocalDate date, RegionTag regionTag, String gatherStatus, Member member) {
+        this.category = gatherPostDto.getCategory();
         this.date = date;
         this.number = gatherPostDto.getNumber();
         this.kakaoLink = gatherPostDto.getKakaoLink();

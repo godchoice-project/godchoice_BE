@@ -7,7 +7,6 @@ import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.domain.domainenum.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.TokenDto;
-import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.NaverUserInfoDto;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
@@ -31,18 +30,20 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class SocialNaverService {
-
+// 네이버 로그인 수정
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String client_id;
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String client_secret;
+    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
+    private String user_url;
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
+    private String redirect_uri;
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final SocialKakaoService socialKakaoService;
-
     public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) {
 
         try {
@@ -68,8 +69,8 @@ public class SocialNaverService {
                         .userName(naverUser.getNickName())
                         .userImgUrl(naverUser.getUserImgUrl())
                         .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
-                        .isAccepted(false) // ?!?!??!?
-                        .isDeleted(false) // ?!?!?!?!
+                        .isAccepted(false)
+                        .isDeleted(false)
                         .role(role)
                         .build();
                 memberRepository.save(naverMember);
@@ -83,7 +84,6 @@ public class SocialNaverService {
             // 토큰 관리
             TokenDto tokenDto = jwtUtil.createAllToken(naverMember.getEmail());
             Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(naverMember.getEmail());
-
             if (refreshToken.isPresent()) {
                 refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
             } else {
@@ -93,12 +93,8 @@ public class SocialNaverService {
 
             //토큰을 header에 넣어서 클라이언트에게 전달하기
             setHeader(response, tokenDto);
-//
-//            socialKakaoService.createToken(naverMember,response);
 
-            UserInfoDto userInfoDto = new UserInfoDto(naverMember);
-
-            return GlobalResDto.success(userInfoDto, "Success Naver Login");
+            return GlobalResDto.success(null, "Success Naver Login");
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -122,9 +118,7 @@ public class SocialNaverService {
             String sb = "grant_type=authorization_code" +
                     "&client_id=" + client_id +
                     "&client_secret=" + client_secret +
-//                    "&redirect_uri=http://localhost:8080/member/signup/naver" +
-                    "&redirect_uri=http://localhost:3000/member/signup/naver" +
-//                    "&redirect_uri=https://우리도매인/member/signup/naver" +
+                    "&redirect_uri=" + redirect_uri +
                     "&code=" + code +
                     "&state=" + state;
             bw.write(sb);
@@ -150,8 +144,8 @@ public class SocialNaverService {
 
     // 네이버에 요청해서 회원정보 받는 메소드
     private NaverUserInfoDto getNaverUserInfo(String code, String state) throws IOException {
-        String codeReqURL = "https://nid.naver.com/oauth2.0/token";
-        String tokenReqURL = "https://openapi.naver.com/v1/nid/me";
+        String codeReqURL = redirect_uri;
+        String tokenReqURL = user_url;
 
         // 코드를 네이ㅣ버에 전달하여 엑세스 토큰 가져옴
         JsonElement tokenElement = jsonElement(codeReqURL, null, code, state);

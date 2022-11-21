@@ -20,7 +20,8 @@ public enum ErrorCode {
 
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다."),
 
-    NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." );
+    NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." ),
+    DATESTATUS_ERROR(HttpStatus.BAD_REQUEST.value(), "D001","만남날짜가 지난 날짜입니다." );
 
 
     private final int status;

@@ -78,6 +78,13 @@ public class GatherPostService implements MakeRegionTag {
         }
 
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
+
+        if(date.isBefore(LocalDate.now())){
+            if(gatherPostDto.getPostAddress().equals("진행중")){
+                throw new CustomException(ErrorCode.DATESTATUS_ERROR);
+            }
+        }
+
         RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
         String gatherStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto, date, regionTag, gatherStatus, member);

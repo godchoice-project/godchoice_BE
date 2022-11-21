@@ -2,6 +2,7 @@ package com.team03.godchoice.domain.eventpost;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.Timestamped;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.domainenum.DeleteStatus;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
@@ -17,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EventPostComment {
+public class EventPostComment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -16,50 +16,54 @@ public class CommentChildDto {
     private Long commentId;
     private Long parentId;
     private String userName;
+    private String userImg;
     private String content;
 
-    public CommentChildDto(EventPostComment eventPostComment){
+    public CommentChildDto(EventPostComment eventPostComment) {
         this.commentId = eventPostComment.getCommentId();
         this.parentId = eventPostComment.getParent().getCommentId();
         this.userName = eventPostComment.getMember().getUserName();
+        this.userImg = eventPostComment.getMember().getUserImgUrl();
         this.content = eventPostComment.getContent();
     }
 
-    public CommentChildDto(AskPostComment askPostComment){
+    public CommentChildDto(AskPostComment askPostComment) {
         this.commentId = askPostComment.getCommentId();
         this.parentId = askPostComment.getParent().getCommentId();
         this.userName = askPostComment.getMember().getUserName();
+        this.userImg = askPostComment.getMember().getUserImgUrl();
         this.content = askPostComment.getContent();
     }
 
-    public CommentChildDto(GatherPostComment gatherPostComment){
+    public CommentChildDto(GatherPostComment gatherPostComment) {
         this.commentId = gatherPostComment.getCommentId();
         this.parentId = gatherPostComment.getParent().getCommentId();
         this.userName = gatherPostComment.getMember().getUserName();
+        this.userImg = gatherPostComment.getMember().getUserImgUrl();
         this.content = gatherPostComment.getContent();
     }
 
-    public static List<CommentChildDto> toEventPostCommentChildDto(List<EventPostComment> eventPostCommentList){
+    public static List<CommentChildDto> toEventPostCommentChildDto(List<EventPostComment> eventPostCommentList) {
         List<CommentChildDto> commentChildDtos = new ArrayList<>();
-        for(EventPostComment eventPostComment : eventPostCommentList){
+        for (EventPostComment eventPostComment : eventPostCommentList) {
             CommentChildDto commentChildDto = new CommentChildDto(eventPostComment);
             commentChildDtos.add(commentChildDto);
         }
         return commentChildDtos;
     }
 
-    public static List<CommentChildDto> toAskPostCommentChildDto(List<AskPostComment> askPostCommentList){
+    public static List<CommentChildDto> toAskPostCommentChildDto(List<AskPostComment> askPostCommentList) {
         List<CommentChildDto> commentChildDtos = new ArrayList<>();
-        for(AskPostComment askPostComment : askPostCommentList){
+        for (AskPostComment askPostComment : askPostCommentList) {
             CommentChildDto commentChildDto = new CommentChildDto(askPostComment);
             commentChildDtos.add(commentChildDto);
         }
         return commentChildDtos;
     }
 
-    public static List<CommentChildDto> toGatherPostCommentChildDto(List<GatherPostComment> gatherPostCommentList){
+    public static List<CommentChildDto> toGatherPostCommentChildDto(List<GatherPostComment> gatherPostCommentList) {
         List<CommentChildDto> commentChildDtos = new ArrayList<>();
-        for(GatherPostComment gatherPostComment : gatherPostCommentList){
+        for (GatherPostComment gatherPostComment : gatherPostCommentList) {
             CommentChildDto commentChildDto = new CommentChildDto(gatherPostComment);
             commentChildDtos.add(commentChildDto);
         }

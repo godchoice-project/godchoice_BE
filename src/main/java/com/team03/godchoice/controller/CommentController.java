@@ -31,7 +31,7 @@ public class CommentController {
     public GlobalResDto<?> getComment(@PathVariable Long postId,
                                       @PathVariable String kind,
                                       @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.getComment(postId,kind,userDetails.getAccount());
+        return commentService.getComment(postId,kind);
     }
 
     @DeleteMapping("/{commentId}/{kind}")

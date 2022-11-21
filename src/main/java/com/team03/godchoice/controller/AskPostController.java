@@ -53,9 +53,8 @@ public class AskPostController {
     // 상세 조회
     @GetMapping(value = "/{postId}")
     public GlobalResDto<?> getOneAskPost(@PathVariable Long postId,
-                                                  @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                  HttpServletRequest req, HttpServletResponse res) {
-        return askPostService.getOneAskPost(postId,req,res);
+                                                  @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return askPostService.getOneAskPost(postId,userDetails);
     }
 
 }

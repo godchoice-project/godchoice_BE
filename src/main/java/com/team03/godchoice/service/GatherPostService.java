@@ -133,7 +133,7 @@ public class GatherPostService implements MakeRegionTag {
     }
 
     public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+        viewCountUp(postId,userDetails.getAccount());
 
         memberCheck(userDetails);
 
@@ -188,33 +188,11 @@ public class GatherPostService implements MakeRegionTag {
         return list.get(3) + "/" + list.get(4);
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView", "[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    @Transactional
+    public void viewCountUp(Long postId, Member member){
+        if(!member.getPostView().contains("[g_"+postId.toString()+"]")){
+            member.updatePostView("[g_" + postId+ "],");
+            viewCountUp(postId);
         }
     }
 

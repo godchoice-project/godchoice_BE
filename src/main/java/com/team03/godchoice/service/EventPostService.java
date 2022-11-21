@@ -142,9 +142,9 @@ public class EventPostService implements MakeRegionTag {
         return list.get(3) + "/" + list.get(4);
     }
 
-    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId,
-                                           HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId) {
+
+        viewCountUp(postId, userDetails.getAccount());
 
         Member member = isPresentMember(userDetails);
         if (member == null) {
@@ -167,7 +167,7 @@ public class EventPostService implements MakeRegionTag {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (EventPostComment comment : eventPost.getComments()) {
             if (comment.getParent() == null) {
-                commentDtoList.add(0,new CommentDto(comment));
+                commentDtoList.add(0, new CommentDto(comment));
             }
         }
 
@@ -206,33 +206,11 @@ public class EventPostService implements MakeRegionTag {
         }
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView", "[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    @Transactional
+    public void viewCountUp(Long postId, Member member) {
+        if (!member.getPostView().contains("[e_" + postId.toString() + "]")) {
+            member.updatePostView("[e_" + postId+ "],");
+            viewCountUp(postId);
         }
     }
 

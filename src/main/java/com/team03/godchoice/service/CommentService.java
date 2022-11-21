@@ -77,7 +77,7 @@ public class CommentService {
             gatherPostCommentRepository.save(gatherPostComment);
         }
 
-        return GlobalResDto.success(null, "Success create comment");
+        return GlobalResDto.success(getComment(postId,kind), "Success create comment");
     }
 
     public GlobalResDto<?> deleteComment(Long commentId, String  kind, Member member) {
@@ -138,7 +138,7 @@ public class CommentService {
         return GlobalResDto.success(null, "Success delete comment");
     }
 
-    public GlobalResDto<?> getComment(Long postId, String kind, Member member) {
+    public GlobalResDto<?> getComment(Long postId, String kind) {
         List<CommentDto> commentDtoList = new ArrayList<>();
         if(kind.equals("ask")){
             AskPost askPost = askPostRepository.findByAskPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));

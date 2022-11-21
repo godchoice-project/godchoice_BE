@@ -133,8 +133,8 @@ public class AskPostService {
     }
 
     @Transactional
-    public GlobalResDto<?> getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+    public GlobalResDto<?> getOneAskPost(Long postId,UserDetailsImpl userDetails) {
+        viewCountUp(postId,userDetails.getAccount());
 
         AskPost askPost=askPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
@@ -165,33 +165,10 @@ public class AskPostService {
         return list.get(3)+"/"+list.get(4);
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView","[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    public void viewCountUp(Long postId,Member member) {
+        if(!member.getPostView().contains("[a_" + postId.toString() + "]")){
+            member.updatePostView("[a_" + postId+ "],");
+            viewCountUp(postId);
         }
     }
 

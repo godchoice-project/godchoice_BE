@@ -66,131 +66,137 @@ public class MyPageService implements MakeRegionTag {
     @Transactional
     public GlobalResDto<?> changeUserInfo(MyPageReqDto user, MultipartFile multipartFile, UserDetailsImpl userDetails) throws IOException {
         Member member = isPresentMember(userDetails);
-        if(member==null){
+        if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
         String userImgUrl;
-        if(multipartFile!=null){
-            userImgUrl = s3Uploader.uploadFiles(multipartFile,"testdir");
-        }else{
+        if (multipartFile != null) {
+            userImgUrl = s3Uploader.uploadFiles(multipartFile, "testdir");
+        } else {
             userImgUrl = member.getUserImgUrl();
         }
 
         RegionTag regionTag = toRegionTag(user.getUserAddress());
 
-        member.update(user,regionTag,userImgUrl);
+        member.update(user, regionTag, userImgUrl);
         memberRepository.save(member);
-        return GlobalResDto.success(null,"수정이 완료되었습니다");
+        return GlobalResDto.success(null, "수정이 완료되었습니다");
     }
 
     public GlobalResDto<?> getUser(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if(member==null){
+        if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
         String[] userEmail = toEmail(member);
-        MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member,userEmail);
+        MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member, userEmail);
 
-        return GlobalResDto.success(myPageUserResDto,"유저정보를 가져왔습니다");
+        return GlobalResDto.success(myPageUserResDto, "유저정보를 가져왔습니다");
     }
 
     public GlobalResDto<?> getMyPost(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if(member==null){
+        if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
         //내가 쓴 행사글 가져와서 Dto 저장
         List<EventPost> eventPostList = eventPostRepository.findAllByMemberOrderByEventPostIdDesc(member);
         List<EventPostAllResDto> myEventPost = new ArrayList<>();
-        for(EventPost eventPost : eventPostList){
-            boolean bookmark = eventPostLikeRepository.existsByMemberAndEventPost(member,eventPost);
-            myEventPost.add(EventPostAllResDto.toEPARD(eventPost,bookmark));
+        for (EventPost eventPost : eventPostList) {
+            boolean bookmark = eventPostLikeRepository.existsByMemberAndEventPost(member, eventPost);
+            myEventPost.add(EventPostAllResDto.toEPARD(eventPost, bookmark));
         }
 
         //내가 쓴 모집글 가져와서 Dto 저장
         List<GatherPost> gatherPostList = gatherPostRepository.findAllByMemberOrderByGatherPostIdDesc(member);
         List<GatherPostAllResDto> myGatherPost = new ArrayList<>();
-        for(GatherPost gatherPost : gatherPostList){
-            boolean bookmark = gatherPostLikeRepository.existsByMemberAndGatherPost(member,gatherPost);
-            myGatherPost.add(GatherPostAllResDto.toGPARD(gatherPost,bookmark));
+        for (GatherPost gatherPost : gatherPostList) {
+            boolean bookmark = gatherPostLikeRepository.existsByMemberAndGatherPost(member, gatherPost);
+            myGatherPost.add(GatherPostAllResDto.toGPARD(gatherPost, bookmark));
         }
 
         //내가 쓴 질문들 가져와서 DTo 저장
         List<AskPost> askPostList = askPostRepository.findAllByMemberOrderByAskPostIdDesc(member);
         List<AskPostAllResDto> myAskPost = new ArrayList<>();
-        for(AskPost askPost : askPostList){
-            boolean bookmark = askPostLikeRepository.existsByMemberAndAskPost(member,askPost);
-            myAskPost.add(AskPostAllResDto.toAPARD(askPost,bookmark));
+        for (AskPost askPost : askPostList) {
+            boolean bookmark = askPostLikeRepository.existsByMemberAndAskPost(member, askPost);
+            myAskPost.add(AskPostAllResDto.toAPARD(askPost, bookmark));
         }
 
-        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost,myGatherPost,myAskPost);
-        return GlobalResDto.success(myPageMyPostResDto,"내가쓴글을 가져왔습니다");
+        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost, myGatherPost, myAskPost);
+        return GlobalResDto.success(myPageMyPostResDto, "내가쓴글을 가져왔습니다");
     }
 
     public GlobalResDto<?> getMyComment(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if(member==null){
+        if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
         List<EventPostComment> eventPostCommentList = eventPostCommentRepository.findAllByMemberOrderByCommentIdDesc(member);
         List<EventPost> eventPostList = new ArrayList<>();
-        for(EventPostComment eventPostComment : eventPostCommentList){
-            eventPostList.add(eventPostComment.getEventPost());
+        for (EventPostComment eventPostComment : eventPostCommentList) {
+            if (!eventPostList.contains(eventPostComment.getEventPost())) {
+                eventPostList.add(eventPostComment.getEventPost());
+            }
         }
-        List<EventPostAllResDto> myEventPost = toMyEventPost(member,eventPostList);
+        List<EventPostAllResDto> myEventPost = toMyEventPost(member, eventPostList);
 
         List<GatherPostComment> gatherPostCommentList = gatherPostCommentRepository.findAllByMemberOrderByCommentIdDesc(member);
         List<GatherPost> gatherPostList = new ArrayList<>();
-        for(GatherPostComment gatherPostComment : gatherPostCommentList){
-            gatherPostList.add(gatherPostComment.getGatherPost());
+        for (GatherPostComment gatherPostComment : gatherPostCommentList) {
+            if (!gatherPostList.contains(gatherPostComment.getGatherPost())) {
+                gatherPostList.add(gatherPostComment.getGatherPost());
+            }
         }
-        List<GatherPostAllResDto> myGatherPost = toMyGatherPost(member ,gatherPostList);
+        List<GatherPostAllResDto> myGatherPost = toMyGatherPost(member, gatherPostList);
 
         List<AskPostComment> askPostCommentList = askPostCommentRepository.findAllByMemberOrderByCommentIdDesc(member);
         List<AskPost> askPostList = new ArrayList<>();
-        for(AskPostComment askPostComment : askPostCommentList){
-            askPostList.add(askPostComment.getAskPost());
+        for (AskPostComment askPostComment : askPostCommentList) {
+            if (!askPostList.contains(askPostComment.getAskPost())) {
+                askPostList.add(askPostComment.getAskPost());
+            }
         }
-        List<AskPostAllResDto> myAskPost = toMyAskPost(member ,askPostList);
+        List<AskPostAllResDto> myAskPost = toMyAskPost(member, askPostList);
 
-        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost,myGatherPost,myAskPost);
-        return GlobalResDto.success(myPageMyPostResDto,"댓글 단 글을 가져왔습니다");
+        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost, myGatherPost, myAskPost);
+        return GlobalResDto.success(myPageMyPostResDto, "댓글 단 글을 가져왔습니다");
     }
 
 
     public GlobalResDto<?> getMyScrap(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if(member==null){
+        if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
         }
 
         List<EventPostLike> eventPostLikeList = eventPostLikeRepository.findAllByMemberOrderByPostLikeIdDesc(member);
         List<EventPost> eventPostList = new ArrayList<>();
-        for(EventPostLike eventPostLike : eventPostLikeList){
+        for (EventPostLike eventPostLike : eventPostLikeList) {
             eventPostList.add(eventPostLike.getEventPost());
         }
-        List<EventPostAllResDto> myEventPost = toMyEventPost( member,eventPostList);
+        List<EventPostAllResDto> myEventPost = toMyEventPost(member, eventPostList);
 
         List<GatherPostLike> gatherPostLikeList = gatherPostLikeRepository.findAllByMemberOrderByPostLikeIdDesc(member);
         List<GatherPost> gatherPostList = new ArrayList<>();
-        for(GatherPostLike gatherPostLike : gatherPostLikeList){
+        for (GatherPostLike gatherPostLike : gatherPostLikeList) {
             gatherPostList.add(gatherPostLike.getGatherPost());
         }
-        List<GatherPostAllResDto> myGatherPost = toMyGatherPost(member,gatherPostList);
+        List<GatherPostAllResDto> myGatherPost = toMyGatherPost(member, gatherPostList);
 
         List<AskPostLike> askPostLikeList = askPostLikeRepository.findAllByMemberOrderByPostLikeIdDesc(member);
         List<AskPost> askPostList = new ArrayList<>();
-        for(AskPostLike askPostLike : askPostLikeList){
+        for (AskPostLike askPostLike : askPostLikeList) {
             askPostList.add(askPostLike.getAskPost());
         }
-        List<AskPostAllResDto> myAskPost = toMyAskPost(member,askPostList);
+        List<AskPostAllResDto> myAskPost = toMyAskPost(member, askPostList);
 
-        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost,myGatherPost,myAskPost);
-        return GlobalResDto.success(myPageMyPostResDto,"스크랩한 글을 가져왔습니다");
+        MyPageMyPostResDto myPageMyPostResDto = new MyPageMyPostResDto(myEventPost, myGatherPost, myAskPost);
+        return GlobalResDto.success(myPageMyPostResDto, "스크랩한 글을 가져왔습니다");
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
@@ -198,50 +204,50 @@ public class MyPageService implements MakeRegionTag {
         return member.orElse(null);
     }
 
-    public String[] toEmail(Member member){
+    public String[] toEmail(Member member) {
         String[] result = new String[2];
-        if(member.getEmail().startsWith("k_")){
+        if (member.getEmail().startsWith("k_")) {
             result[0] = "kakao";
-            result[1] = member.getEmail().replace("k_","");
+            result[1] = member.getEmail().replace("k_", "");
             return result;
-        }else if(member.getEmail().startsWith("g_")){
+        } else if (member.getEmail().startsWith("g_")) {
             result[0] = "google";
-            result[1] = member.getEmail().replace("g_","");
+            result[1] = member.getEmail().replace("g_", "");
             return result;
-        }else if(member.getEmail().startsWith("n_")){
+        } else if (member.getEmail().startsWith("n_")) {
             result[0] = "naver";
-            result[1] = member.getEmail().replace("n_","");
+            result[1] = member.getEmail().replace("n_", "");
             return result;
-        }else {
+        } else {
             result[0] = "github";
-            result[1] = member.getEmail().replace("git_","");
+            result[1] = member.getEmail().replace("git_", "");
             return result;
         }
     }
 
-    public List<EventPostAllResDto> toMyEventPost(Member member ,List<EventPost> eventPostList){
+    public List<EventPostAllResDto> toMyEventPost(Member member, List<EventPost> eventPostList) {
         List<EventPostAllResDto> myEventPost = new ArrayList<>();
-        for(EventPost eventPost : eventPostList){
-            boolean bookmark = eventPostLikeRepository.existsByMemberAndEventPost(member,eventPost);
-            myEventPost.add(EventPostAllResDto.toEPARD(eventPost,bookmark));
+        for (EventPost eventPost : eventPostList) {
+            boolean bookmark = eventPostLikeRepository.existsByMemberAndEventPost(member, eventPost);
+            myEventPost.add(EventPostAllResDto.toEPARD(eventPost, bookmark));
         }
         return myEventPost;
     }
 
-    public List<GatherPostAllResDto> toMyGatherPost(Member member ,List<GatherPost> gatherPostList){
+    public List<GatherPostAllResDto> toMyGatherPost(Member member, List<GatherPost> gatherPostList) {
         List<GatherPostAllResDto> myGatherPost = new ArrayList<>();
-        for(GatherPost gatherPost : gatherPostList){
-            boolean bookmark = gatherPostLikeRepository.existsByMemberAndGatherPost(member,gatherPost);
-            myGatherPost.add(GatherPostAllResDto.toGPARD(gatherPost,bookmark));
+        for (GatherPost gatherPost : gatherPostList) {
+            boolean bookmark = gatherPostLikeRepository.existsByMemberAndGatherPost(member, gatherPost);
+            myGatherPost.add(GatherPostAllResDto.toGPARD(gatherPost, bookmark));
         }
         return myGatherPost;
     }
 
-    public List<AskPostAllResDto> toMyAskPost(Member member ,List<AskPost> askPostList){
+    public List<AskPostAllResDto> toMyAskPost(Member member, List<AskPost> askPostList) {
         List<AskPostAllResDto> myAskPost = new ArrayList<>();
-        for(AskPost askPost : askPostList){
-            boolean bookmark = askPostLikeRepository.existsByMemberAndAskPost(member,askPost);
-            myAskPost.add(AskPostAllResDto.toAPARD(askPost,bookmark));
+        for (AskPost askPost : askPostList) {
+            boolean bookmark = askPostLikeRepository.existsByMemberAndAskPost(member, askPost);
+            myAskPost.add(AskPostAllResDto.toAPARD(askPost, bookmark));
         }
         return myAskPost;
     }

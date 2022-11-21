@@ -20,7 +20,8 @@ public enum ErrorCode {
 
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다."),
 
-    NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." );
+    NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." ),
+    COMMENT_ERROR(HttpStatus.BAD_REQUEST.value(), "C001","대댓글의 댓글아이디가 다릅니다." );
 
 
     private final int status;

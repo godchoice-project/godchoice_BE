@@ -1,6 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.domain.domainenum.DeleteStatus;
 import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
@@ -165,7 +166,7 @@ public class EventPostService implements MakeRegionTag {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (EventPostComment comment : eventPost.getComments()) {
             if (comment.getParent() == null) {
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(0,new CommentDto(comment));
             }
         }
 

@@ -1,4 +1,4 @@
-package com.team03.godchoice.dto.responsedto.mypageResDto;
+package com.team03.godchoice.dto.responseDto.mypageResDto ;
 
 import com.team03.godchoice.domain.Member;
 import lombok.AllArgsConstructor;

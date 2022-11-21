@@ -31,14 +31,15 @@ public class CommentController {
     public GlobalResDto<?> getComment(@PathVariable Long postId,
                                       @PathVariable String kind,
                                       @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.getComment(postId,kind);
+        return commentService.getComment(postId, kind);
     }
 
-    @DeleteMapping("/{commentId}/{kind}")
-    public GlobalResDto<?> deleteComment(@PathVariable Long commentId,
+    @DeleteMapping("/{postId}/{commentId}/{kind}")
+    public GlobalResDto<?> deleteComment(@PathVariable Long postId,
+                                         @PathVariable Long commentId,
                                          @PathVariable String kind,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return commentService.deleteComment(commentId, kind, userDetails.getAccount());
+        return commentService.deleteComment(postId,commentId, kind, userDetails.getAccount());
     }
 
 }

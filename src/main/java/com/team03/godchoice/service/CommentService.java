@@ -80,7 +80,7 @@ public class CommentService {
         return GlobalResDto.success(getComment(postId,kind), "Success create comment");
     }
 
-    public GlobalResDto<?> deleteComment(Long commentId, String  kind, Member member) {
+    public GlobalResDto<?> deleteComment(Long postId ,Long commentId, String  kind, Member member) {
 
         if(kind.equals("ask")){
             AskPostComment comment = askPostCommentRepository.findById(commentId).orElseThrow(
@@ -90,6 +90,11 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(askPostCommentRepository.findAllByParent(comment.getParent()).size() == 1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        askPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 askPostCommentRepository.delete(comment);
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
@@ -107,6 +112,11 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(eventPostCommentRepository.findAllByParent(comment.getParent()).size()==1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        eventPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 eventPostCommentRepository.delete(comment);
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
@@ -124,7 +134,14 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(gatherPostCommentRepository.findAllByParent(comment.getParent()).size()==1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        gatherPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 gatherPostCommentRepository.delete(comment);
+                //마지막 대댓글인경우 알수없음 댓글 삭제
+
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
@@ -135,7 +152,7 @@ public class CommentService {
             }
         }
 
-        return GlobalResDto.success(null, "Success delete comment");
+        return GlobalResDto.success(getComment(postId,kind), "Success delete comment");
     }
 
     public GlobalResDto<?> getComment(Long postId, String kind) {

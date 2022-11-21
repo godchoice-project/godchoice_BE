@@ -132,7 +132,7 @@ public class GatherPostService implements MakeRegionTag {
         }
     }
 
-    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
+    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails) {
         viewCountUp(postId,userDetails.getAccount());
 
         memberCheck(userDetails);
@@ -190,8 +190,9 @@ public class GatherPostService implements MakeRegionTag {
 
     @Transactional
     public void viewCountUp(Long postId, Member member){
-        if(!member.getPostView().contains("[g_"+postId.toString()+"]")){
+        if(member.getPostView()==null || !member.getPostView().contains("[g_"+postId.toString()+"]")){
             member.updatePostView("[g_" + postId+ "],");
+            memberRepository.save(member);
             viewCountUp(postId);
         }
     }

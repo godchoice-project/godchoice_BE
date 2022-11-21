@@ -12,6 +12,7 @@ import com.team03.godchoice.dto.responseDto.askpost.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
@@ -35,6 +36,7 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public GlobalResDto<?> createAskPost(
@@ -166,8 +168,9 @@ public class AskPostService {
     }
 
     public void viewCountUp(Long postId,Member member) {
-        if(!member.getPostView().contains("[a_" + postId.toString() + "]")){
+        if(member.getPostView()==null || !member.getPostView().contains("[a_" + postId.toString() + "]")){
             member.updatePostView("[a_" + postId+ "],");
+            memberRepository.save(member);
             viewCountUp(postId);
         }
     }

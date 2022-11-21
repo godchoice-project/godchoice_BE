@@ -208,8 +208,9 @@ public class EventPostService implements MakeRegionTag {
 
     @Transactional
     public void viewCountUp(Long postId, Member member) {
-        if (!member.getPostView().contains("[e_" + postId.toString() + "]")) {
+        if(member.getPostView()==null || !member.getPostView().contains("[e_" + postId.toString() + "]")){
             member.updatePostView("[e_" + postId+ "],");
+            memberRepository.save(member);
             viewCountUp(postId);
         }
     }

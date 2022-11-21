@@ -49,8 +49,7 @@ public class EventPostController {
 
     @GetMapping("/{postId}")
     public GlobalResDto<?> getOneEventPost(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                      @PathVariable Long postId,
-                                                      HttpServletRequest req, HttpServletResponse res) {
-        return eventPostService.getOneEventPost(userDetails, postId, req, res);
+                                                      @PathVariable Long postId) {
+        return eventPostService.getOneEventPost(userDetails, postId);
     }
 }

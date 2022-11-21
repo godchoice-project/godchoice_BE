@@ -49,8 +49,7 @@ public class GatherPostController {
 
     @GetMapping("/{postId}")
     public GlobalResDto<?> getGatherPost(@PathVariable Long postId,
-                                         @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                         HttpServletRequest req, HttpServletResponse res) {
-        return gatherPostService.getGatherPost(postId, userDetails, req, res);
+                                         @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return gatherPostService.getGatherPost(postId, userDetails);
     }
 }

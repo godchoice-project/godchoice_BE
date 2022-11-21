@@ -65,6 +65,10 @@ public class Member {
     }
 
     public void updatePostView(String postView) {
-        this.postView += postView;
+        if(this.postView==null){
+            this.postView = postView;
+        }else{
+            this.postView += postView;
+        }
     }
 }

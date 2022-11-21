@@ -14,4 +14,6 @@ public interface GatherPostCommentRepository extends JpaRepository<GatherPostCom
     List<GatherPostComment> findAllByMember(Member member);
 
     List<GatherPostComment> findAllByMemberOrderByCommentIdDesc(Member member);
+
+    List<GatherPostComment> findAllByParent(GatherPostComment gatherPostComment);
 }

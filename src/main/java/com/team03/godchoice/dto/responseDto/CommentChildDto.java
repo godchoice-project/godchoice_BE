@@ -18,6 +18,7 @@ public class CommentChildDto extends TimeCountClass {
     private String commentWriteDate;
     private Long commentId;
     private Long parentId;
+    private Long userId;
     private String userName;
     private String userImg;
     private String content;
@@ -26,6 +27,7 @@ public class CommentChildDto extends TimeCountClass {
         this.commentWriteDate = countTime(eventPostComment.getCreatedAt());
         this.commentId = eventPostComment.getCommentId();
         this.parentId = eventPostComment.getParent().getCommentId();
+        this.userId = eventPostComment.getMember().getMemberId();
         this.userName = eventPostComment.getMember().getUserName();
         this.userImg = eventPostComment.getMember().getUserImgUrl();
         this.content = eventPostComment.getContent();
@@ -35,6 +37,7 @@ public class CommentChildDto extends TimeCountClass {
         this.commentWriteDate = countTime(askPostComment.getCreatedAt());
         this.commentId = askPostComment.getCommentId();
         this.parentId = askPostComment.getParent().getCommentId();
+        this.userId = askPostComment.getMember().getMemberId();
         this.userName = askPostComment.getMember().getUserName();
         this.userImg = askPostComment.getMember().getUserImgUrl();
         this.content = askPostComment.getContent();
@@ -44,6 +47,7 @@ public class CommentChildDto extends TimeCountClass {
         this.commentWriteDate = countTime(gatherPostComment.getCreatedAt());
         this.commentId = gatherPostComment.getCommentId();
         this.parentId = gatherPostComment.getParent().getCommentId();
+        this.userId = gatherPostComment.getMember().getMemberId();
         this.userName = gatherPostComment.getMember().getUserName();
         this.userImg = gatherPostComment.getMember().getUserImgUrl();
         this.content = gatherPostComment.getContent();

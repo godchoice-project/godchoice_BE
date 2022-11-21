@@ -15,6 +15,7 @@ public class CommentDto {
 
     private Long commentId;
     private String userName;
+    private String userImg;
     private String content;
 
     private List<CommentChildDto> askPostCommentChildren = new ArrayList<>();
@@ -24,6 +25,7 @@ public class CommentDto {
     public CommentDto(AskPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
+        this.userImg=comment.getMember().getUserImgUrl();
         this.content=comment.getContent();
         this.askPostCommentChildren=CommentChildDto.toAskPostCommentChildDto(comment.getChildren());
     }
@@ -31,6 +33,7 @@ public class CommentDto {
     public CommentDto(EventPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
+        this.userImg=comment.getMember().getUserImgUrl();
         this.content=comment.getContent();
         this.eventPostCommentChildren=CommentChildDto.toEventPostCommentChildDto(comment.getChildren());
     }
@@ -38,6 +41,7 @@ public class CommentDto {
     public CommentDto(GatherPostComment comment){
         this.commentId=comment.getCommentId();
         this.userName=comment.getMember().getUserName();
+        this.userImg=comment.getMember().getUserImgUrl();
         this.content=comment.getContent();
         this.gatherPostCommentChildren=CommentChildDto.toGatherPostCommentChildDto(comment.getChildren());
     }

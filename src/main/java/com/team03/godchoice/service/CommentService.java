@@ -10,6 +10,7 @@ import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
+import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.askpost.AskPostCommentRepository;
@@ -18,8 +19,12 @@ import com.team03.godchoice.repository.eventpost.EventPostCommentRepository;
 import com.team03.godchoice.repository.eventpost.EventPostRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostCommentRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
+import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +94,7 @@ public class CommentService {
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    askPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     askPostCommentRepository.delete(comment);
                 }
@@ -105,6 +111,7 @@ public class CommentService {
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    eventPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     eventPostCommentRepository.delete(comment);
                 }
@@ -121,6 +128,7 @@ public class CommentService {
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    gatherPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     gatherPostCommentRepository.delete(comment);
                 }
@@ -128,5 +136,33 @@ public class CommentService {
         }
 
         return GlobalResDto.success(null, "Success delete comment");
+    }
+
+    public GlobalResDto<?> getComment(Long postId, String kind, Member member) {
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        if(kind.equals("ask")){
+            AskPost askPost = askPostRepository.findByAskPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(AskPostComment comment : askPost.getComments()){
+                if(comment.getParent()==null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        } else if (kind.equals("event")) {
+            EventPost eventPost = eventPostRepository.findByEventPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(EventPostComment comment : eventPost.getComments()){
+                if(comment.getParent()==null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        }else {
+            GatherPost gatherPost = gatherPostRepository.findByGatherPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(GatherPostComment comment : gatherPost.getComments()){
+                if(comment.getParent() == null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        }
+
+        return GlobalResDto.success(commentDtoList,null);
     }
 }

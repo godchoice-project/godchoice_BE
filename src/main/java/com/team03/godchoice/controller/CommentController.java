@@ -27,6 +27,12 @@ public class CommentController {
         return commentService.createComment(postId, kind, commentRequestDto, userDetails.getAccount());
     }
 
+    @GetMapping("/{postId}/{kind}")
+    public GlobalResDto<?> getComment(@PathVariable Long postId,
+                                      @PathVariable String kind,
+                                      @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return commentService.getComment(postId,kind,userDetails.getAccount());
+    }
 
     @DeleteMapping("/{commentId}/{kind}")
     public GlobalResDto<?> deleteComment(@PathVariable Long commentId,

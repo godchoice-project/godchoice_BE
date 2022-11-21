@@ -145,6 +145,7 @@ public class MyPageService implements MakeRegionTag {
         List<EventPostComment> eventPostCommentList = eventPostCommentRepository.findAllByMemberOrderByCommentIdDesc(member);
         List<EventPost> eventPostList = new ArrayList<>();
         for(EventPostComment eventPostComment : eventPostCommentList){
+            //중복체크 추가하기
             eventPostList.add(eventPostComment.getEventPost());
         }
         List<EventPostAllResDto> myEventPost = toMyEventPost(member,eventPostList);

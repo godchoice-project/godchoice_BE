@@ -88,7 +88,8 @@ public class EventPostService implements MakeRegionTag {
 
         String[] imgIdList;
 
-        if (eventPostPutReqDto.getImgId() != null || !eventPostPutReqDto.getImgId().trim().isEmpty() || !eventPostPutReqDto.getImgId().trim().isBlank()) {
+        if (eventPostPutReqDto.getImgId().length() > 0) {
+
             imgIdList = eventPostPutReqDto.getImgId().split(",");
             for (String imgUrl : imgIdList) {
                 Long imgId = Long.valueOf(imgUrl);

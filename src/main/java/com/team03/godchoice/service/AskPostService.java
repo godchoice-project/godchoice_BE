@@ -77,19 +77,15 @@ public class AskPostService {
 
         String[] imgIdList;
 
-        if (askPostPutRequestDto.getImgId().length() == 1)  {
-            imgIdList = new String[]{askPostPutRequestDto.getImgId()};
-        }else {
+        if(askPostPutRequestDto.getImgId().length()>0){
             imgIdList = askPostPutRequestDto.getImgId().split(",");
-        }
-
-        // 기존에 있는 Image삭제
-        for(String imgId : imgIdList) {
-            Long imageId = Long.parseLong(imgId);
-            AskPostImg askPostImg = askPostImgRepository.findById(imageId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_IMG));
-            String s3Path = toImgPath(askPostImg);
-            s3Uploader.delImg(s3Path);
-            askPostImgRepository.deleteById(imageId);
+            for(String imgId : imgIdList) {
+                Long imageId = Long.parseLong(imgId);
+                AskPostImg askPostImg = askPostImgRepository.findById(imageId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_IMG));
+                String s3Path = toImgPath(askPostImg);
+                s3Uploader.delImg(s3Path);
+                askPostImgRepository.deleteById(imageId);
+            }
         }
 
         // List로 image받은후 저장

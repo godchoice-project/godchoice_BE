@@ -84,7 +84,7 @@ public class GatherPostService implements MakeRegionTag {
 
         String[] imgIdList;
 
-        if (gatherPostDto.getImgId() != null) {
+        if (gatherPostDto.getImgId().length()>0) {
             imgIdList = gatherPostDto.getImgId().split(",");
 
             for (String imgUrl : imgIdList) {

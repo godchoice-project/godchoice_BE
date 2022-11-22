@@ -23,7 +23,7 @@ public class AskPostAllResDto {
                 askPost.getViewCount(),
                 toImgUrl(askPost),
                 askPost.getTitle(),
-                askPost.getContent(),
+                toContent(askPost.getContent()),
                 bookMarkStatus
         );
     }
@@ -33,6 +33,14 @@ public class AskPostAllResDto {
             return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
         } else {
             return askPost.getAskPostImg().get(0).getImage();
+        }
+    }
+
+    public static String toContent(String content){
+        if(content.length()>=10){
+            return content.substring(10).trim()+"...";
+        }else {
+            return content.trim();
         }
     }
 }

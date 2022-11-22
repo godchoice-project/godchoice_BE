@@ -5,6 +5,7 @@ import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
+import com.team03.godchoice.domain.gatherPost.GatherPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
@@ -16,6 +17,7 @@ import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
+import com.team03.godchoice.repository.gatherpost.GatherPostLikeRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -41,6 +43,7 @@ public class GatherPostService implements MakeRegionTag {
     private final MemberRepository memberRepository;
     private final GatherPostRepository gatherPostRepository;
     private final GatherPostImgRepository gatherPostImgRepository;
+    private final GatherPostLikeRepository gatherPostLikeRepository;
     private final EventPostService eventPostService;
     private final S3Uploader s3Uploader;
 
@@ -78,15 +81,23 @@ public class GatherPostService implements MakeRegionTag {
         }
 
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
-
-        if(date.isBefore(LocalDate.now())){
-            if(gatherPostDto.getPostAddress().equals("진행중")){
-                throw new CustomException(ErrorCode.DATESTATUS_ERROR);
+        String gatherStatus;
+        if(gatherPost.getPostStatus().equals("진행중")){
+            gatherStatus = gatherPostDto.getPostState();
+        }else{
+            if(date.isBefore(LocalDate.now())){
+                if(gatherPostDto.getPostState().equals("진행중")){
+                    throw new CustomException(ErrorCode.DATESTATUS_ERROR);
+                }else{
+                    gatherStatus = gatherPostDto.getPostState();
+                }
+            }else{
+                gatherStatus = gatherPostDto.getPostState();
             }
         }
 
+
         RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String gatherStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto, date, regionTag, gatherStatus, member);
 
         String[] imgIdList;
@@ -156,7 +167,9 @@ public class GatherPostService implements MakeRegionTag {
             }
         }
 
-        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, postImgResDtos, commentDtoList), null);
+        boolean bookMarkStatus = gatherPostLikeRepository.existsByMemberAndGatherPost(memberCheck(userDetails),gatherPost);
+
+        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, postImgResDtos, commentDtoList,bookMarkStatus), null);
 
     }
 

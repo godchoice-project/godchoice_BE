@@ -21,5 +21,5 @@ public class GatherPostUpdateDto {
     private String content;
     private String postLink;
     private String postAddress;
-    private String postProceeding;
+    private String postState;
 }

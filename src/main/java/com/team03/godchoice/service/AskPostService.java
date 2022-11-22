@@ -4,6 +4,7 @@ import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
+import com.team03.godchoice.domain.askpost.AskPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
@@ -14,6 +15,7 @@ import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
+import com.team03.godchoice.repository.askpost.AskPostLikeRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -36,6 +38,7 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
+    private final AskPostLikeRepository askPostLikeRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -159,7 +162,9 @@ public class AskPostService {
             }
         }
 
-        return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList),null);
+        boolean bookMarkStatus = askPostLikeRepository.existsByMemberAndAskPost(userDetails.getAccount(),askPost);
+
+        return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList,bookMarkStatus),null);
     }
 
     public String toImgPath(AskPostImg askPostImg){

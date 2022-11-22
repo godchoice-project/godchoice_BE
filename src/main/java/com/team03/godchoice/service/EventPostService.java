@@ -17,6 +17,7 @@ import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.eventpost.EventPostImgRepository;
+import com.team03.godchoice.repository.eventpost.EventPostLikeRepository;
 import com.team03.godchoice.repository.eventpost.EventPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -25,9 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +38,7 @@ public class EventPostService implements MakeRegionTag {
     private final MemberRepository memberRepository;
     private final EventPostRepository eventPostRepository;
     private final EventPostImgRepository eventPostImgRepository;
+    private final EventPostLikeRepository eventPostLikeRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -171,7 +170,9 @@ public class EventPostService implements MakeRegionTag {
             }
         }
 
-        return GlobalResDto.success(new EventPostResDto(eventPost, postImgResDtos, commentDtoList), null);
+        boolean bookMarkStatus = eventPostLikeRepository.existsByMemberAndEventPost(member,eventPost);
+
+        return GlobalResDto.success(new EventPostResDto(eventPost, postImgResDtos, commentDtoList,bookMarkStatus), null);
 
     }
 

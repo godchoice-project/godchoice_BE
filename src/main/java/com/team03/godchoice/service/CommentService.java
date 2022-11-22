@@ -77,7 +77,7 @@ public class CommentService {
             gatherPostCommentRepository.save(gatherPostComment);
         }
 
-        return GlobalResDto.success(getComment(postId,kind), "Success create comment");
+        return GlobalResDto.success(getComment(postId,kind).getData(), "Success create comment");
     }
 
     public GlobalResDto<?> deleteComment(Long postId ,Long commentId, String  kind, Member member) {
@@ -152,7 +152,7 @@ public class CommentService {
             }
         }
 
-        return GlobalResDto.success(getComment(postId,kind), "Success delete comment");
+        return GlobalResDto.success(getComment(postId,kind).getData(), "Success delete comment");
     }
 
     public GlobalResDto<?> getComment(Long postId, String kind) {

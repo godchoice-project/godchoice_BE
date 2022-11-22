@@ -18,6 +18,7 @@ public class GatherPostAllResDto {
     private String date;
     private String sex;
     private String imgUrl;
+    private String content;
     private long viewCount;
     private boolean bookMarkStatus;
 
@@ -32,6 +33,7 @@ public class GatherPostAllResDto {
                 gatherPost.getDate().toString(),
                 gatherPost.getSex(),
                 toImgUrl(gatherPost),
+                toContent(gatherPost.getContent()),
                 gatherPost.getViewCount(),
                 bookMarkStatus
         );
@@ -42,6 +44,14 @@ public class GatherPostAllResDto {
             return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
         }else{
             return gatherPost.getGatherPostImg().get(0).getImgUrl();
+        }
+    }
+
+    public static String toContent(String content){
+        if(content.length()>=10){
+            return content.substring(10).trim()+"...";
+        }else {
+            return content.trim();
         }
     }
 }

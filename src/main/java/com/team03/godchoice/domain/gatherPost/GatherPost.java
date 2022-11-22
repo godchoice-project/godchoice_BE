@@ -72,9 +72,6 @@ public class GatherPost extends Timestamped {
 
     @Column(nullable = false)
     private String postStatus;
-    @Column(nullable = false)
-    private String postProceeding;
-
 
     @OneToMany(mappedBy = "gatherPost", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<GatherPostComment> comments = new ArrayList<>();
@@ -114,7 +111,6 @@ public class GatherPost extends Timestamped {
         this.member = member;
         this.regionTag = regionTag;
         this.postStatus = gatherStatus;
-        this.postProceeding = gatherPostDto.getPostProceeding();
     }
 
     public void viewCountUp() {

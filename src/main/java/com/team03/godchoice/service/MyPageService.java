@@ -87,7 +87,7 @@ public class MyPageService implements MakeRegionTag {
 
         member.update(user, regionTag, userImgUrl);
         memberRepository.save(member);
-        return GlobalResDto.success(null, "수정이 완료되었습니다");
+        return GlobalResDto.success(getUser(userDetails).getData(), "수정이 완료되었습니다");
     }
 
     public GlobalResDto<?> getUser(UserDetailsImpl userDetails) {

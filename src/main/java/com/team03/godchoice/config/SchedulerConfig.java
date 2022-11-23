@@ -34,10 +34,7 @@ public class SchedulerConfig {
                 }
             }
         }
-    }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void checkGatherStatus() {
         List<GatherPost> gatherPostList = gatherPostRepository.findAll();
         for (GatherPost gatherPost : gatherPostList) {
             if (gatherPost.getPostStatus().equals("진행중")) {
@@ -48,10 +45,7 @@ public class SchedulerConfig {
                 }
             }
         }
-    }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void viewCountZero() {
         List<Member> memberList = memberRepository.findAll();
         for (Member member : memberList) {
             if (member.getPostView() != null) {

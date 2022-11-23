@@ -95,6 +95,7 @@ public class WebSecurityConfig {
                         "/swagger-ui/**").permitAll()
                 //로그인,회원가입만 허용
                 .antMatchers("/member/**").permitAll()
+                //전체불러오기 허용
                 .antMatchers("/allposts").permitAll()
                 .anyRequest().authenticated()
 

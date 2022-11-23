@@ -29,7 +29,7 @@ public class GatherPostResponseDto {
     private String postAddress;
     private String postState;
     private boolean bookMarkStatus;
-
+    private long viewCount;
     private List<CommentDto> commentDtoList;
     public GatherPostResponseDto(GatherPost gatherPost, List<PostImgResDto> postImgResDtos,List<CommentDto> commentDtoList,boolean bookMarkStatus) {
         this.userId = gatherPost.getMember().getMemberId();
@@ -49,6 +49,7 @@ public class GatherPostResponseDto {
         this.postAddress = gatherPost.getPostAddress();
         this.postState = gatherPost.getPostStatus();
         this.bookMarkStatus = bookMarkStatus;
+        this.viewCount = gatherPost.getViewCount();
         this.commentDtoList=commentDtoList;
     }
 }

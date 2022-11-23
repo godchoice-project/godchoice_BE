@@ -94,11 +94,9 @@ public class AskPostService {
         }
 
         // List로 image받은후 저장
-        if(!(multipartFile.size()==0)) {
-
+        if(multipartFile != null) {
             for (MultipartFile file : multipartFile) {
                 String img = s3Uploader.uploadFiles(file, "testdir");
-
                 AskPostImg image = new AskPostImg(img, askPost);
                 askPostImgRepository.save(image);
             }
@@ -164,7 +162,7 @@ public class AskPostService {
 
         boolean bookMarkStatus = askPostLikeRepository.existsByMemberAndAskPost(userDetails.getAccount(),askPost);
 
-        return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList,bookMarkStatus),null);
+        return GlobalResDto.success(new AskPostResponseDto(askPost, postImgResDtos, commentDtoList,bookMarkStatus),null);
     }
 
     public String toImgPath(AskPostImg askPostImg){

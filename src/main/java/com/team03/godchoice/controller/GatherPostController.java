@@ -27,7 +27,7 @@ public class GatherPostController {
     private final GatherPostService gatherPostService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public GlobalResDto<?> createGatherPost(@RequestPart(required = false) GatherPostRequestDto gatherPostDto,
+    public GlobalResDto<?> createGatherPost(@RequestPart GatherPostRequestDto gatherPostDto,
                                             @RequestPart(required = false) List<MultipartFile> multipartFile,
                                             @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return gatherPostService.createGather(gatherPostDto, multipartFile,  userDetails);
@@ -36,7 +36,7 @@ public class GatherPostController {
     @PutMapping("/{postId}")
     public GlobalResDto<?> putGatherPost(@PathVariable Long postId,
                                          @RequestPart GatherPostUpdateDto gatherPostDto,
-                                         @RequestPart List<MultipartFile> multipartFile,
+                                         @RequestPart(required = false)  List<MultipartFile> multipartFile,
                                          @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return gatherPostService.updateGatherPost(postId, gatherPostDto, multipartFile, userDetails);
     }

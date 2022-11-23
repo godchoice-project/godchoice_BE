@@ -86,6 +86,7 @@ public class SocialKakaoService implements LoginInterface {
         body.add("client_id", kakaoClientId);
 //        body.add("redirect_uri", "http://54.180.201.200/member/signup/kakao");
         body.add("redirect_uri", "http://localhost:3000/member/signup/kakao");
+//        body.add("redirect_uri", "https://godchoice.shop/member/signup/kakao");
         body.add("code", code);
         body.add("client_secret", kakaoClientSecret);
 

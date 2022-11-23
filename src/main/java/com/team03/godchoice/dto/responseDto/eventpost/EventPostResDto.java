@@ -26,7 +26,7 @@ public class EventPostResDto {
     private String postAddress;
     private String postState;
     private boolean bookMarkStatus;
-
+    private long viewCount;
     private List<CommentDto> commentDtoList;
 
     public EventPostResDto(EventPost eventPost, List<PostImgResDto> postImgResDtos, List<CommentDto> commentDtoList,boolean bookMarkStatus) {
@@ -43,6 +43,7 @@ public class EventPostResDto {
         this.postAddress = eventPost.getPostAddress();
         this.postState = eventPost.getEventStatus();
         this.bookMarkStatus = bookMarkStatus;
+        this.viewCount = eventPost.getViewCount();
         this.commentDtoList=commentDtoList;
     }
 }

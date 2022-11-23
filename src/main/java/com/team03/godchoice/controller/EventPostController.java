@@ -27,7 +27,7 @@ public class EventPostController {
     private final EventPostService eventPostService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public GlobalResDto<?> createEventPost(@RequestPart(required = false) EventPostReqDto eventPostReqDto,
+    public GlobalResDto<?> createEventPost(@RequestPart EventPostReqDto eventPostReqDto,
                                            @RequestPart(required = false) List<MultipartFile> multipartFile,
                                            @ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         return eventPostService.createEventPost(userDetails, eventPostReqDto, multipartFile);
@@ -36,7 +36,7 @@ public class EventPostController {
     @PutMapping("/{postId}")
     public GlobalResDto<?> putEventPost(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
                                         @PathVariable Long postId,
-                                        @RequestPart(required = false) EventPostPutReqDto eventPostPutReqDto,
+                                        @RequestPart EventPostPutReqDto eventPostPutReqDto,
                                         @RequestPart(required = false) List<MultipartFile> multipartFile) throws IOException {
         return eventPostService.putEventPost(userDetails, postId, eventPostPutReqDto, multipartFile);
     }

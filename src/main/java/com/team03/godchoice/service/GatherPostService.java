@@ -153,7 +153,7 @@ public class GatherPostService implements MakeRegionTag {
         List<GatherPostImg> gatherPostImgs = new ArrayList<>(gatherPost.getGatherPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (gatherPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
         } else {
             for (GatherPostImg gatherPostImg : gatherPostImgs) {
                 postImgResDtos.add(new PostImgResDto(gatherPostImg.getImgUrl(), gatherPostImg.getGatherPostImgId().toString()));

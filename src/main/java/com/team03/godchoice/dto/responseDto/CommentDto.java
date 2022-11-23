@@ -39,7 +39,7 @@ public class CommentDto extends TimeCountClass {
         } else {
             this.userId = 0L;
             this.userName = "알수없음";
-            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
             this.content = "알수없음";
         }
     }
@@ -56,7 +56,7 @@ public class CommentDto extends TimeCountClass {
         } else {
             this.userId = 0L;
             this.userName = "알수없음";
-            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
             this.content = "알수없음";
         }
 
@@ -74,7 +74,7 @@ public class CommentDto extends TimeCountClass {
         } else {
             this.userId = 0L;
             this.userName = "알수없음";
-            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
             this.content = "알수없음";
         }
     }

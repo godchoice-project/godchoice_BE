@@ -156,7 +156,7 @@ public class EventPostService implements MakeRegionTag {
         List<EventPostImg> eventPostImgs = new ArrayList<>(eventPost.getPostImgUrl());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (eventPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
         } else {
             for (EventPostImg eventPostImg : eventPostImgs) {
                 postImgResDtos.add(new PostImgResDto(eventPostImg.getImgUrl(), eventPostImg.getEventPostImgId().toString()));

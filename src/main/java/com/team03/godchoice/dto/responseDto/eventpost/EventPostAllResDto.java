@@ -37,7 +37,7 @@ public class EventPostAllResDto {
 
     public static String toImgUrl(EventPost eventPost){
         if(eventPost.getPostImgUrl()==null || eventPost.getPostImgUrl().isEmpty()){
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
         }else{
             return eventPost.getPostImgUrl().get(0).getImgUrl();
         }
@@ -45,7 +45,7 @@ public class EventPostAllResDto {
 
     public static String toContent(String content){
         if(content.length()>=10){
-            return content.substring(10).trim()+"...";
+            return content.substring(0,10).trim()+"...";
         }else {
             return content.trim();
         }

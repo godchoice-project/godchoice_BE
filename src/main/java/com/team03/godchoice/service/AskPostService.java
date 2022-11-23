@@ -146,7 +146,7 @@ public class AskPostService {
         List<AskPostImg> askPostImgList = new ArrayList<>(askPost.getAskPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if(askPostImgList.size()==0){
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg",null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png",null));
         }else{
             for(AskPostImg askPostImg : askPostImgList){
                 postImgResDtos.add(new PostImgResDto(askPostImg.getImage(),askPostImg.getImageId().toString()));

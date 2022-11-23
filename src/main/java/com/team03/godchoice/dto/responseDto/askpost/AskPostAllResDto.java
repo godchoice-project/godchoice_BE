@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class AskPostAllResDto {
     private Long postId;
     private long viewCount;
-    private String postImgUrl;
+    private String ImgUrl;
     private String title;
     private String content;
     private boolean bookMarkStatus;
@@ -30,7 +30,7 @@ public class AskPostAllResDto {
 
     public static String toImgUrl(AskPost askPost) {
         if (askPost.getAskPostImg() == null || askPost.getAskPostImg().isEmpty()) {
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
         } else {
             return askPost.getAskPostImg().get(0).getImage();
         }
@@ -38,7 +38,7 @@ public class AskPostAllResDto {
 
     public static String toContent(String content){
         if(content.length()>=10){
-            return content.substring(10).trim()+"...";
+            return content.substring(0,10).trim()+"...";
         }else {
             return content.trim();
         }

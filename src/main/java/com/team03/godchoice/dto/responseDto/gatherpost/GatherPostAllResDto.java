@@ -41,7 +41,7 @@ public class GatherPostAllResDto {
 
     public static String toImgUrl(GatherPost gatherPost){
         if(gatherPost.getGatherPostImg()==null || gatherPost.getGatherPostImg().isEmpty()){
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
         }else{
             return gatherPost.getGatherPostImg().get(0).getImgUrl();
         }
@@ -49,7 +49,7 @@ public class GatherPostAllResDto {
 
     public static String toContent(String content){
         if(content.length()>=10){
-            return content.substring(10).trim()+"...";
+            return content.substring(0,10).trim()+"...";
         }else {
             return content.trim();
         }

@@ -3,8 +3,8 @@ package com.team03.godchoice.domain.gatherPost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.Timestamped;
-import com.team03.godchoice.domain.domainenum.Category;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.Category;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
 import lombok.Getter;
@@ -115,5 +115,9 @@ public class GatherPost extends Timestamped {
 
     public void viewCountUp() {
         this.viewCount++;
+    }
+
+    public void setPostStatus(String postStatus) {
+        this.postStatus = postStatus;
     }
 }

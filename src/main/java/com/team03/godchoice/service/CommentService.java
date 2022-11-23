@@ -3,13 +3,14 @@ package com.team03.godchoice.service;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
-import com.team03.godchoice.domain.domainenum.DeleteStatus;
+import com.team03.godchoice.enumclass.DeleteStatus;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.CommentRequestDto;
+import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.askpost.AskPostCommentRepository;
@@ -20,6 +21,9 @@ import com.team03.godchoice.repository.gatherpost.GatherPostCommentRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +57,13 @@ public class CommentService {
 
             EventPostComment eventPostComment = new EventPostComment(commentRequestDto, eventPost, account, parentComment);
 
+            if(parentComment!=null){
+                if(!parentComment.getEventPost().getEventPostId().equals(eventPostComment.getEventPost().getEventPostId())){
+                    throw  new CustomException(ErrorCode.COMMENT_ERROR);
+                }
+            }
+
+
             eventPostCommentRepository.save(eventPostComment);
         } else{
             GatherPost gatherPost = gatherPostRepository.findById(postId).orElseThrow(
@@ -65,10 +76,10 @@ public class CommentService {
             gatherPostCommentRepository.save(gatherPostComment);
         }
 
-        return GlobalResDto.success(null, "Success create comment");
+        return GlobalResDto.success(getComment(postId,kind).getData(), "Success create comment");
     }
 
-    public GlobalResDto<?> deleteComment(Long commentId, String  kind, Member member) {
+    public GlobalResDto<?> deleteComment(Long postId ,Long commentId, String  kind, Member member) {
 
         if(kind.equals("ask")){
             AskPostComment comment = askPostCommentRepository.findById(commentId).orElseThrow(
@@ -78,10 +89,16 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(askPostCommentRepository.findAllByParent(comment.getParent()).size() == 1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        askPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 askPostCommentRepository.delete(comment);
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    askPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     askPostCommentRepository.delete(comment);
                 }
@@ -94,10 +111,16 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(eventPostCommentRepository.findAllByParent(comment.getParent()).size()==1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        eventPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 eventPostCommentRepository.delete(comment);
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    eventPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     eventPostCommentRepository.delete(comment);
                 }
@@ -110,16 +133,52 @@ public class CommentService {
                 throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
+                if(gatherPostCommentRepository.findAllByParent(comment.getParent()).size()==1){
+                    if(comment.getParent().getIsDeleted().equals(DeleteStatus.Y)){
+                        gatherPostCommentRepository.delete(comment.getParent());
+                    }
+                }
                 gatherPostCommentRepository.delete(comment);
+                //마지막 대댓글인경우 알수없음 댓글 삭제
+
             } else { // 부모 댓글임
                 if (comment.getChildren().size() != 0) { // 자식이 있으면 상태만 변경
                     comment.changeDeletedStatus(DeleteStatus.Y);
+                    gatherPostCommentRepository.save(comment);
                 } else { // 삭제 가능한 조상 댓글을 구해서 삭제
                     gatherPostCommentRepository.delete(comment);
                 }
             }
         }
 
-        return GlobalResDto.success(null, "Success delete comment");
+        return GlobalResDto.success(getComment(postId,kind).getData(), "Success delete comment");
+    }
+
+    public GlobalResDto<?> getComment(Long postId, String kind) {
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        if(kind.equals("ask")){
+            AskPost askPost = askPostRepository.findByAskPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(AskPostComment comment : askPost.getComments()){
+                if(comment.getParent()==null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        } else if (kind.equals("event")) {
+            EventPost eventPost = eventPostRepository.findByEventPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(EventPostComment comment : eventPost.getComments()){
+                if(comment.getParent()==null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        }else {
+            GatherPost gatherPost = gatherPostRepository.findByGatherPostId(postId).orElseThrow(()->  new CustomException(ErrorCode.NOT_FOUND_POST));
+            for(GatherPostComment comment : gatherPost.getComments()){
+                if(comment.getParent() == null){
+                    commentDtoList.add(0,new CommentDto(comment));
+                }
+            }
+        }
+
+        return GlobalResDto.success(commentDtoList,null);
     }
 }

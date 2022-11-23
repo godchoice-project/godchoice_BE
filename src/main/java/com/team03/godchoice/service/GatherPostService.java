@@ -1,7 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
@@ -16,6 +16,7 @@ import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
+import com.team03.godchoice.repository.gatherpost.GatherPostLikeRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -24,9 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -41,6 +39,7 @@ public class GatherPostService implements MakeRegionTag {
     private final MemberRepository memberRepository;
     private final GatherPostRepository gatherPostRepository;
     private final GatherPostImgRepository gatherPostImgRepository;
+    private final GatherPostLikeRepository gatherPostLikeRepository;
     private final EventPostService eventPostService;
     private final S3Uploader s3Uploader;
 
@@ -78,13 +77,28 @@ public class GatherPostService implements MakeRegionTag {
         }
 
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
+        String gatherStatus;
+        if(gatherPost.getPostStatus().equals("진행중")){
+            gatherStatus = gatherPostDto.getPostState();
+        }else{
+            if(date.isBefore(LocalDate.now())){
+                if(gatherPostDto.getPostState().equals("진행중")){
+                    throw new CustomException(ErrorCode.DATESTATUS_ERROR);
+                }else{
+                    gatherStatus = gatherPostDto.getPostState();
+                }
+            }else{
+                gatherStatus = gatherPostDto.getPostState();
+            }
+        }
+
+
         RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
-        String gatherStatus = eventPostService.toEventStatus(date);
         gatherPost.update(gatherPostDto, date, regionTag, gatherStatus, member);
 
         String[] imgIdList;
 
-        if (gatherPostDto.getImgId() != null) {
+        if (gatherPostDto.getImgId().length()>0) {
             imgIdList = gatherPostDto.getImgId().split(",");
 
             for (String imgUrl : imgIdList) {
@@ -125,8 +139,8 @@ public class GatherPostService implements MakeRegionTag {
         }
     }
 
-    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails, HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+    public GlobalResDto<?> getGatherPost(Long postId, UserDetailsImpl userDetails) {
+        viewCountUp(postId,userDetails.getAccount());
 
         memberCheck(userDetails);
 
@@ -135,7 +149,7 @@ public class GatherPostService implements MakeRegionTag {
         List<GatherPostImg> gatherPostImgs = new ArrayList<>(gatherPost.getGatherPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (gatherPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
         } else {
             for (GatherPostImg gatherPostImg : gatherPostImgs) {
                 postImgResDtos.add(new PostImgResDto(gatherPostImg.getImgUrl(), gatherPostImg.getGatherPostImgId().toString()));
@@ -145,11 +159,13 @@ public class GatherPostService implements MakeRegionTag {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (GatherPostComment comment : gatherPost.getComments()) {
             if (comment.getParent() == null) {
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(0,new CommentDto(comment));
             }
         }
 
-        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, postImgResDtos, commentDtoList), null);
+        boolean bookMarkStatus = gatherPostLikeRepository.existsByMemberAndGatherPost(memberCheck(userDetails),gatherPost);
+
+        return GlobalResDto.success(new GatherPostResponseDto(gatherPost, postImgResDtos, commentDtoList,bookMarkStatus), null);
 
     }
 
@@ -181,33 +197,12 @@ public class GatherPostService implements MakeRegionTag {
         return list.get(3) + "/" + list.get(4);
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView", "[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    @Transactional
+    public void viewCountUp(Long postId, Member member){
+        if(member.getPostView()==null || !member.getPostView().contains("[g_"+postId.toString()+"]")){
+            member.updatePostView("[g_" + postId+ "],");
+            memberRepository.save(member);
+            viewCountUp(postId);
         }
     }
 

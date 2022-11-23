@@ -1,7 +1,7 @@
 package com.team03.godchoice.domain;
 
-import com.team03.godchoice.domain.domainenum.RegionTag;
-import com.team03.godchoice.domain.domainenum.Role;
+import com.team03.godchoice.enumclass.RegionTag;
+import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.dto.requestDto.MyPageReqDto;
 import lombok.*;
 
@@ -44,6 +44,8 @@ public class Member {
     @Column
     private Boolean isDeleted;
 
+    private String postView;
+
     @Builder
     public Member(String email, String userName, String  userImgUrl,String pw,Boolean isAccepted, Boolean isDeleted, Role role){
         this.email=email;
@@ -53,11 +55,20 @@ public class Member {
         this.isAccepted=isAccepted;
         this.isDeleted=isDeleted;
         this.role = role;
+        this.postView = null;
     }
 
     public void update(MyPageReqDto user, RegionTag regionTag, String userImgUrl) {
         this.userName = user.getUserName();
         this.userAddressTag = regionTag;
         this.userImgUrl = userImgUrl;
+    }
+
+    public void updatePostView(String postView) {
+        if(this.postView==null){
+            this.postView = postView;
+        }else{
+            this.postView += postView;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.team03.godchoice.repository.eventpost;
 
+import antlr.collections.impl.ASTArray;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface EventPostCommentRepository extends JpaRepository<EventPostComme
     List<EventPostComment> findAllByMember(Member member);
 
     List<EventPostComment> findAllByMemberOrderByCommentIdDesc(Member member);
+
+    List<EventPostComment> findAllByParent(EventPostComment parent);
 }

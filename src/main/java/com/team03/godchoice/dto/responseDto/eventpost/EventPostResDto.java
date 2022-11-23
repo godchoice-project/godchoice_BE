@@ -25,10 +25,11 @@ public class EventPostResDto {
     private String postLink;
     private String postAddress;
     private String postState;
-
+    private boolean bookMarkStatus;
+    private long viewCount;
     private List<CommentDto> commentDtoList;
 
-    public EventPostResDto(EventPost eventPost, List<PostImgResDto> postImgResDtos, List<CommentDto> commentDtoList) {
+    public EventPostResDto(EventPost eventPost, List<PostImgResDto> postImgResDtos, List<CommentDto> commentDtoList,boolean bookMarkStatus) {
         this.userId = eventPost.getMember().getMemberId();
         this.userImg = eventPost.getMember().getUserImgUrl();
         this.username = eventPost.getMember().getUserName();
@@ -41,6 +42,8 @@ public class EventPostResDto {
         this.postLink = eventPost.getPostLink();
         this.postAddress = eventPost.getPostAddress();
         this.postState = eventPost.getEventStatus();
+        this.bookMarkStatus = bookMarkStatus;
+        this.viewCount = eventPost.getViewCount();
         this.commentDtoList=commentDtoList;
     }
 }

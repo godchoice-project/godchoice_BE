@@ -1,7 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.eventpost.EventPostImg;
@@ -16,6 +16,7 @@ import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.eventpost.EventPostImgRepository;
+import com.team03.godchoice.repository.eventpost.EventPostLikeRepository;
 import com.team03.godchoice.repository.eventpost.EventPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -24,9 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +37,7 @@ public class EventPostService implements MakeRegionTag {
     private final MemberRepository memberRepository;
     private final EventPostRepository eventPostRepository;
     private final EventPostImgRepository eventPostImgRepository;
+    private final EventPostLikeRepository eventPostLikeRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -46,6 +45,10 @@ public class EventPostService implements MakeRegionTag {
         Member member = isPresentMember(userDetails);
         if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+        }
+
+        if(userDetails.getMember().getIsDeleted()){
+            throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
         }
 
         //시작시간,만료시간 localDate로 바꾸고 주소 태그만들고
@@ -88,7 +91,8 @@ public class EventPostService implements MakeRegionTag {
 
         String[] imgIdList;
 
-        if (eventPostPutReqDto.getImgId() != null || !eventPostPutReqDto.getImgId().trim().isEmpty() || !eventPostPutReqDto.getImgId().trim().isBlank()) {
+        if (eventPostPutReqDto.getImgId().length() > 0) {
+
             imgIdList = eventPostPutReqDto.getImgId().split(",");
             for (String imgUrl : imgIdList) {
                 Long imgId = Long.valueOf(imgUrl);
@@ -140,9 +144,9 @@ public class EventPostService implements MakeRegionTag {
         return list.get(3) + "/" + list.get(4);
     }
 
-    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId,
-                                           HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+    public GlobalResDto<?> getOneEventPost(UserDetailsImpl userDetails, Long postId) {
+
+        viewCountUp(postId, userDetails.getAccount());
 
         Member member = isPresentMember(userDetails);
         if (member == null) {
@@ -155,7 +159,7 @@ public class EventPostService implements MakeRegionTag {
         List<EventPostImg> eventPostImgs = new ArrayList<>(eventPost.getPostImgUrl());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (eventPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
         } else {
             for (EventPostImg eventPostImg : eventPostImgs) {
                 postImgResDtos.add(new PostImgResDto(eventPostImg.getImgUrl(), eventPostImg.getEventPostImgId().toString()));
@@ -165,11 +169,13 @@ public class EventPostService implements MakeRegionTag {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for (EventPostComment comment : eventPost.getComments()) {
             if (comment.getParent() == null) {
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(0, new CommentDto(comment));
             }
         }
 
-        return GlobalResDto.success(new EventPostResDto(eventPost, postImgResDtos, commentDtoList), null);
+        boolean bookMarkStatus = eventPostLikeRepository.existsByMemberAndEventPost(member,eventPost);
+
+        return GlobalResDto.success(new EventPostResDto(eventPost, postImgResDtos, commentDtoList,bookMarkStatus), null);
 
     }
 
@@ -204,33 +210,12 @@ public class EventPostService implements MakeRegionTag {
         }
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView", "[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    @Transactional
+    public void viewCountUp(Long postId, Member member) {
+        if(member.getPostView()==null || !member.getPostView().contains("[e_" + postId.toString() + "]")){
+            member.updatePostView("[e_" + postId+ "],");
+            memberRepository.save(member);
+            viewCountUp(postId);
         }
     }
 

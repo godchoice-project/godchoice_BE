@@ -4,6 +4,7 @@ import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
+import com.team03.godchoice.domain.askpost.AskPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
@@ -12,7 +13,9 @@ import com.team03.godchoice.dto.responseDto.askpost.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.askpost.AskPostImgRepository;
+import com.team03.godchoice.repository.askpost.AskPostLikeRepository;
 import com.team03.godchoice.repository.askpost.AskPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
@@ -35,6 +38,8 @@ public class AskPostService {
     private final AskPostRepository askPostRepository;
     private final S3Uploader s3Uploader;
     private final AskPostImgRepository askPostImgRepository;
+    private final AskPostLikeRepository askPostLikeRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public GlobalResDto<?> createAskPost(
@@ -77,27 +82,21 @@ public class AskPostService {
 
         String[] imgIdList;
 
-        if (askPostPutRequestDto.getImgId().length() == 1)  {
-            imgIdList = new String[]{askPostPutRequestDto.getImgId()};
-        }else {
+        if(askPostPutRequestDto.getImgId().length()>0){
             imgIdList = askPostPutRequestDto.getImgId().split(",");
-        }
-
-        // 기존에 있는 Image삭제
-        for(String imgId : imgIdList) {
-            Long imageId = Long.parseLong(imgId);
-            AskPostImg askPostImg = askPostImgRepository.findById(imageId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_IMG));
-            String s3Path = toImgPath(askPostImg);
-            s3Uploader.delImg(s3Path);
-            askPostImgRepository.deleteById(imageId);
+            for(String imgId : imgIdList) {
+                Long imageId = Long.parseLong(imgId);
+                AskPostImg askPostImg = askPostImgRepository.findById(imageId).orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_IMG));
+                String s3Path = toImgPath(askPostImg);
+                s3Uploader.delImg(s3Path);
+                askPostImgRepository.deleteById(imageId);
+            }
         }
 
         // List로 image받은후 저장
-        if(!(multipartFile.size()==0)) {
-
+        if(multipartFile != null) {
             for (MultipartFile file : multipartFile) {
                 String img = s3Uploader.uploadFiles(file, "testdir");
-
                 AskPostImg image = new AskPostImg(img, askPost);
                 askPostImgRepository.save(image);
             }
@@ -137,8 +136,8 @@ public class AskPostService {
     }
 
     @Transactional
-    public GlobalResDto<?> getOneAskPost(Long postId, HttpServletRequest req, HttpServletResponse res) {
-        viewCountUp(postId, req, res);
+    public GlobalResDto<?> getOneAskPost(Long postId,UserDetailsImpl userDetails) {
+        viewCountUp(postId,userDetails.getAccount());
 
         AskPost askPost=askPostRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
@@ -147,7 +146,7 @@ public class AskPostService {
         List<AskPostImg> askPostImgList = new ArrayList<>(askPost.getAskPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if(askPostImgList.size()==0){
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg",null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png",null));
         }else{
             for(AskPostImg askPostImg : askPostImgList){
                 postImgResDtos.add(new PostImgResDto(askPostImg.getImage(),askPostImg.getImageId().toString()));
@@ -157,11 +156,13 @@ public class AskPostService {
         List<CommentDto> commentDtoList = new ArrayList<>();
         for(AskPostComment comment : askPost.getComments()){
             if(comment.getParent() == null){
-                commentDtoList.add(new CommentDto(comment));
+                commentDtoList.add(0,new CommentDto(comment));
             }
         }
 
-        return GlobalResDto.success(new AskPostResponseDto(askPost, askPostImgList, commentDtoList),null);
+        boolean bookMarkStatus = askPostLikeRepository.existsByMemberAndAskPost(userDetails.getAccount(),askPost);
+
+        return GlobalResDto.success(new AskPostResponseDto(askPost, postImgResDtos, commentDtoList,bookMarkStatus),null);
     }
 
     public String toImgPath(AskPostImg askPostImg){
@@ -169,33 +170,11 @@ public class AskPostService {
         return list.get(3)+"/"+list.get(4);
     }
 
-    public void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
-
-        Cookie oldCookie = null;
-
-        Cookie[] cookies = req.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("postView")) {
-                    oldCookie = cookie;
-                }
-            }
-        }
-
-        if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("[" + id.toString() + "]")) {
-                viewCountUp(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
-                oldCookie.setPath("/");
-                oldCookie.setMaxAge(60 * 60 * 24);
-                res.addCookie(oldCookie);
-            }
-        } else {
-            viewCountUp(id);
-            Cookie newCookie = new Cookie("postView","[" + id + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(60 * 60 * 24);
-            res.addCookie(newCookie);
+    public void viewCountUp(Long postId,Member member) {
+        if(member.getPostView()==null || !member.getPostView().contains("[a_" + postId.toString() + "]")){
+            member.updatePostView("[a_" + postId+ "],");
+            memberRepository.save(member);
+            viewCountUp(postId);
         }
     }
 

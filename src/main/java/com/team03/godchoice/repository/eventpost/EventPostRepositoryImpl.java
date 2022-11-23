@@ -5,7 +5,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.dto.responseDto.eventpost.EventPostAllResDto;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
@@ -17,9 +16,7 @@ import org.springframework.stereotype.Repository;
 import static com.team03.godchoice.domain.eventpost.QEventPost.eventPost;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class EventPostRepositoryImpl extends QuerydslRepositorySupport implements MakeRegionTag {

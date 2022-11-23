@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
-import com.team03.godchoice.domain.domainenum.Role;
+import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.TokenDto;
 import com.team03.godchoice.dto.social.NaverUserInfoDto;

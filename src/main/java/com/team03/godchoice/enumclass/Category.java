@@ -1,4 +1,4 @@
-package com.team03.godchoice.domain.domainenum;
+package com.team03.godchoice.enumclass;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

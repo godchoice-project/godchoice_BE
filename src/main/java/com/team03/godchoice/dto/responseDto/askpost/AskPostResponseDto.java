@@ -3,6 +3,7 @@ package com.team03.godchoice.dto.responseDto.askpost;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
 import com.team03.godchoice.dto.responseDto.CommentDto;
+import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,10 +23,12 @@ public class AskPostResponseDto {
     private String content;
     private String postAddress;
     private String postLink;
-    private List<AskPostImg> askPostImgList;
+    private boolean bookMarkStatus;
+    private long viewCount;
+    private List<PostImgResDto> askPostImgList;
     private List<CommentDto> commentDtoList;
 
-    public AskPostResponseDto(AskPost askPost, List<AskPostImg> askPostImgList, List<CommentDto> commentDtoList) {
+    public AskPostResponseDto(AskPost askPost, List<PostImgResDto> askPostImgList, List<CommentDto> commentDtoList,boolean bookMarkStatus) {
         this.userId = askPost.getMember().getMemberId();
         this.userImg = askPost.getMember().getUserImgUrl();
         this.userName = askPost.getMember().getUserName();
@@ -34,6 +37,8 @@ public class AskPostResponseDto {
         this.content = askPost.getContent();
         this.postAddress = askPost.getPostAddress();
         this.postLink = askPost.getPostLink();
+        this.bookMarkStatus = bookMarkStatus;
+        this.viewCount = askPost.getViewCount();
         this.askPostImgList = askPostImgList;
         this.commentDtoList = commentDtoList;
     }

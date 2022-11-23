@@ -18,7 +18,7 @@ public class EventPostImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventPostImgId;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "eventpostid")
     private EventPost eventPost;

@@ -16,6 +16,7 @@ public class EventPostAllResDto {
     private String endPeriod;
     private String eventStatus;
     private String imgUrl;
+    private String content;
     private long viewCount;
     private boolean bookMarkStatus;
 
@@ -28,6 +29,7 @@ public class EventPostAllResDto {
                 eventPost.getEndPeriod().toString(),
                 eventPost.getEventStatus(),
                 toImgUrl(eventPost),
+                toContent(eventPost.getContent()),
                 eventPost.getViewCount(),
                 bookMarkStatus
         );
@@ -35,9 +37,17 @@ public class EventPostAllResDto {
 
     public static String toImgUrl(EventPost eventPost){
         if(eventPost.getPostImgUrl()==null || eventPost.getPostImgUrl().isEmpty()){
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.jpg";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
         }else{
             return eventPost.getPostImgUrl().get(0).getImgUrl();
+        }
+    }
+
+    public static String toContent(String content){
+        if(content.length()>=10){
+            return content.substring(0,10).trim()+"...";
+        }else {
+            return content.trim();
         }
     }
 }

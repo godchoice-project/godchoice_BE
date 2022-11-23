@@ -5,6 +5,7 @@ import com.team03.godchoice.dto.requestDto.MyPageReqDto;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/mypage")

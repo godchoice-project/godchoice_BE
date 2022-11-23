@@ -5,7 +5,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostAllResDto;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;

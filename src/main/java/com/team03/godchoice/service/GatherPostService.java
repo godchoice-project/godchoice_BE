@@ -1,11 +1,10 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostImg;
-import com.team03.godchoice.domain.gatherPost.GatherPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostRequestDto;
 import com.team03.godchoice.dto.requestDto.gatherpostDto.GatherPostUpdateDto;
@@ -26,9 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;

@@ -3,7 +3,7 @@ package com.team03.godchoice.service;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
-import com.team03.godchoice.domain.domainenum.DeleteStatus;
+import com.team03.godchoice.enumclass.DeleteStatus;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
@@ -19,7 +19,6 @@ import com.team03.godchoice.repository.eventpost.EventPostCommentRepository;
 import com.team03.godchoice.repository.eventpost.EventPostRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostCommentRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
-import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

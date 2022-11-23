@@ -1,8 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.domainenum.DeleteStatus;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.eventpost.EventPostImg;
@@ -46,6 +45,10 @@ public class EventPostService implements MakeRegionTag {
         Member member = isPresentMember(userDetails);
         if (member == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
+        }
+
+        if(userDetails.getMember().getIsDeleted()){
+            throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
         }
 
         //시작시간,만료시간 localDate로 바꾸고 주소 태그만들고

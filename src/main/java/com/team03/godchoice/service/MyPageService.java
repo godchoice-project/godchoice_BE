@@ -1,10 +1,14 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.adminPage.AdminPage;
+import com.team03.godchoice.adminPage.AdminPageRepository;
+import com.team03.godchoice.adminPage.AdminService;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.askpost.AskPostLike;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.dto.responseDto.mypageResDto.AdminMyPage;
+import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.eventpost.EventPostLike;
@@ -18,6 +22,7 @@ import com.team03.godchoice.dto.responseDto.eventpost.EventPostAllResDto;
 import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostAllResDto;
 import com.team03.godchoice.dto.responseDto.mypageResDto.MyPageMyPostResDto;
 import com.team03.godchoice.dto.responseDto.mypageResDto.MyPageUserResDto;
+import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
@@ -61,6 +66,8 @@ public class MyPageService implements MakeRegionTag {
     private final AskPostCommentRepository askPostCommentRepository;
     private final AskPostLikeRepository askPostLikeRepository;
 
+    private final AdminPageRepository adminPageRepository;
+
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -97,9 +104,16 @@ public class MyPageService implements MakeRegionTag {
         }
 
         String[] userEmail = toEmail(member);
-        MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member, userEmail);
 
-        return GlobalResDto.success(myPageUserResDto, "유저정보를 가져왔습니다");
+
+        if(member.getRole().equals(Role.ADMIN)){
+            List<AdminPage> adminPageList = adminPageRepository.findAll();
+            MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member, userEmail,adminPageList);
+            return GlobalResDto.success(myPageUserResDto,"배너 정보와 유저정보를 가져왔습니다");
+        }else {
+            MyPageUserResDto myPageUserResDto = new MyPageUserResDto(member, userEmail,null);
+            return GlobalResDto.success(myPageUserResDto, "유저정보를 가져왔습니다");
+        }
     }
 
     public GlobalResDto<?> getMyPost(UserDetailsImpl userDetails) {

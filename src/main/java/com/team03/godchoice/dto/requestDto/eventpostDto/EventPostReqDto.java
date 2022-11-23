@@ -1,6 +1,6 @@
 package com.team03.godchoice.dto.requestDto.eventpostDto;
 
-import com.team03.godchoice.domain.domainenum.Category;
+import com.team03.godchoice.enumclass.Category;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

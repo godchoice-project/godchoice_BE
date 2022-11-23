@@ -1,7 +1,7 @@
 package com.team03.godchoice.interfacepackage;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.team03.godchoice.domain.domainenum.RegionTag;
+import com.team03.godchoice.enumclass.RegionTag;
 
 import java.util.HashMap;
 import java.util.List;

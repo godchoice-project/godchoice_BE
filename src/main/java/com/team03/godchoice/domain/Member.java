@@ -1,7 +1,7 @@
 package com.team03.godchoice.domain;
 
-import com.team03.godchoice.domain.domainenum.RegionTag;
-import com.team03.godchoice.domain.domainenum.Role;
+import com.team03.godchoice.enumclass.RegionTag;
+import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.dto.requestDto.MyPageReqDto;
 import lombok.*;
 

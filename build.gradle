@@ -66,8 +66,6 @@ dependencies {
     //카카오 로그인
     implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.6.3'
 
-    //구글 로그인
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 

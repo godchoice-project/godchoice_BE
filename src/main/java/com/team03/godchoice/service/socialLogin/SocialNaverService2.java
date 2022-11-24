@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
-import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.dto.TokenDto;
 import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
-import com.team03.godchoice.dto.TokenDto;
+import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.interfacepackage.LoginInterface;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
@@ -32,116 +32,105 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class SocialKakaoService implements LoginInterface {
+public class SocialNaverService2 implements LoginInterface {
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private String kakaoClientId;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
-    private String kakaoClientSecret;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    private String client_id;
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+    private String client_secret;
+    @Value("${spring.security.oauth2.client.provider.naver.user-info-uri}")
+    private String user_info_url;
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
     private String redirect_uri;
-    @Value("${spring.security.oauth2.client.provider.kakao.user-info-uri}")
-    private String user_info_uri;
-    @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
+    @Value("${spring.security.oauth2.client.provider.naver.token-uri}")
     private String token_uri;
 
-    public final MemberRepository memberRepository;
-    public final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
-    public final JwtUtil jwtUtil;
+    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public GlobalResDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
-        //인가코드를 통해 access_token 발급받기
-        String accessToken = issuedAccessToken(code);
+    public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
+        //인가코드와 state를 통해 access_token발급받기
+        String accessToken = issuedAccessToken(code, state);
 
-        //access_token을 통해 사용자 정보가져오기
-        SocialUserInfoDto socialUserInfoDto = getKakaoUserInfo(accessToken);
+        //access_token을 이용해 사용자 정보 가져오기(response.profile_image,response.email, response.name)
+        SocialUserInfoDto socialUserInfoDto = getNaverUserInfo(accessToken);
 
-        //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
+        //사용자정보를 토대로 가입진행
         Member member = saveMember(socialUserInfoDto);
 
-        //강제 로그인 처리
+        //강제 로그인
         forceLoginUser(member);
 
-        //리프레쉬, 액세스 토큰 만들기
-        //토큰 발급후 response
+        //토큰발급후 response
         createToken(member,response);
-
         UserInfoDto userInfoDto = new UserInfoDto(member);
-
-        return GlobalResDto.success(userInfoDto, "로그인이 완료되었습니다");
+        return GlobalResDto.success(userInfoDto,"로그인이 완료되었습니다");
     }
 
-    //인가코드를 통해 access_token 발급받기
-    public String issuedAccessToken(String code) throws JsonProcessingException {
+    private String issuedAccessToken(String code, String state) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        // HTTP Body 생성
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoClientId);
-        body.add("redirect_uri", redirect_uri);
-        body.add("code", code);
-        body.add("client_secret", kakaoClientSecret);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", client_id);
+        params.add("client_secret", client_secret);
+        params.add("code", code);
+        params.add("state", state);
 
-        // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
-                new HttpEntity<>(body, headers);
+
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
+                new HttpEntity<>(params, headers);
         RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange(
+        ResponseEntity<String> naverResponse = rt.exchange(
                 token_uri,
                 HttpMethod.POST,
-                kakaoTokenRequest,
+                naverTokenRequest,
                 String.class
         );
 
-        // HTTP 응답 (JSON) -> 액세스 토큰 파싱
-        String responseBody = response.getBody();
+        String responseBody = naverResponse.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
-
         return jsonNode.get("access_token").asText();
     }
 
-    //access_token을 통해 사용자 정보가져오기
-    private SocialUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
-        // HTTP Header 생성
+    private SocialUserInfoDto getNaverUserInfo(String accessToken) throws JsonProcessingException {
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // HTTP 요청 보내기
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> naverUserInfoRequest = new HttpEntity<>(headers);
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> response = rt.exchange(
-                user_info_uri,
+                user_info_url,
                 HttpMethod.POST,
-                kakaoUserInfoRequest,
+                naverUserInfoRequest,
                 String.class
         );
 
         String responseBody = response.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties")
-                .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
-                .get("email").asText();
-        String userImgUrl = jsonNode.get("properties")
-                .get("profile_image").asText();
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        JsonNode jsonNode2 = objectMapper2.readTree(responseBody);
 
-        return new SocialUserInfoDto(id, nickname, email, userImgUrl);
+        Long id = jsonNode2.get("response").get("id").asLong();
+        String profileImage = jsonNode2.get("response").get("profile_image").asText();
+        String email = jsonNode2.get("response").get("email").asText();
+        String name = jsonNode2.get("response").get("name").asText();
+
+        return new SocialUserInfoDto(id, name, email, profileImage);
     }
 
-    //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
-    public Member saveMember(SocialUserInfoDto socialUserInfoDto) {
-        Member kakaoMember = memberRepository.findByEmail("k_"+socialUserInfoDto.getEmail()).orElse(null);
+    private Member saveMember(SocialUserInfoDto socialUserInfoDto) {
 
-        //없다면 저장
-        if (kakaoMember == null) {
+        Member naverMember = memberRepository.findByEmail("n_" + socialUserInfoDto.getEmail()).orElse(null);
+
+        if (naverMember == null) {
             Role role;
             if (memberRepository.findAll().isEmpty()) {
                 role = Role.ADMIN;
@@ -149,8 +138,9 @@ public class SocialKakaoService implements LoginInterface {
                 role = Role.USER;
             }
 
-            Member member = Member.builder().
-                    email("k_" + socialUserInfoDto.getEmail())
+
+            Member member = Member.builder()
+                    .email("n_" + socialUserInfoDto.getEmail())
                     .userName(socialUserInfoDto.getNickname())
                     .userImgUrl(socialUserInfoDto.getUserImgUrl())
                     .pw(passwordEncoder.encode(UUID.randomUUID().toString()))
@@ -162,9 +152,7 @@ public class SocialKakaoService implements LoginInterface {
             memberRepository.save(member);
             return member;
         }
-
-        //있다면 member 반환
-        return kakaoMember;
+        return naverMember;
     }
 
     public void createToken(Member member,HttpServletResponse response){

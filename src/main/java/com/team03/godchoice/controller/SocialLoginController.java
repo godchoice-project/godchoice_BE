@@ -2,10 +2,7 @@ package com.team03.godchoice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.service.socialLogin.SocialGithubService;
-import com.team03.godchoice.service.socialLogin.SocialGoogleService;
-import com.team03.godchoice.service.socialLogin.SocialKakaoService;
-import com.team03.godchoice.service.socialLogin.SocialNaverService;
+import com.team03.godchoice.service.socialLogin.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +21,7 @@ public class SocialLoginController {
     private final SocialGoogleService socialGoogleService;
     private final SocialGithubService socialGithubService;
     private final SocialKakaoService socialKakaoService;
-    private final SocialNaverService socialNaverService;
+    private final SocialNaverService2 socialNaverService;
 
     @GetMapping("/kakao")
     public GlobalResDto<?> kakaoLogin(
@@ -46,7 +43,7 @@ public class SocialLoginController {
 
     @GetMapping("/naver")
     public GlobalResDto<?> naverLogin(
-            @RequestParam(value = "code") String code, @RequestParam String state, HttpServletResponse response){
+            @RequestParam(value = "code") String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
         return socialNaverService.naverLogin(code, state, response);
     }
 }

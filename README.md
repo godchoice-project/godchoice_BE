@@ -39,3 +39,6 @@
 |https://github.com/euni1004|https://github.com/dhun0103|https://github.com/KimByeungHyun|
 |https://mungcung2.tistory.com/|https://dhun.tistory.com/|https://rlaqudgus.tistory.com/|
 |BE💙|BE💙|BE💙|
+
+
+## [📚 프로젝트 팀 노션 보러가기](https://euninote.notion.site/C-3-SA-c27cbed753ac40449cb391623eebc245) 

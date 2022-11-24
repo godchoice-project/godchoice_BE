@@ -32,6 +32,8 @@ import java.util.UUID;
 @Service
 public class SocialGoogleService implements LoginInterface {
 
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    String redirect_uri;
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String client_id;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
@@ -95,9 +97,7 @@ public class SocialGoogleService implements LoginInterface {
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
         body.add("client_secret", clientSecret);
-//        body.add("redirect_uri", "http://localhost:8080/member/signup/google");
-        body.add("redirect_uri", "http://localhost:3000/member/signup/google");
-//        body.add("redirect_uri", "https://www.chackcheck99.com/user/signin/google");
+        body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
 

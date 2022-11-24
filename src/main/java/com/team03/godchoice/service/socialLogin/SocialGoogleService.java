@@ -18,6 +18,7 @@ import com.team03.godchoice.util.ComfortUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -41,6 +42,7 @@ public class SocialGoogleService implements LoginInterface {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final ComfortUtils comfortUtils;
+    private final PasswordEncoder passwordEncoder;
 
 //    private final SocialKakaoService socialKakaoService;
 
@@ -162,14 +164,12 @@ public class SocialGoogleService implements LoginInterface {
 
             String email = googleUserInfoDto.getUserEmail();
             String password = UUID.randomUUID().toString();
-            //수정필요
-            String userImgUrl = "sdf";
 
             Member googleMember = Member.builder()
                     .email("g_" + email)
                     .userName(comfortUtils.makeUserNickName())
-                    .userImgUrl(userImgUrl)//수정필요
-                    .pw(password)
+                    .userImgUrl("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png")//수정필요
+                    .pw(passwordEncoder.encode(password))
                     .isAccepted(false)
                     .isDeleted(false)
                     .role(Role.USER)

@@ -97,6 +97,8 @@ public class WebSecurityConfig {
                 .antMatchers("/member/**").permitAll()
                 //전체불러오기 허용
                 .antMatchers("/allposts").permitAll()
+                .antMatchers("/getadminpost").permitAll()
+
                 .anyRequest().authenticated()
 
                 .and()

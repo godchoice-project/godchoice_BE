@@ -37,7 +37,7 @@ public class EventPostAllResDto {
 
     public static String toImgUrl(EventPost eventPost){
         if(eventPost.getPostImgUrl()==null || eventPost.getPostImgUrl().isEmpty()){
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png";
         }else{
             return eventPost.getPostImgUrl().get(0).getImgUrl();
         }

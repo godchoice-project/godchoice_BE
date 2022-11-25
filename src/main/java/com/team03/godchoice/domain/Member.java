@@ -58,8 +58,8 @@ public class Member {
         this.postView = null;
     }
 
-    public void update(MyPageReqDto user, RegionTag regionTag, String userImgUrl) {
-        this.userName = user.getUserName();
+    public void update(MyPageReqDto user, RegionTag regionTag, String userImgUrl,String userName) {
+        this.userName = userName;
         this.userAddressTag = regionTag;
         this.userImgUrl = userImgUrl;
     }

@@ -1,6 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
@@ -62,7 +63,7 @@ public class EventPostService implements MakeRegionTag {
 
         saveImg(multipartFiles, eventPost);
 
-        return GlobalResDto.success(null, "작성완료");
+        return GlobalResDto.success(new CreateResDto(eventPost.getEventPostId()), "작성완료");
     }
 
     @Transactional
@@ -159,7 +160,7 @@ public class EventPostService implements MakeRegionTag {
         List<EventPostImg> eventPostImgs = new ArrayList<>(eventPost.getPostImgUrl());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (eventPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png", null));
         } else {
             for (EventPostImg eventPostImg : eventPostImgs) {
                 postImgResDtos.add(new PostImgResDto(eventPostImg.getImgUrl(), eventPostImg.getEventPostImgId().toString()));

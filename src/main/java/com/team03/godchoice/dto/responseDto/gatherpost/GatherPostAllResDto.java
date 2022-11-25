@@ -41,7 +41,7 @@ public class GatherPostAllResDto {
 
     public static String toImgUrl(GatherPost gatherPost){
         if(gatherPost.getGatherPostImg()==null || gatherPost.getGatherPostImg().isEmpty()){
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png";
         }else{
             return gatherPost.getGatherPostImg().get(0).getImgUrl();
         }

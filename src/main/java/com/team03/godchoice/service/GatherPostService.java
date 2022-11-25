@@ -1,6 +1,7 @@
 package com.team03.godchoice.service;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.gatherPost.GatherPost;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
@@ -62,7 +63,7 @@ public class GatherPostService implements MakeRegionTag {
         // List로 image받은후 저장
         saveImg(multipartFile, gatherPost);
 
-        return GlobalResDto.success(null, "success create gatherPost");
+        return GlobalResDto.success(new CreateResDto(gatherPost.getGatherPostId()), "success create gatherPost");
     }
 
     @Transactional
@@ -149,7 +150,7 @@ public class GatherPostService implements MakeRegionTag {
         List<GatherPostImg> gatherPostImgs = new ArrayList<>(gatherPost.getGatherPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if (gatherPostImgs.size() == 0) {
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png", null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png", null));
         } else {
             for (GatherPostImg gatherPostImg : gatherPostImgs) {
                 postImgResDtos.add(new PostImgResDto(gatherPostImg.getImgUrl(), gatherPostImg.getGatherPostImgId().toString()));

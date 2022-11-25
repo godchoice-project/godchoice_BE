@@ -29,7 +29,7 @@ public class ComfortUtils {
         Collections.shuffle(firstName);
         Collections.shuffle(middleName);
         Collections.shuffle(lastName);
-        sb.append(firstName.get(0)).append(middleName.get(0)).append(lastName.get(0));
+        sb.append(firstName.get(0)).append(" ").append(middleName.get(0)).append(lastName.get(0));
         return sb.toString();
     }
 }

@@ -44,7 +44,7 @@ public class GatherPostResponseDto {
         this.startAge = gatherPost.getStartAge();
         this.endAge = gatherPost.getEndAge();
         this.title = gatherPost.getTitle();
-        this.content = gatherPost.getPostLink();
+        this.content = gatherPost.getContent();
         this.postLink = gatherPost.getPostLink();
         this.postAddress = gatherPost.getPostAddress();
         this.postState = gatherPost.getPostStatus();

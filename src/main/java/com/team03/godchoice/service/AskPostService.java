@@ -8,6 +8,7 @@ import com.team03.godchoice.domain.askpost.AskPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
+import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import com.team03.godchoice.dto.responseDto.askpost.AskPostResponseDto;
 import com.team03.godchoice.dto.responseDto.CommentDto;
@@ -60,7 +61,7 @@ public class AskPostService {
             }
         }
 
-        return GlobalResDto.success(null,"success create askPost");
+        return GlobalResDto.success(new CreateResDto(askPost.getAskPostId()),"success create askPost");
     }
 
     @Transactional
@@ -146,7 +147,7 @@ public class AskPostService {
         List<AskPostImg> askPostImgList = new ArrayList<>(askPost.getAskPostImg());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
         if(askPostImgList.size()==0){
-            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png",null));
+            postImgResDtos.add(new PostImgResDto("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png",null));
         }else{
             for(AskPostImg askPostImg : askPostImgList){
                 postImgResDtos.add(new PostImgResDto(askPostImg.getImage(),askPostImg.getImageId().toString()));

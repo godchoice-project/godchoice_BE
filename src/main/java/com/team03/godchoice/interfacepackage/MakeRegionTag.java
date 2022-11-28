@@ -17,7 +17,13 @@ public interface MakeRegionTag {
             put("경기",RegionTag.Gyeonggi);
             put("강원",RegionTag.Gangwon);
             put("경상",RegionTag.Gyeongsang);
+            put("경북",RegionTag.Gyeongsang);
+            put("경남",RegionTag.Gyeongsang);
+            put("전북",RegionTag.Jeolla);
+            put("전남",RegionTag.Jeolla);
             put("전라",RegionTag.Jeolla);
+            put("충북",RegionTag.Chungcheong);
+            put("충남",RegionTag.Chungcheong);
             put("충청",RegionTag.Chungcheong);
             put("제주",RegionTag.Jeju);
             put("인천",RegionTag.Incheon);

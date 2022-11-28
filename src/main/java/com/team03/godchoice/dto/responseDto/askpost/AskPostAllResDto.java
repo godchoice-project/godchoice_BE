@@ -30,7 +30,7 @@ public class AskPostAllResDto {
 
     public static String toImgUrl(AskPost askPost) {
         if (askPost.getAskPostImg() == null || askPost.getAskPostImg().isEmpty()) {
-            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_profile.png";
+            return "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_post_img.png";
         } else {
             return askPost.getAskPostImg().get(0).getImage();
         }

@@ -10,7 +10,6 @@ import com.team03.godchoice.dto.responseDto.eventpost.EventPostAllResDto;
 import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
 import static com.team03.godchoice.domain.eventpost.QEventPost.eventPost;
@@ -19,12 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class EventPostRepositoryImpl extends QuerydslRepositorySupport implements MakeRegionTag {
+public class EventPostRepositoryImpl implements MakeRegionTag {
     private final JPAQueryFactory queryFactory;
     private final EventPostLikeRepository eventPostLikeRepository;
 
     public EventPostRepositoryImpl(JPAQueryFactory queryFactory, EventPostLikeRepository eventPostLikeRepository) {
-        super(EventPost.class);
         this.queryFactory = queryFactory;
         this.eventPostLikeRepository = eventPostLikeRepository;
     }

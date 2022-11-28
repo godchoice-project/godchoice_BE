@@ -1,9 +1,9 @@
 #https ??
-#server:
-#  ssl:
-#    key-store-password: 5509kong
-#    key-store-type: PKCS12
-#    key-store:  classpath:keystore.p12
+server:
+  ssl:
+    key-store-password: 5509kong
+    key-store-type: PKCS12
+    key-store:  classpath:keystore.p12
 
 spring:
   h2:
@@ -18,7 +18,7 @@ spring:
     url: jdbc:mysql://godchoice.co1d2mlhpaa6.ap-northeast-2.rds.amazonaws.com:3306/godchoice
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
-    password: 5509kong
+    password: ENC(OJgXyE93hux1qu+gy/WRyc8d0Z1XgGtX)
 
   jpa:
     properties:
@@ -42,8 +42,10 @@ spring:
         registration:
           kakao:
             client-id: ENC(GRwC4xDK2+Li+1SoOSTQjPCUBW1RBhQIEsPlm21/u1VCOQI4L0UzvwfBEQsnJ+vJ)
-            redirect-uri: http://54.180.201.200/member/signup/kakao
+#            redirect-uri: http://54.180.201.200/member/signup/kakao
 #            redirect-uri: http://localhost:8080/member/signup/kakao
+            redirect-uri: https://godchoice.shop/member/signup/kakao
+#            redirect-uri: http://localhost:3000/member/signup/kakao
             client-authentication-method: POST
             client-secret: ENC(J4KeBmKJFYx1iNmpI0Lx4DUUziK07zu3Qyzrb+Ph0IZRhvZXMyEM9NQaheLsw0PM)
             authorization-grant-type: authorization_code
@@ -53,6 +55,8 @@ spring:
               - account_email
             client-name: kakao
           google:
+            redirect-uri: https://godchoice.shop/member/signup/google
+#            redirect-uri: http://localhost:3000/member/signup/google
             client-id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
             client-secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)
             scope:
@@ -65,9 +69,11 @@ spring:
           naver:
             authorization-grant-type: authorization_code
 #            redirect-uri: http://54.180.201.200/member/signup/naver
-            redirect-uri: http://localhost:8080/member/signup/naver
-            client-id: ENC(0AO0EaRVFK2ckWeWvfxYU5D+X2mGqstJymsN2ATI024=)
-            client-secret: ENC(NQHyfJtQu7G5IfgZfko3e9WZte3HYjS1)
+#            redirect-uri: http://localhost:8080/member/signup/naver
+            redirect-uri: https://godchoice.shop/member/signup/naver
+#            redirect-uri: http://localhost:3000/member/signup/naver
+            client-id: ENC(tB0Oc2vPBULZObHGk1UQnx+ZDNCmptVlXhp2xOpofYU=)
+            client-secret: ENC(1Ox6O24XdWClCPdhil4/42Pn6vFSQJZ6)
             client-name: naver
 
         provider:
@@ -81,6 +87,7 @@ spring:
             user-info-uri: https://openapi.naver.com/v1/nid/me
             token-uri: https://nid.naver.com/oauth2.0/token
             user-name-attribute: naver_account
+
   profiles:
     include: secret
 
@@ -96,24 +103,3 @@ sentry:
   logging:
     minimum-event-level: warn
   dsn: https://d247bc84b40c4f9c9780a16db53b7da3@o4504194608201728.ingest.sentry.io/4504194610364416
-
-##s3
-#cloud:
-#  aws:
-#    s3:
-#      bucket: kimbiibucket
-#    credentials:
-#      access-key: ENC(OhFW/2FfibV77re8MTUXS+CqUkUZO7c0+JosNqr86s0=)
-#      secret-key: ENC(uKUw8EN/kFEBIDEylQwejmWJzlrjsqBrD0UrubhOrDXZOKIBvZ+InhW0d2qh10E0Slp5UsaKROM=)
-#    region:
-#      static: ap-northeast-2
-#      auto: false
-#    stack:
-#      auto: false
-#
-#logging:
-#  level:
-#    com:
-#      amazonaws:
-#        util:
-#          EC2MetadataUtils: ERROR

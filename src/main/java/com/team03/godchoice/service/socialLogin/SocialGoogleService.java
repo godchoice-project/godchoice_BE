@@ -18,6 +18,7 @@ import com.team03.godchoice.util.ComfortUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -31,6 +32,8 @@ import java.util.UUID;
 @Service
 public class SocialGoogleService implements LoginInterface {
 
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    String redirect_uri;
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     String client_id;
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
@@ -41,6 +44,7 @@ public class SocialGoogleService implements LoginInterface {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final ComfortUtils comfortUtils;
+    private final PasswordEncoder passwordEncoder;
 
 //    private final SocialKakaoService socialKakaoService;
 
@@ -59,23 +63,21 @@ public class SocialGoogleService implements LoginInterface {
         forceLoginUser(member);
 
         //토큰 발급
-        TokenDto tokenDto = jwtUtil.createAllToken(googleUserInfo.getUserEmail());
+        TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(googleUserInfo.getUserEmail());
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(member.getEmail());
 
         // 로그아웃한 후 로그인을 다시 하는가?
         if(refreshToken.isPresent()) {
             RefreshToken refreshToken1 = refreshToken.get().updateToken(tokenDto.getRefreshToken());
             refreshTokenRepository.save(refreshToken1);
         } else {
-            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), googleUserInfo.getUserEmail());
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), member.getEmail());
             refreshTokenRepository.save(newToken);
         }
 
         //토큰을 header에 넣어서 클라이언트에게 전달하기
         setHeader(response, tokenDto);
-
-//        socialKakaoService.createToken(member,response);
 
         UserInfoDto userInfoDto = new UserInfoDto(member);
 
@@ -93,9 +95,7 @@ public class SocialGoogleService implements LoginInterface {
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
         body.add("client_secret", clientSecret);
-//        body.add("redirect_uri", "http://localhost:8080/member/signup/google");
-        body.add("redirect_uri", "http://localhost:3000/member/signup/google");
-//        body.add("redirect_uri", "https://www.chackcheck99.com/user/signin/google");
+        body.add("redirect_uri", redirect_uri);
         body.add("code", code);
 
 
@@ -149,12 +149,11 @@ public class SocialGoogleService implements LoginInterface {
         String userName = jsonNode.get("name").asText();
         return new GoogleUserInfoDto(id, userName, userEmail);
     }
-//    https://www.googleapis.com/auth/userinfo.profile
 
     private Member signupGoogleUser(GoogleUserInfoDto googleUserInfoDto) {
         // 재가입 방지
         // DB 에 중복된 Google Id 가 있는지 확인
-        Member findGoogle = memberRepository.findByEmail(googleUserInfoDto.getUserEmail()).orElse(null);
+        Member findGoogle = memberRepository.findByEmail("g_"+googleUserInfoDto.getUserEmail()).orElse(null);
 
 
         //DB에 중복된 계정이 없으면 회원가입 처리
@@ -162,14 +161,12 @@ public class SocialGoogleService implements LoginInterface {
 
             String email = googleUserInfoDto.getUserEmail();
             String password = UUID.randomUUID().toString();
-            //수정필요
-            String userImgUrl = "sdf";
 
             Member googleMember = Member.builder()
                     .email("g_" + email)
                     .userName(comfortUtils.makeUserNickName())
-                    .userImgUrl(userImgUrl)//수정필요
-                    .pw(password)
+                    .userImgUrl("https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_user_img.png")//수정필요
+                    .pw(passwordEncoder.encode(password))
                     .isAccepted(false)
                     .isDeleted(false)
                     .role(Role.USER)

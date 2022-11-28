@@ -7,12 +7,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RegionTag {
     Seoul("서울"),
-    Gyeonggi("경기"),
-    Gangwon("강원"),
-    Gyeongsang("경상"),
-    Jeolla("전라"),
-    Chungcheong("충청"),
-    Jeju("제주"),
+    Gyeonggi("경기도"),
+    Gangwon("강원도"),
+    Gyeongsang("경상도"),
+    Jeolla("전라도"),
+    Chungcheong("충청도"),
+    Jeju("제주도"),
     Incheon("인천"),
     Sejong("세종"),
     Daegu("대구"),

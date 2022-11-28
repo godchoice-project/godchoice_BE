@@ -85,14 +85,21 @@ public class MyPageService implements MakeRegionTag {
         }
 
         RegionTag regionTag;
-        if(user.getUserAddress()!=null || !user.getUserAddress().trim().isBlank()){
-            regionTag= toRegionTag(user.getUserAddress());
+        if(user.getUserAddress()==null || user.getUserAddress().isBlank()){
+            regionTag = member.getUserAddressTag();
         }else{
-            regionTag = null;
+            regionTag= toRegionTag(user.getUserAddress());
+        }
+
+        String username;
+        if(user.getUserName().isBlank() || user.getUserName()==null){
+            username = member.getUserName();
+        }else{
+            username = user.getUserName();
         }
 
 
-        member.update(user, regionTag, userImgUrl);
+        member.update(user, regionTag, userImgUrl,username);
         memberRepository.save(member);
         return GlobalResDto.success(getUser(userDetails).getData(), "수정이 완료되었습니다");
     }

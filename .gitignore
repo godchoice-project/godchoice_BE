@@ -27,7 +27,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 GodchoiceApplicationTest.java
-application.yml
 
 
 ### NetBeans ###

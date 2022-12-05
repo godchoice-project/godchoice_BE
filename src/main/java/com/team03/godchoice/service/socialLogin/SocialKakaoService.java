@@ -3,6 +3,7 @@ package com.team03.godchoice.service.socialLogin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team03.godchoice.SSE.NotificationRepository;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.enumclass.Role;
@@ -48,6 +49,7 @@ public class SocialKakaoService implements LoginInterface {
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationRepository notificationRepository;
     public final JwtUtil jwtUtil;
 
     public GlobalResDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -68,7 +70,10 @@ public class SocialKakaoService implements LoginInterface {
         //토큰 발급후 response
         createToken(member,response);
 
-        UserInfoDto userInfoDto = new UserInfoDto(member);
+        //아직 읽지않은 알림 갯수 표시
+        Long notificationNum = notificationRepository.countUnReadStateNotifications(member.getMemberId());
+
+        UserInfoDto userInfoDto = new UserInfoDto(member,notificationNum);
 
         return GlobalResDto.success(userInfoDto, "로그인이 완료되었습니다");
     }

@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 public abstract class TimeCountClass {
 
-    public String countTime(LocalDateTime localDateTime) {
+    public static String countTime(LocalDateTime localDateTime) {
         String countTime = "";
 
         LocalDateTime now = LocalDateTime.now();//현재날짜 시간

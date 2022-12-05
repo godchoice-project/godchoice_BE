@@ -27,6 +27,7 @@ public class GatherPost extends Timestamped {
 
     @Column(nullable = false)
     private Category category;
+
     @Column(nullable = false)
     private LocalDate date;
 

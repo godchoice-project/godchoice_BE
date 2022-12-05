@@ -3,6 +3,7 @@ package com.team03.godchoice.service.socialLogin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team03.godchoice.SSE.NotificationRepository;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.dto.GlobalResDto;
@@ -49,6 +50,7 @@ public class SocialNaverService2 implements LoginInterface {
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NotificationRepository notificationRepository;
 
 
     public GlobalResDto<?> naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
@@ -66,7 +68,10 @@ public class SocialNaverService2 implements LoginInterface {
 
         //토큰발급후 response
         createToken(member,response);
-        UserInfoDto userInfoDto = new UserInfoDto(member);
+
+        Long notificationNum = notificationRepository.countUnReadStateNotifications(member.getMemberId());
+
+        UserInfoDto userInfoDto = new UserInfoDto(member,notificationNum);
         return GlobalResDto.success(userInfoDto,"로그인이 완료되었습니다");
     }
 

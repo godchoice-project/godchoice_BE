@@ -1,84 +1,129 @@
-//package com.team03.godchoice.service;
-//
-//import com.team03.godchoice.domain.Member;
-//import com.team03.godchoice.domain.Notification;
-//import com.team03.godchoice.repository.EmitterRepository;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-//
-//import java.io.IOException;
-//import java.util.Map;
-//
-//@Service
-//@RequiredArgsConstructor
-//public class NotificationService {
-//
-//    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
-//
-//    private final EmitterRepository emitterRepository;
-//
-//    public SseEmitter subscribe(Long userId, String lastEventId) {
-//        // 1
-//        String id = userId + "_" + System.currentTimeMillis();
-//
-//        // 2
-//        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
-//
-//        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-//        emitter.onTimeout(() -> emitterRepository.deleteById(id));
-//
-//        // 3
-//        // 503 에러를 방지하기 위한 더미 이벤트 전송
-//        sendToClient(emitter, id, "EventStream Created. [userId=" + userId + "]");
-//
-//        // 4
-//        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
-//        if (!lastEventId.isEmpty()) {
-//            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithId(String.valueOf(userId));
-//            events.entrySet().stream()
-//                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
-//                    .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
-//        }
-//
-//        return emitter;
-//    }
-//
-//    public void send(Member receiver, String notificationType, Long postId , String content) {
-//        Notification notification = createNotification(receiver,  notificationType,  postId , content);
-//
-//        // 로그인 한 유저의 SseEmitter 모두 가져오기
-//        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(postId);
-//        sseEmitters.forEach(
-//                (key, emitter) -> {
-//                    // 데이터 캐시 저장(유실된 데이터 처리하기 위함)
-//                    emitterRepository.saveEventCache(key, notification);
-//                    // 데이터 전송
-//                    sendToClient(emitter, key, NotificationResponse.from(notification));
-//                }
-//        );
-//    }
-//
-//    private Notification createNotification(Member receiver, String  notificationType,Long postId, String content) {
-//        return Notification.builder()
-//                .receiver(receiver)
-//                .notificationType(notificationType)
-//                .content(content)
-//                .url("/"+notificationType+"/" + postId)
-//                .isRead(false)
-//                .build();
-//    }
-//
-//    private void sendToClient(SseEmitter emitter, String id, Object data) {
-//        try {
-//            emitter.send(SseEmitter.event()
-//                    .id(id)
-//                    .name("sse")
-//                    .data(data));
-//        } catch (IOException exception) {
-//            emitterRepository.deleteById(id);
-//            throw new RuntimeException("연결 오류!");
-//        }
-//    }
-//
-//}
+package com.team03.godchoice.SSE;
+
+import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.exception.CustomException;
+import com.team03.godchoice.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class NotificationService {
+
+    private static final Long DEFAULT_TIMEOUT = 1000L * 60 * 60;
+
+    private final EmitterRepository emitterRepository = new EmitterRepositoryImpl();
+    private final NotificationRepository notificationRepository;
+
+    public SseEmitter subscribe(Long memberId, String lastEventId) {
+        String id = memberId + "_" + System.currentTimeMillis();
+
+        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
+
+        emitter.onCompletion(() -> emitterRepository.deleteById(id));
+        emitter.onTimeout(() -> emitterRepository.deleteById(id));
+
+        sendToClient(emitter, id, "EventStream Created. [memberId=" + memberId + "]");
+
+        if (!lastEventId.isEmpty()) {
+            Map<String, Object> events = emitterRepository.findAllEventCacheStartWithByUserId(String.valueOf(memberId));
+            events.entrySet().stream()
+                    .filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
+                    .forEach(entry -> sendToClient(emitter, entry.getKey(), entry.getValue()));
+        }
+
+        return emitter;
+    }
+
+    private void sendToClient(SseEmitter emitter, String eventId, Object data) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(eventId)
+                    .data(data));
+
+        } catch (IOException exception) {
+            emitterRepository.deleteById(eventId);
+        }
+    }
+
+    @Async
+    public void send(Member receiver, AlarmType alarmType, String message, Long articlesId, String title) {
+
+        Notification notification = notificationRepository.save(createNotification(receiver, alarmType, message, articlesId, title));
+
+        String receiverId = String.valueOf(receiver.getMemberId());
+        String eventId = receiverId + "_" + System.currentTimeMillis();
+        Map<String, SseEmitter> emitters = emitterRepository.findAllEmitterStartWithByUserId(receiverId);
+        emitters.forEach(
+                (key, emitter) -> {
+                    emitterRepository.saveEventCache(key, notification);
+                    NotificationResponseDto notificationResponseDto = new NotificationResponseDto(notification);
+                    sendToClient(emitter, eventId, notificationResponseDto);
+                }
+        );
+    }
+
+    private Notification createNotification(Member receiver, AlarmType alarmType, String message,
+                                            Long articlesId, String title) {
+
+        return Notification.builder()
+                .receiver(receiver)
+                .alarmType(alarmType)
+                .message(message)
+                .articlesId(articlesId)
+                .title(title)
+                .readState(false) // 현재 읽음상태
+                .build();
+    }
+
+    public GlobalResDto<?> getAllNotification(Member member) {
+        List<Notification> notificationList = notificationRepository.findAllByMemberOrderByIdDesc(member);
+        List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
+        for (Notification notification : notificationList) {
+            NotificationResponseDto notificationResponseDto = new NotificationResponseDto(notification);
+            notificationResponseDtoList.add(notificationResponseDto);
+        }
+        return GlobalResDto.success(notificationResponseDtoList, "알림리스트를 가져왔습니다.");
+    }
+
+    @Transactional
+    public GlobalResDto<?> deleteNotification(Member member, Long id) {
+        Notification notification = notificationRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
+        if (!notification.getMember().equals(member)) {
+            throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
+        }
+        notificationRepository.delete(notification);
+        return GlobalResDto.success(null, "삭제 성공");
+    }
+
+    @Transactional
+    public GlobalResDto<?> readNotification( Long id) {
+        Notification notification = notificationRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
+        notification.changeState();
+        notificationRepository.save(notification);
+        String post;
+        if (notification.getAlarmType().equals(AlarmType.eventPostComment) || notification.getAlarmType().equals(AlarmType.eventPostCommentComment)) {
+            post = "/eventposts/";
+        }else if(notification.getAlarmType().equals(AlarmType.gatherPostComment) || notification.getAlarmType().equals(AlarmType.gatherPostCommentComment)){
+            post = "/gatherposts/";
+        }else{
+            post = "/askposts/";
+        }
+        return GlobalResDto.success(null, post+id);
+    }
+
+    public Long unreadNotification(Member member) {
+        return notificationRepository.countUnReadStateNotifications(member.getMemberId());
+    }
+}

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.team03.godchoice.SSE.NotificationRepository;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.enumclass.Role;
@@ -43,10 +44,9 @@ public class SocialGithubService implements LoginInterface {
 
     public final MemberRepository memberRepository;
     public final RefreshTokenRepository refreshTokenRepository;
-    private final SocialKakaoService socialKakaoService;
-    private final SocialGoogleService socialGoogleService;
     private final PasswordEncoder passwordEncoder;
-    public final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
+    private final NotificationRepository notificationRepository;
 
     public GlobalResDto<?> githubLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         //인가코드를 통해 accesstoken받기
@@ -64,7 +64,9 @@ public class SocialGithubService implements LoginInterface {
         //리프레쉬, 액세스 토큰 만든후 반환
         createToken(member,response);
 
-        UserInfoDto userInfoDto = new UserInfoDto(member);
+        Long notificationNum = notificationRepository.countUnReadStateNotifications(member.getMemberId());
+
+        UserInfoDto userInfoDto = new UserInfoDto(member,notificationNum);
 
         return GlobalResDto.success(userInfoDto, "로그인이 완료되었습니다");
     }

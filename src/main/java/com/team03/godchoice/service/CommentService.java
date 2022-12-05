@@ -1,5 +1,7 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.SSE.AlarmType;
+import com.team03.godchoice.SSE.NotificationService;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
@@ -22,6 +24,7 @@ import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentService {
 
+    private final NotificationService notificationService;
     private final AskPostCommentRepository askPostCommentRepository;
     private final EventPostCommentRepository eventPostCommentRepository;
     private final GatherPostCommentRepository gatherPostCommentRepository;
@@ -47,6 +51,18 @@ public class CommentService {
 
             AskPostComment askPostComment = new AskPostComment(commentRequestDto, askPost, account, parentComment);
 
+            if(parentComment!=null){
+                if(!parentComment.getAskPost().getAskPostId().equals(askPostComment.getAskPost().getAskPostId())){
+                    throw  new CustomException(ErrorCode.COMMENT_ERROR);
+                }
+                notificationService.send(parentComment.getMember(),AlarmType.askPostCommentComment,commentRequestDto.getContent(),askPost.getAskPostId(),"댓글에 대댓글이 달렸습니다.");
+
+            }else{
+                if(!askPost.getMember().equals(askPostComment.getMember())){
+                    notificationService.send(askPost.getMember(), AlarmType.askPostComment,commentRequestDto.getContent(),askPost.getAskPostId(),"질문글에 댓글이 달렸습니다.");
+                }
+            }
+
             askPostCommentRepository.save(askPostComment);
         }else if(kind.equals("event")){
             EventPost eventPost = eventPostRepository.findById(postId).orElseThrow(
@@ -61,8 +77,13 @@ public class CommentService {
                 if(!parentComment.getEventPost().getEventPostId().equals(eventPostComment.getEventPost().getEventPostId())){
                     throw  new CustomException(ErrorCode.COMMENT_ERROR);
                 }
-            }
+                notificationService.send(parentComment.getMember(),AlarmType.eventPostCommentComment,commentRequestDto.getContent(),eventPost.getEventPostId(),"댓글에 대댓글이 달렸습니다.");
 
+            }else{
+                if(!eventPost.getMember().equals(eventPostComment.getMember())){
+                    notificationService.send(eventPost.getMember(), AlarmType.eventPostComment,commentRequestDto.getContent(),eventPost.getEventPostId(),"행사글에 댓글이 달렸습니다.");
+                }
+            }
 
             eventPostCommentRepository.save(eventPostComment);
         } else{
@@ -72,6 +93,18 @@ public class CommentService {
             GatherPostComment parentComment = gatherPostCommentRepository
                     .findByCommentId(commentRequestDto.getParentId()).orElse(null);
             GatherPostComment gatherPostComment = new GatherPostComment(commentRequestDto, gatherPost, account, parentComment);
+
+            if(parentComment!=null){
+                if(!parentComment.getGatherPost().getGatherPostId().equals(gatherPostComment.getGatherPost().getGatherPostId())){
+                    throw  new CustomException(ErrorCode.COMMENT_ERROR);
+                }
+                notificationService.send(parentComment.getMember(),AlarmType.gatherPostCommentComment,commentRequestDto.getContent(),gatherPost.getGatherPostId(),"댓글에 대댓글이 달렸습니다.");
+
+            }else{
+                if(!gatherPost.getMember().equals(gatherPostComment.getMember())){
+                    notificationService.send(gatherPost.getMember(), AlarmType.gatherPostComment,commentRequestDto.getContent(),gatherPost.getGatherPostId(),"모집글에 댓글이 달렸습니다.");
+                }
+            }
 
             gatherPostCommentRepository.save(gatherPostComment);
         }
@@ -181,4 +214,5 @@ public class CommentService {
 
         return GlobalResDto.success(commentDtoList,null);
     }
+
 }

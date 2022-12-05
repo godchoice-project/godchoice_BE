@@ -3,6 +3,7 @@ package com.team03.godchoice.service.socialLogin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.team03.godchoice.SSE.NotificationRepository;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
 import com.team03.godchoice.enumclass.Role;
@@ -45,8 +46,7 @@ public class SocialGoogleService implements LoginInterface {
     private final RefreshTokenRepository refreshTokenRepository;
     private final ComfortUtils comfortUtils;
     private final PasswordEncoder passwordEncoder;
-
-//    private final SocialKakaoService socialKakaoService;
+    private final NotificationRepository notificationRepository;
 
     public GlobalResDto<?> googleLogin(String code, HttpServletResponse response)
     throws JsonProcessingException {
@@ -79,8 +79,9 @@ public class SocialGoogleService implements LoginInterface {
         //토큰을 header에 넣어서 클라이언트에게 전달하기
         setHeader(response, tokenDto);
 
-        UserInfoDto userInfoDto = new UserInfoDto(member);
+        Long notificationNum = notificationRepository.countUnReadStateNotifications(member.getMemberId());
 
+        UserInfoDto userInfoDto = new UserInfoDto(member,notificationNum);
 
         return GlobalResDto.success(userInfoDto, "Success Google login");
     }

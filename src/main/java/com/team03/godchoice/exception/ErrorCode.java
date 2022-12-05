@@ -16,14 +16,16 @@ public enum ErrorCode {
     DUPLICATION_NICKNAME(HttpStatus.BAD_REQUEST.value(), "M004","닉네임이 중복되었습니다."),
 
     NOT_FOUND_POST(HttpStatus.NOT_FOUND.value(), "P001","게시물이 존재하지 않습니다."),
-    NO_PERMISSION_DELETE(HttpStatus.BAD_REQUEST.value(), "P002","게시물을 삭제할 권한이 없습니다."),
-    NO_PERMISSION_CHANGE(HttpStatus.BAD_REQUEST.value(), "P003","게시물을 수정할 권한이 없습니다"),
+    NO_PERMISSION_DELETE(HttpStatus.BAD_REQUEST.value(), "P002","삭제할 권한이 없습니다."),
+    NO_PERMISSION_CHANGE(HttpStatus.BAD_REQUEST.value(), "P003","수정할 권한이 없습니다"),
 
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND.value(), "C001","댓글이 존재하지 않습니다."),
 
     NOT_FOUND_IMG(HttpStatus.NOT_FOUND.value(), "I001","이미지가 존재하지 않습니다." ),
     DATESTATUS_ERROR(HttpStatus.BAD_REQUEST.value(), "D001","만남날짜가 지난 날짜입니다." ),
-    COMMENT_ERROR(HttpStatus.BAD_REQUEST.value(), "C001","대댓글의 댓글아이디가 다릅니다." );
+    COMMENT_ERROR(HttpStatus.BAD_REQUEST.value(), "C001","대댓글의 댓글아이디가 다릅니다." ),
+
+    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "N001","알림이 존재하지 않습니다.");
 
 
     private final int status;

@@ -31,7 +31,7 @@ public class NotificationController {
     }
 
     //알림삭제
-    @ApiOperation(value = "알림 삭제",notes = "지금까지 온 알림 중에 선택한 알림을 삭제합니다.")
+    @ApiOperation(value = "알림 삭제",notes = "지금까지 온 알림 중에 선택한 알림을 삭제합니다.(토큰필요)")
     @DeleteMapping("/notice/{id}")
     public GlobalResDto<?> deleteNotification(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
                                               @PathVariable Long id) {
@@ -46,7 +46,7 @@ public class NotificationController {
     }
 
     //안읽은 알림갯수
-    @ApiOperation(value = "안읽은 알림 갯수",notes = "상태가 false인 알림의 갯수를 반환합니다.")
+    @ApiOperation(value = "안읽은 알림 갯수",notes = "상태가 false인 알림의 갯수를 반환합니다.(토큰필요)")
     @GetMapping("/unreadnotice")
     public Long unreadNotification(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return notificationService.unreadNotification(userDetails.getMember());

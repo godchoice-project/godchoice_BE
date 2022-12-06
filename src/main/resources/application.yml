@@ -21,10 +21,10 @@ spring:
     password: ENC(OJgXyE93hux1qu+gy/WRyc8d0Z1XgGtX)
 
   jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        show_sql: true
         #나중에 지워야함
 
   #h2 테이블 만들어지는 규칙?

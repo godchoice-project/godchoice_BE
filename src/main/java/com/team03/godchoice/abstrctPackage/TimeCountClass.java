@@ -24,7 +24,6 @@ public abstract class TimeCountClass {
             if (betweenTime <= 60) {
                 countTime = "약 1분 전";
             } else if (betweenTime <= 3600) {
-                System.out.println(betweenTime);
                 countTime = "약 "+(betweenTime / 60) + "분 전";
             } else if (betweenTime <= 86400) {
                 countTime = "약 "+(betweenTime / 60 / 60) + "시간 전";

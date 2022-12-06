@@ -100,7 +100,7 @@ public class NotificationService {
     @Transactional
     public GlobalResDto<?> deleteNotification(Member member, Long id) {
         Notification notification = notificationRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
-        if (!notification.getMember().equals(member)) {
+        if (!notification.getMember().getMemberId().equals(member.getMemberId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
         }
         notificationRepository.delete(notification);
@@ -120,7 +120,7 @@ public class NotificationService {
         }else{
             post = "/askposts/";
         }
-        return GlobalResDto.success(null, post+id);
+        return GlobalResDto.success(null, post+notification.getUrl());
     }
 
     public Long unreadNotification(Member member) {

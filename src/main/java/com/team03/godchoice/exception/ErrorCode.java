@@ -25,7 +25,9 @@ public enum ErrorCode {
     DATESTATUS_ERROR(HttpStatus.BAD_REQUEST.value(), "D001","만남날짜가 지난 날짜입니다." ),
     COMMENT_ERROR(HttpStatus.BAD_REQUEST.value(), "C001","대댓글의 댓글아이디가 다릅니다." ),
 
-    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "N001","알림이 존재하지 않습니다.");
+    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "N001","알림이 존재하지 않습니다."),
+
+    ERROR(HttpStatus.NO_CONTENT.value(),"S001","알수업는오류");
 
 
     private final int status;

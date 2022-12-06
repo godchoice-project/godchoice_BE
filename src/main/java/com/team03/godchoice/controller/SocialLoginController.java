@@ -2,13 +2,14 @@ package com.team03.godchoice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team03.godchoice.dto.GlobalResDto;
+import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.socialLogin.*;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,6 +28,11 @@ public class SocialLoginController {
     public GlobalResDto<?> kakaoLogin(
             @RequestParam(value = "code") String code, HttpServletResponse response) throws JsonProcessingException {
         return socialKakaoService.kakaoLogin(code, response);
+    }
+
+    @PostMapping("/kakao")
+    public GlobalResDto<?> kakaoLogout(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return socialKakaoService.logoutKakao(userDetails.getMember());
     }
 
     @GetMapping("/github")

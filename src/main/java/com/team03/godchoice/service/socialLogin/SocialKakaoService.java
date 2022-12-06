@@ -6,14 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.team03.godchoice.SSE.NotificationRepository;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.RefreshToken;
+import com.team03.godchoice.domain.SocialAccessToken;
 import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.responseDto.UserInfoDto;
 import com.team03.godchoice.dto.social.SocialUserInfoDto;
 import com.team03.godchoice.dto.TokenDto;
+import com.team03.godchoice.exception.CustomException;
+import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.interfacepackage.LoginInterface;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.RefreshTokenRepository;
+import com.team03.godchoice.repository.SocialAccessTokenRepository;
 import com.team03.godchoice.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +54,7 @@ public class SocialKakaoService implements LoginInterface {
     public final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final NotificationRepository notificationRepository;
+    private final SocialAccessTokenRepository socialAccessTokenRepository;
     public final JwtUtil jwtUtil;
 
     public GlobalResDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -61,7 +66,7 @@ public class SocialKakaoService implements LoginInterface {
         SocialUserInfoDto socialUserInfoDto = getKakaoUserInfo(accessToken);
 
         //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
-        Member member = saveMember(socialUserInfoDto);
+        Member member = saveMember(socialUserInfoDto,accessToken);
 
         //강제 로그인 처리
         forceLoginUser(member);
@@ -107,7 +112,9 @@ public class SocialKakaoService implements LoginInterface {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
 
-        return jsonNode.get("access_token").asText();
+        String accessToken = jsonNode.get("access_token").asText();
+
+        return accessToken;
     }
 
     //access_token을 통해 사용자 정보가져오기
@@ -142,7 +149,7 @@ public class SocialKakaoService implements LoginInterface {
     }
 
     //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
-    public Member saveMember(SocialUserInfoDto socialUserInfoDto) {
+    public Member saveMember(SocialUserInfoDto socialUserInfoDto,String accessToken) {
         Member kakaoMember = memberRepository.findByEmail("k_"+socialUserInfoDto.getEmail()).orElse(null);
 
         //없다면 저장
@@ -168,6 +175,9 @@ public class SocialKakaoService implements LoginInterface {
             return member;
         }
 
+        SocialAccessToken socialAccessToken = new SocialAccessToken(accessToken,"k_" + socialUserInfoDto.getEmail(),"kakao");
+        socialAccessTokenRepository.save(socialAccessToken);
+
         //있다면 member 반환
         return kakaoMember;
     }
@@ -186,4 +196,34 @@ public class SocialKakaoService implements LoginInterface {
 
         setHeader(response, tokenDto);
     }
+
+    public GlobalResDto<?> logoutKakao(Member member){
+
+        //소셜 토큰 가져오기
+        SocialAccessToken accessToken = socialAccessTokenRepository.findByAccountEmail(member.getEmail()).orElseThrow(()-> new CustomException(ErrorCode.ERROR));
+
+        //토큰으로 카카오에 로그아웃 요청
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken.getAccessToken());
+        headers.add("Content-type", "application/x-www-form-urlencoded");
+
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(headers);
+        RestTemplate rt = new RestTemplate();
+        try {
+            ResponseEntity<String> response = rt.exchange(
+                    "https://kapi.kakao.com/v1/user/logout",
+                    HttpMethod.POST,
+                    kakaoLogoutRequest,
+                    String.class
+            );
+        }catch (Exception e){
+            throw new CustomException(ErrorCode.ERROR);
+        }
+
+        socialAccessTokenRepository.delete(accessToken);
+
+        return GlobalResDto.success(null, "로그아웃 완료");
+    }
+
 }

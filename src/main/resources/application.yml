@@ -55,8 +55,8 @@ spring:
               - account_email
             client-name: kakao
           google:
-#            redirect-uri: https://godchoice.shop/member/signup/google
-            redirect-uri: http://localhost:3000/member/signup/google
+            redirect-uri: https://godchoice.shop/member/signup/google
+#            redirect-uri: http://localhost:3000/member/signup/google
             client-id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
             client-secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)
             scope:
@@ -70,8 +70,8 @@ spring:
             authorization-grant-type: authorization_code
 #            redirect-uri: http://54.180.201.200/member/signup/naver
 #            redirect-uri: http://localhost:8080/member/signup/naver
-#            redirect-uri: https://godchoice.shop/member/signup/naver
-            redirect-uri: http://localhost:3000/member/signup/naver
+            redirect-uri: https://godchoice.shop/member/signup/naver
+#            redirect-uri: http://localhost:3000/member/signup/naver
             client-id: ENC(tB0Oc2vPBULZObHGk1UQnx+ZDNCmptVlXhp2xOpofYU=)
             client-secret: ENC(1Ox6O24XdWClCPdhil4/42Pn6vFSQJZ6)
             client-name: naver

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequiredArgsConstructor
 public class NotificationController {
@@ -27,7 +29,7 @@ public class NotificationController {
     @ApiOperation(value = "전체 알림 가져오기",notes = "토큰이 필요합니다. 지금까지 온 모든 알림을 조회합니다.")
     @GetMapping("/getnotice")
     public GlobalResDto<?> getAllNotification(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return notificationService.getAllNotification(userDetails.getMember());
+        return notificationService.getAllNotification(userDetails);
     }
 
     //알림삭제

@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,7 +59,6 @@ public class SocialKakaoService implements LoginInterface {
     public final JwtUtil jwtUtil;
 
     public GlobalResDto<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-
         //인가코드를 통해 access_token 발급받기
         String accessToken = issuedAccessToken(code);
 
@@ -149,8 +149,8 @@ public class SocialKakaoService implements LoginInterface {
     }
 
     //사용자정보를 토대로 가입진행하기(일단 DB에 저장이 되어있는지 확인후)
-    public Member saveMember(SocialUserInfoDto socialUserInfoDto,String accessToken) {
-        Member kakaoMember = memberRepository.findByEmail("k_"+socialUserInfoDto.getEmail()).orElse(null);
+    public Member saveMember(SocialUserInfoDto socialUserInfoDto, String accessToken) {
+        Member kakaoMember = memberRepository.findByEmail("k_" + socialUserInfoDto.getEmail()).orElse(null);
 
         //없다면 저장
         if (kakaoMember == null) {
@@ -175,14 +175,23 @@ public class SocialKakaoService implements LoginInterface {
             return member;
         }
 
-        SocialAccessToken socialAccessToken = new SocialAccessToken(accessToken,"k_" + socialUserInfoDto.getEmail(),"kakao");
-        socialAccessTokenRepository.save(socialAccessToken);
+        List<SocialAccessToken> socialAccessTokens = socialAccessTokenRepository.findAllByAccountEmailOrderByAccessIdDesc("k_" + socialUserInfoDto.getEmail());
+
+        if (socialAccessTokens.size() != 0) {
+            SocialAccessToken socialAccessToken = socialAccessTokens.get(0);
+            socialAccessToken.change(accessToken);
+            socialAccessTokenRepository.save(socialAccessToken);
+        } else {
+            SocialAccessToken socialAccessToken = new SocialAccessToken(accessToken, "k_" + socialUserInfoDto.getEmail(), "kakao");
+            socialAccessTokenRepository.save(socialAccessToken);
+        }
+
 
         //있다면 member 반환
         return kakaoMember;
     }
 
-    public void createToken(Member member,HttpServletResponse response){
+    public void createToken(Member member, HttpServletResponse response) {
         TokenDto tokenDto = jwtUtil.createAllToken(member.getEmail());
 
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccountEmail(member.getEmail());
@@ -197,14 +206,18 @@ public class SocialKakaoService implements LoginInterface {
         setHeader(response, tokenDto);
     }
 
-    public GlobalResDto<?> logoutKakao(Member member){
+    public GlobalResDto<?> logoutKakao(Member member) {
 
         //소셜 토큰 가져오기
-        SocialAccessToken accessToken = socialAccessTokenRepository.findByAccountEmail(member.getEmail()).orElseThrow(()-> new CustomException(ErrorCode.ERROR));
+        List<SocialAccessToken> accessToken = socialAccessTokenRepository.findAllByAccountEmailOrderByAccessIdDesc(member.getEmail());
+
+        if (accessToken.size() == 0) {
+            throw new CustomException(ErrorCode.ERROR);
+        }
 
         //토큰으로 카카오에 로그아웃 요청
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken.getAccessToken());
+        headers.add("Authorization", "Bearer " + accessToken.get(0).getAccessToken());
         headers.add("Content-type", "application/x-www-form-urlencoded");
 
         // HTTP 요청 보내기
@@ -217,11 +230,11 @@ public class SocialKakaoService implements LoginInterface {
                     kakaoLogoutRequest,
                     String.class
             );
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException(ErrorCode.ERROR);
         }
 
-        socialAccessTokenRepository.delete(accessToken);
+        socialAccessTokenRepository.deleteAll(accessToken);
 
         return GlobalResDto.success(null, "로그아웃 완료");
     }

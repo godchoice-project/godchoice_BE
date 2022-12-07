@@ -27,7 +27,8 @@ public enum ErrorCode {
 
     NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "N001","알림이 존재하지 않습니다."),
 
-    ERROR(HttpStatus.NO_CONTENT.value(),"S001","알수업는오류");
+    ERROR(HttpStatus.NO_CONTENT.value(),"S001","알수업는오류"),
+    ERROR_LOGIN(HttpStatus.BAD_REQUEST.value(), "L001","로그인을 다시 시도해주세요");
 
 
     private final int status;

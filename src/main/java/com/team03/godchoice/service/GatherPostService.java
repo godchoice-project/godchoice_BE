@@ -50,7 +50,6 @@ public class GatherPostService implements MakeRegionTag {
         Member member = memberCheck(userDetails);
 
         // 만남시간, lacalDate로 바꾸고 주소 태그만들고
-        log.info("gatherPostDto");
         LocalDate date = LocalDate.parse(gatherPostDto.getDate(), DateTimeFormatter.ISO_DATE);
         RegionTag regionTag = toRegionTag(gatherPostDto.getPostAddress());
         String gatherStatus = eventPostService.toEventStatus(date);

@@ -29,7 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (accessToken != null) {
             if (!jwtUtil.tokenValidation(accessToken)) {
-                jwtExceptionHandler(response, "토큰이 만료되었습니다", HttpStatus.BAD_REQUEST);
+                jwtExceptionHandler(response, "토큰이 만료되었습니다", HttpStatus.FORBIDDEN);
                 return;
             }
             setAuthentication(jwtUtil.getEmailFromToken(accessToken));

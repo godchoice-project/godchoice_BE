@@ -11,16 +11,22 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 
 @Configuration
@@ -94,12 +100,26 @@ public class WebSecurityConfig {
                         "/v3/api-docs/**",
                         "/swagger-ui/**").permitAll()
                 //로그인,회원가입만 허용
-                .antMatchers("/member/**").permitAll()
+                .antMatchers("/member/signup/**").permitAll()
                 //전체불러오기 허용
                 .antMatchers("/allposts").permitAll()
                 .antMatchers("/getadminpost").permitAll()
 
+                .antMatchers("/getnotice").permitAll()
+
                 .anyRequest().authenticated()
+
+                .and()
+                .logout()
+                .logoutUrl("/member/signup/logout")
+                .deleteCookies("JSESSIONID")
+                .addLogoutHandler(new LogoutHandler() {
+                    @Override
+                    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                        HttpSession session = request.getSession();
+                        session.invalidate();
+                    }
+                })
 
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

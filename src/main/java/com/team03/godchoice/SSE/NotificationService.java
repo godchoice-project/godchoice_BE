@@ -4,6 +4,7 @@ import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
+import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -87,14 +88,18 @@ public class NotificationService {
                 .build();
     }
 
-    public GlobalResDto<?> getAllNotification(Member member) {
-        List<Notification> notificationList = notificationRepository.findAllByMemberOrderByIdDesc(member);
-        List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
-        for (Notification notification : notificationList) {
-            NotificationResponseDto notificationResponseDto = new NotificationResponseDto(notification);
-            notificationResponseDtoList.add(notificationResponseDto);
+    public GlobalResDto<?> getAllNotification(UserDetailsImpl userDetails) {
+        if(userDetails!=null){
+            List<Notification> notificationList = notificationRepository.findAllByMemberOrderByIdDesc(userDetails.getMember());
+            List<NotificationResponseDto> notificationResponseDtoList = new ArrayList<>();
+            for (Notification notification : notificationList) {
+                NotificationResponseDto notificationResponseDto = new NotificationResponseDto(notification);
+                notificationResponseDtoList.add(notificationResponseDto);
+            }
+            return GlobalResDto.success(notificationResponseDtoList, "알림리스트를 가져왔습니다.");
+        }else{
+            return GlobalResDto.success(null,"알림없음");
         }
-        return GlobalResDto.success(notificationResponseDtoList, "알림리스트를 가져왔습니다.");
     }
 
     @Transactional
@@ -108,19 +113,19 @@ public class NotificationService {
     }
 
     @Transactional
-    public GlobalResDto<?> readNotification( Long id) {
+    public GlobalResDto<?> readNotification(Long id) {
         Notification notification = notificationRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_NOTICE));
         notification.changeState();
         notificationRepository.save(notification);
         String post;
         if (notification.getAlarmType().equals(AlarmType.eventPostComment) || notification.getAlarmType().equals(AlarmType.eventPostCommentComment)) {
             post = "/eventposts/";
-        }else if(notification.getAlarmType().equals(AlarmType.gatherPostComment) || notification.getAlarmType().equals(AlarmType.gatherPostCommentComment)){
+        } else if (notification.getAlarmType().equals(AlarmType.gatherPostComment) || notification.getAlarmType().equals(AlarmType.gatherPostCommentComment)) {
             post = "/gatherposts/";
-        }else{
+        } else {
             post = "/askposts/";
         }
-        return GlobalResDto.success(null, post+notification.getUrl());
+        return GlobalResDto.success(null, post + notification.getUrl());
     }
 
     public Long unreadNotification(Member member) {

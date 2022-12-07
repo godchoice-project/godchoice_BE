@@ -36,4 +36,7 @@ public class RefreshToken {
         this.accountEmail = accountEmail;
     }
 
+    public void change(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }

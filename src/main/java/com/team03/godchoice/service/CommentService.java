@@ -55,7 +55,9 @@ public class CommentService {
                 if(!parentComment.getAskPost().getAskPostId().equals(askPostComment.getAskPost().getAskPostId())){
                     throw  new CustomException(ErrorCode.COMMENT_ERROR);
                 }
-                notificationService.send(parentComment.getMember(),AlarmType.askPostCommentComment,commentRequestDto.getContent(),askPost.getAskPostId(),account.getUserName());
+                if(!askPostComment.getMember().getMemberId().equals(parentComment.getMember().getMemberId())){
+                    notificationService.send(parentComment.getMember(),AlarmType.askPostCommentComment,commentRequestDto.getContent(),askPost.getAskPostId(),account.getUserName());
+                }
 
             }else{
                 if(!askPost.getMember().equals(askPostComment.getMember())){
@@ -77,7 +79,9 @@ public class CommentService {
                 if(!parentComment.getEventPost().getEventPostId().equals(eventPostComment.getEventPost().getEventPostId())){
                     throw  new CustomException(ErrorCode.COMMENT_ERROR);
                 }
-                notificationService.send(parentComment.getMember(),AlarmType.eventPostCommentComment,commentRequestDto.getContent(),eventPost.getEventPostId(),account.getUserName());
+                if(!eventPostComment.getMember().getMemberId().equals(parentComment.getMember().getMemberId())){
+                    notificationService.send(parentComment.getMember(),AlarmType.eventPostCommentComment,commentRequestDto.getContent(),eventPost.getEventPostId(),account.getUserName());
+                }
 
             }else{
                 if(!eventPost.getMember().equals(eventPostComment.getMember())){
@@ -98,7 +102,9 @@ public class CommentService {
                 if(!parentComment.getGatherPost().getGatherPostId().equals(gatherPostComment.getGatherPost().getGatherPostId())){
                     throw  new CustomException(ErrorCode.COMMENT_ERROR);
                 }
-                notificationService.send(parentComment.getMember(),AlarmType.gatherPostCommentComment,commentRequestDto.getContent(),gatherPost.getGatherPostId(),account.getUserName());
+                if(!gatherPostComment.getMember().getMemberId().equals(parentComment.getMember().getMemberId())){
+                    notificationService.send(parentComment.getMember(),AlarmType.gatherPostCommentComment,commentRequestDto.getContent(),gatherPost.getGatherPostId(),account.getUserName());
+                }
 
             }else{
                 if(!gatherPost.getMember().equals(gatherPostComment.getMember())){

@@ -34,4 +34,8 @@ public class SocialAccessToken {
         this.accountEmail = accountEmail;
         this.provider = provider;
     }
+
+    public void change(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

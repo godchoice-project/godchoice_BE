@@ -1,6 +1,6 @@
 package com.team03.godchoice.service;
 
-import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
+import com.team03.godchoice.publicClass.MakeRegionTagClass;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.enumclass.RegionTag;

@@ -4,7 +4,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
+import com.team03.godchoice.publicClass.MakeRegionTagClass;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.dto.responseDto.eventpost.EventPostAllResDto;

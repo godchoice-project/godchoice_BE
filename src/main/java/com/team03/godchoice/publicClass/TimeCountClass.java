@@ -1,9 +1,9 @@
-package com.team03.godchoice.abstrctPackage;
+package com.team03.godchoice.publicClass;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-public abstract class TimeCountClass {
+public class TimeCountClass {
 
     public static String countTime(LocalDateTime localDateTime) {
         String countTime = "";

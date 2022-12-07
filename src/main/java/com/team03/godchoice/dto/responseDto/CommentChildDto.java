@@ -1,13 +1,12 @@
 package com.team03.godchoice.dto.responseDto;
 
-import com.team03.godchoice.abstrctPackage.TimeCountClass;
+import com.team03.godchoice.publicClass.TimeCountClass;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
 import com.team03.godchoice.domain.gatherPost.GatherPostComment;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.team03.godchoice.abstrctPackage;
+package com.team03.godchoice.publicClass;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.team03.godchoice.enumclass.RegionTag;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class MakeRegionTagClass {
+public class MakeRegionTagClass {
 
     private RegionTag getRegionTag(String key) {
         Map<String, RegionTag> regionTagMap = new HashMap<>() {{

@@ -1,6 +1,6 @@
 package com.team03.godchoice.dto.responseDto;
 
-import com.team03.godchoice.abstrctPackage.TimeCountClass;
+import com.team03.godchoice.publicClass.TimeCountClass;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.enumclass.DeleteStatus;
 import com.team03.godchoice.domain.eventpost.EventPostComment;

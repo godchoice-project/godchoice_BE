@@ -1,6 +1,6 @@
 package com.team03.godchoice.SSE;
 
-import com.team03.godchoice.abstrctPackage.TimeCountClass;
+import com.team03.godchoice.publicClass.TimeCountClass;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

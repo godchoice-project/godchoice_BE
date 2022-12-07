@@ -1,6 +1,6 @@
 package com.team03.godchoice.service;
 
-import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
+import com.team03.godchoice.publicClass.MakeRegionTagClass;
 import com.team03.godchoice.adminPage.AdminPage;
 import com.team03.godchoice.adminPage.AdminPageRepository;
 import com.team03.godchoice.domain.Member;
@@ -45,7 +45,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

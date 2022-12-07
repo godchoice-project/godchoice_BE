@@ -2,20 +2,11 @@ package com.team03.godchoice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team03.godchoice.dto.GlobalResDto;
-import com.team03.godchoice.security.jwt.JwtUtil;
-import com.team03.godchoice.security.jwt.UserDetailsImpl;
 import com.team03.godchoice.service.ReTokenService;
 import com.team03.godchoice.service.socialLogin.*;
-import io.jsonwebtoken.Jwt;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,39 +17,34 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/member/signup")
 public class SocialLoginController {
 
-    private final SocialGoogleService socialGoogleService;
-    private final SocialGithubService socialGithubService;
-    private final SocialKakaoService socialKakaoService;
-    private final SocialNaverService2 socialNaverService;
+    private final SocialGoogleService socialGoogleService2;
+    private final SocialGithubService socialGithubService2;
+    private final SocialKakaoService socialKakaoService2;
+    private final SocialNaverService3 socialNaverService3;
     private final ReTokenService reTokenService;
 
     @GetMapping("/kakao")
     public GlobalResDto<?> kakaoLogin(
             @RequestParam(value = "code") String code, HttpServletResponse response) throws JsonProcessingException {
-        return socialKakaoService.kakaoLogin(code, response);
-    }
-
-    @PostMapping("/kakao")
-    public GlobalResDto<?> kakaoLogout(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return socialKakaoService.logoutKakao(userDetails.getMember());
+        return socialKakaoService2.loginService(code, response);
     }
 
     @GetMapping("/github")
     public GlobalResDto<?> githubLogin(
             @RequestParam(value = "code") String code, HttpServletResponse response) throws JsonProcessingException {
-        return socialGithubService.githubLogin(code, response);
+        return socialGithubService2.loginService(code, response);
     }
 
     @GetMapping("/google")
     public GlobalResDto<?> googleLogin(
             @RequestParam(value = "code") String code, HttpServletResponse response) throws JsonProcessingException {
-        return socialGoogleService.googleLogin(code, response);
+        return socialGoogleService2.loginService(code, response);
     }
 
     @GetMapping("/naver")
     public GlobalResDto<?> naverLogin(
             @RequestParam(value = "code") String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
-        return socialNaverService.naverLogin(code, state, response);
+        return socialNaverService3.loginService(code, state, response);
     }
 
     @GetMapping("/issue/token")

@@ -4,7 +4,6 @@ import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostImg;
-import com.team03.godchoice.domain.askpost.AskPostLike;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostPutRequestDto;
 import com.team03.godchoice.dto.requestDto.askpostDto.AskPostRequestDto;
@@ -25,9 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +71,7 @@ public class AskPostService {
 
         // 작성자만 수정할수 있게 예외처리
         if(!member.getMemberId().equals(askPost.getMember().getMemberId())){
-            throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
+            throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
         }
 
         // 게시글 수정
@@ -117,7 +113,7 @@ public class AskPostService {
 
         // 작성자만 삭제할수 있게 예외처리
         if(!member.getMemberId().equals(askPost.getMember().getMemberId())){
-            throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
+            throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
         }
 
         List<AskPostImg> askPostImgList = askPost.getAskPostImg();
@@ -131,9 +127,7 @@ public class AskPostService {
         // 삭제
         askPostRepository.deleteById(postId);
 
-
         return GlobalResDto.success(null,"success delete askPost");
-
     }
 
     @Transactional

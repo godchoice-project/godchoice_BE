@@ -1,5 +1,6 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.enumclass.RegionTag;
@@ -14,7 +15,6 @@ import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import com.team03.godchoice.dto.responseDto.gatherpost.GatherPostResponseDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostImgRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostLikeRepository;
@@ -36,7 +36,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GatherPostService implements MakeRegionTag {
+public class GatherPostService extends MakeRegionTagClass {
     private final MemberRepository memberRepository;
     private final GatherPostRepository gatherPostRepository;
     private final GatherPostImgRepository gatherPostImgRepository;
@@ -83,7 +83,7 @@ public class GatherPostService implements MakeRegionTag {
         }else{
             if(date.isBefore(LocalDate.now())){
                 if(gatherPostDto.getPostState().equals("진행중")){
-                    throw new CustomException(ErrorCode.DATESTATUS_ERROR);
+                    throw new CustomException(ErrorCode.DATE_STATUS_ERROR);
                 }else{
                     gatherStatus = gatherPostDto.getPostState();
                 }
@@ -123,7 +123,7 @@ public class GatherPostService implements MakeRegionTag {
         GatherPost gatherPost = postCheck(postId);
 
         if (gatherPost.getMember().getEmail().equals(member.getEmail())) {
-            List<GatherPostImg> gatherPostImgs = gatherPostImgRepository.findAllByGatherPost(gatherPost);
+            List<GatherPostImg> gatherPostImgs = gatherPost.getGatherPostImg();
             if (gatherPostImgs.size() != 0) {
                 for (GatherPostImg gatherPostImg : gatherPostImgs) {
                     String imgUrl = toImgPath(gatherPostImg);

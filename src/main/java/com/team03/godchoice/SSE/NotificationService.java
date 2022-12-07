@@ -109,6 +109,8 @@ public class NotificationService {
             throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
         }
         notificationRepository.delete(notification);
+        emitterRepository.deleteAllEmitterStartWithId(member.getMemberId().toString());
+        emitterRepository.deleteAllEventCacheStartWithId(member.getMemberId().toString());
         return GlobalResDto.success(null, "삭제 성공");
     }
 

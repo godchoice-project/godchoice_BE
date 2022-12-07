@@ -30,25 +30,22 @@ public class SearchPostService {
         Member member;
         if(userDetails!=null){
             member = isPresentMember(userDetails);
-            if (member == null) {
-                throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-            }
         }else{
             member = null;
         }
 
         if(main.equals("event")){  //행사글 찾는 곳
-            return GlobalResDto.success(eventPostImplRepository.searchEventPost(tag,progress,sort,search,pageable,member),null) ;
+            return GlobalResDto.success(eventPostImplRepository.searchPost(tag,progress,sort,search,pageable,member),null) ;
         }else if(main.equals("gather")){  //모집글 찾는곳
-            return GlobalResDto.success(gatherPostImplRepository.searchGatherPost(tag,progress,sort,search,pageable,member),null);
+            return GlobalResDto.success(gatherPostImplRepository.searchPost(tag,progress,sort,search,pageable,member),null);
         }else{  //질문글 찾는곳
-            return GlobalResDto.success(askPostImplRepository.searchAskPost(sort,search,pageable,member),null);
+            return GlobalResDto.success(askPostImplRepository.searchPost(null,null,sort,search,pageable,member),null);
         }
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
-        Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
-        return member.orElse(null);
+        return memberRepository.findById(userDetails.getAccount().getMemberId())
+                .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
 

@@ -1,9 +1,13 @@
 package com.team03.godchoice.exception;
 
 import com.team03.godchoice.dto.GlobalResDto;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestControllerAdvice
@@ -16,10 +20,11 @@ public class ExceptionHandling {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        String errorMessage = e.getBindingResult()
-                .getAllErrors()
-                .get(0)
-                .getDefaultMessage();
+        List<String> errorMessage = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
 
         return GlobalResDto.fail(errorMessage);
     }

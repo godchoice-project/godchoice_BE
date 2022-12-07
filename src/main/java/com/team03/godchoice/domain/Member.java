@@ -25,6 +25,7 @@ public class Member {
     @Column(nullable = false)
     private String userName;
 
+    //    @Enumerated(EnumType.STRING)
     private RegionTag userAddressTag;
 
     private String userImgUrl;
@@ -58,7 +59,7 @@ public class Member {
         this.postView = null;
     }
 
-    public void update(MyPageReqDto user, RegionTag regionTag, String userImgUrl,String userName) {
+    public void update(RegionTag regionTag, String userImgUrl,String userName) {
         this.userName = userName;
         this.userAddressTag = regionTag;
         this.userImgUrl = userImgUrl;

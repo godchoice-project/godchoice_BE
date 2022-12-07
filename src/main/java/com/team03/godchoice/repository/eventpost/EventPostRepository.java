@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventPostRepository extends JpaRepository<EventPost,Long>{
-    List<EventPost> findAllByMember(Member member);
-
-
     Optional<EventPost> findByEventPostId(Long postId);
 
     List<EventPost> findAllByMemberOrderByEventPostIdDesc(Member member);

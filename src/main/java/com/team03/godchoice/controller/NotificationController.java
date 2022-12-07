@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
 @RequiredArgsConstructor
 public class NotificationController {
@@ -20,8 +18,7 @@ public class NotificationController {
 
     @GetMapping(value = "/subscribe", produces = "text/event-stream")
     public SseEmitter subscribe(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "")
-                                String lastEventId) {
+                                @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
         return notificationService.subscribe(userDetails.getMember().getMemberId(), lastEventId);
     }
 

@@ -24,7 +24,6 @@ import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,7 +124,7 @@ public class CommentService {
                     () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
             );
             if (!comment.getMember().getMemberId().equals(member.getMemberId())) {
-                throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
+                throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
                 if(askPostCommentRepository.findAllByParent(comment.getParent()).size() == 1){
@@ -147,7 +146,7 @@ public class CommentService {
                     () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
             );
             if (!comment.getMember().getMemberId().equals(member.getMemberId())) {
-                throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
+                throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
                 if(eventPostCommentRepository.findAllByParent(comment.getParent()).size()==1){
@@ -169,7 +168,7 @@ public class CommentService {
                     () -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
             );
             if (!comment.getMember().getMemberId().equals(member.getMemberId())) {
-                throw new CustomException(ErrorCode.NOT_MATCH_MEMBER);
+                throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
             }
             if (!(comment.getParent() == null)) { // 자식 댓글임
                 if(gatherPostCommentRepository.findAllByParent(comment.getParent()).size()==1){

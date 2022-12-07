@@ -45,18 +45,4 @@ public class NotificationResponseDto {
         this.alarmType = notification.getAlarmType();
         this.createdAt = TimeCountClass.countTime(notification.getCreatedAt());
     }
-
-    public static NotificationResponseDto create(Notification notification) {
-        String createdAt = TimeCountClass.countTime(notification.getCreatedAt());
-
-        return NotificationResponseDto.builder()
-                .id(notification.getId())
-                .message(notification.getMessage())
-                .alarmType(notification.getAlarmType())
-                .articlesId(notification.getUrl())
-                .title(notification.getTitle())
-                .readStatus(notification.getReadState())
-                .createdAt(createdAt)
-                .build();
-    }
 }

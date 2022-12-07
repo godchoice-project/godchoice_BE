@@ -37,8 +37,8 @@ public class JwtUtil {
 
     @Value("${jwt.secret.key}")
     private String secretKey;
-    private Key key;
-    private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    private static Key key;
+    private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
     @PostConstruct
     public void init() {
@@ -52,11 +52,11 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public TokenDto createAllToken(String email) {
+    public static TokenDto createAllToken(String email) {
         return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
     }
 
-    public String createToken(String email, String type) {
+    public static String createToken(String email, String type) {
 
         Date date = new Date();
 

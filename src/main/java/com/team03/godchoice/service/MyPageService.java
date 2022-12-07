@@ -1,13 +1,12 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
 import com.team03.godchoice.adminPage.AdminPage;
 import com.team03.godchoice.adminPage.AdminPageRepository;
-import com.team03.godchoice.adminPage.AdminService;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.domain.askpost.AskPost;
 import com.team03.godchoice.domain.askpost.AskPostComment;
 import com.team03.godchoice.domain.askpost.AskPostLike;
-import com.team03.godchoice.dto.responseDto.mypageResDto.AdminMyPage;
 import com.team03.godchoice.enumclass.RegionTag;
 import com.team03.godchoice.domain.eventpost.EventPost;
 import com.team03.godchoice.domain.eventpost.EventPostComment;
@@ -25,7 +24,6 @@ import com.team03.godchoice.dto.responseDto.mypageResDto.MyPageUserResDto;
 import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.askpost.AskPostCommentRepository;
 import com.team03.godchoice.repository.askpost.AskPostLikeRepository;
@@ -38,6 +36,7 @@ import com.team03.godchoice.repository.gatherpost.GatherPostLikeRepository;
 import com.team03.godchoice.repository.gatherpost.GatherPostRepository;
 import com.team03.godchoice.s3.S3Uploader;
 import com.team03.godchoice.security.jwt.UserDetailsImpl;
+import com.team03.godchoice.util.ComfortUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +49,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageService implements MakeRegionTag {
+public class MyPageService extends MakeRegionTagClass {
 
     private final MemberRepository memberRepository;
 
@@ -65,17 +64,13 @@ public class MyPageService implements MakeRegionTag {
     private final AskPostRepository askPostRepository;
     private final AskPostCommentRepository askPostCommentRepository;
     private final AskPostLikeRepository askPostLikeRepository;
-
     private final AdminPageRepository adminPageRepository;
-
     private final S3Uploader s3Uploader;
+    private final ComfortUtils comfortUtils;
 
     @Transactional
     public GlobalResDto<?> changeUserInfo(MyPageReqDto user, MultipartFile multipartFile, UserDetailsImpl userDetails) throws IOException {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         String userImgUrl;
         if (multipartFile != null) {
@@ -98,20 +93,15 @@ public class MyPageService implements MakeRegionTag {
             username = user.getUserName();
         }
 
-
-        member.update(user, regionTag, userImgUrl,username);
+        member.update(regionTag, userImgUrl,username);
         memberRepository.save(member);
         return GlobalResDto.success(getUser(userDetails).getData(), "수정이 완료되었습니다");
     }
 
     public GlobalResDto<?> getUser(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         String[] userEmail = toEmail(member);
-
 
         if(member.getRole().equals(Role.ADMIN)){
             List<AdminPage> adminPageList = adminPageRepository.findAll();
@@ -125,9 +115,6 @@ public class MyPageService implements MakeRegionTag {
 
     public GlobalResDto<?> getMyPost(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         //내가 쓴 행사글 가져와서 Dto 저장
         List<EventPost> eventPostList = eventPostRepository.findAllByMemberOrderByEventPostIdDesc(member);
@@ -159,9 +146,6 @@ public class MyPageService implements MakeRegionTag {
 
     public GlobalResDto<?> getMyComment(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         List<EventPostComment> eventPostCommentList = eventPostCommentRepository.findAllByMemberOrderByCommentIdDesc(member);
         List<EventPost> eventPostList = new ArrayList<>();
@@ -197,9 +181,6 @@ public class MyPageService implements MakeRegionTag {
 
     public GlobalResDto<?> getMyScrap(UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         List<EventPostLike> eventPostLikeList = eventPostLikeRepository.findAllByMemberOrderByPostLikeIdDesc(member);
         List<EventPost> eventPostList = new ArrayList<>();
@@ -227,8 +208,8 @@ public class MyPageService implements MakeRegionTag {
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
-        Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
-        return member.orElse(null);
+        return memberRepository.findById(userDetails.getAccount().getMemberId())
+                .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     public String[] toEmail(Member member) {
@@ -277,5 +258,9 @@ public class MyPageService implements MakeRegionTag {
             myAskPost.add(AskPostAllResDto.toAPARD(askPost, bookmark));
         }
         return myAskPost;
+    }
+
+    public String createNickName() {
+        return comfortUtils.makeUserNickName();
     }
 }

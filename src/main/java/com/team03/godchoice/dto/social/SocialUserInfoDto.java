@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SocialUserInfoDto {
-    private Long id;
+    private String id;
     private String nickname;
     private String email;
     private String userImgUrl;

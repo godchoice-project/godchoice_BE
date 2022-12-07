@@ -24,7 +24,7 @@ public class ReTokenService {
 
         if(valToken){
             String userEmail =jwtUtil.getEmailFromToken(refreshToken);
-            TokenDto tokenDto = jwtUtil.createAllToken(userEmail);
+            TokenDto tokenDto = JwtUtil.createAllToken(userEmail);
 
             RefreshToken oldRefreshToken = refreshTokenRepository.findByAccountEmail(userEmail)
                     .orElseThrow(()-> new CustomException(ErrorCode.ERROR));

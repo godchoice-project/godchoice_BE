@@ -1,5 +1,6 @@
 package com.team03.godchoice.service;
 
+import com.team03.godchoice.abstrctPackage.MakeRegionTagClass;
 import com.team03.godchoice.domain.Member;
 import com.team03.godchoice.dto.responseDto.CreateResDto;
 import com.team03.godchoice.enumclass.RegionTag;
@@ -14,7 +15,6 @@ import com.team03.godchoice.dto.responseDto.PostImgResDto;
 import com.team03.godchoice.dto.responseDto.eventpost.EventPostResDto;
 import com.team03.godchoice.exception.CustomException;
 import com.team03.godchoice.exception.ErrorCode;
-import com.team03.godchoice.interfacepackage.MakeRegionTag;
 import com.team03.godchoice.repository.MemberRepository;
 import com.team03.godchoice.repository.eventpost.EventPostImgRepository;
 import com.team03.godchoice.repository.eventpost.EventPostLikeRepository;
@@ -33,7 +33,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class EventPostService implements MakeRegionTag {
+public class EventPostService extends MakeRegionTagClass {
 
     private final MemberRepository memberRepository;
     private final EventPostRepository eventPostRepository;
@@ -44,9 +44,6 @@ public class EventPostService implements MakeRegionTag {
     @Transactional
     public GlobalResDto<?> createEventPost(UserDetailsImpl userDetails, EventPostReqDto eventPostReqDto, List<MultipartFile> multipartFiles) throws IOException {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         if(userDetails.getMember().getIsDeleted()){
             throw new CustomException(ErrorCode.DELETED_USER_EXCEPTION);
@@ -70,14 +67,8 @@ public class EventPostService implements MakeRegionTag {
     public GlobalResDto<?> putEventPost(UserDetailsImpl userDetails, Long postId, EventPostPutReqDto eventPostPutReqDto, List<MultipartFile> multipartFiles) throws IOException {
 
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         EventPost eventPost = isPresentPost(postId);
-        if (eventPost == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
-        }
 
         if (!eventPost.getMember().getEmail().equals(member.getEmail())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_CHANGE);
@@ -114,14 +105,8 @@ public class EventPostService implements MakeRegionTag {
     public GlobalResDto<?> deleteEventPost(UserDetailsImpl userDetails, Long postId) {
 
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         EventPost eventPost = isPresentPost(postId);
-        if (eventPost == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
-        }
 
         if (!eventPost.getMember().getEmail().equals(member.getEmail())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_DELETE);
@@ -150,12 +135,8 @@ public class EventPostService implements MakeRegionTag {
         viewCountUp(postId, userDetails.getAccount());
 
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
-        EventPost eventPost = eventPostRepository.findByEventPostId(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        EventPost eventPost = isPresentPost(postId);
 
         List<EventPostImg> eventPostImgs = new ArrayList<>(eventPost.getPostImgUrl());
         List<PostImgResDto> postImgResDtos = new ArrayList<>();
@@ -181,13 +162,13 @@ public class EventPostService implements MakeRegionTag {
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
-        Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
-        return member.orElse(null);
+        return memberRepository.findById(userDetails.getAccount().getMemberId())
+                .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     public EventPost isPresentPost(Long postId) {
-        Optional<EventPost> post = eventPostRepository.findById(postId);
-        return post.orElse(null);
+        return eventPostRepository.findById(postId)
+                .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_POST));
     }
 
     //행사가 진행중인 종료되었는지 판별하는 메서드

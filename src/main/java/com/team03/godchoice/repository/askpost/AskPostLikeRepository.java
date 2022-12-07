@@ -12,8 +12,6 @@ public interface AskPostLikeRepository extends JpaRepository<AskPostLike, Long> 
 
     Optional<AskPostLike> findByAskPostAndMember(AskPost askPost, Member member);
 
-    List<AskPostLike> findAllByMember(Member member);
-
     List<AskPostLike> findAllByMemberOrderByPostLikeIdDesc(Member member);
 
     boolean existsByMemberAndAskPost(Member member, AskPost askPost);

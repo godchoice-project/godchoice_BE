@@ -48,4 +48,9 @@ public class MyPageController {
     public GlobalResDto<?> getMyScrap(@ApiIgnore @AuthenticationPrincipal UserDetailsImpl userDetails){
         return myPageService.getMyScrap(userDetails);
     }
+
+    @GetMapping("/nickname")
+    public String  create(){
+        return myPageService.createNickName();
+    }
 }

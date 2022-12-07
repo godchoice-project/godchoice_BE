@@ -25,6 +25,7 @@ public class GatherPost extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gatherPostId;
 
+    //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
 
@@ -68,6 +69,7 @@ public class GatherPost extends Timestamped {
     @JsonIgnore
     private Member member;
 
+    //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegionTag regionTag;
 

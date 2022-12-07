@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -87,24 +86,29 @@ public class WebSecurityConfig {
         //토큰없이 요청가능한 url 그외에는 권환학인 필수
         http
                 .authorizeRequests()
-                //H2 console 허용
-                .antMatchers("/h2-console/**").permitAll()
+
                 //swagger 허용
-                .antMatchers("/v2/api-docs",
-                        "/swagger-resources",
-                        "/swagger-resources/**",
-                        "/configuration/ui",
-                        "/configuration/security",
-                        "/swagger-ui.html",
-                        "/webjars/**",
-                        "/v3/api-docs/**",
+                .antMatchers(
+//                        "/v2/api-docs",
+//                        "/swagger-resources",
+//                        "/swagger-resources/**",
+//                        "/configuration/ui",
+//                        "/configuration/security",
+//                        "/swagger-ui.html",
+//                        "/webjars/**",
+//                        "/v3/api-docs/**",
                         "/swagger-ui/**").permitAll()
+
                 //로그인,회원가입만 허용
                 .antMatchers("/member/signup/**").permitAll()
+
                 //전체불러오기 허용
                 .antMatchers("/allposts").permitAll()
+
+                //배너허용
                 .antMatchers("/getadminpost").permitAll()
 
+                //알림허용
                 .antMatchers("/getnotice").permitAll()
 
                 .anyRequest().authenticated()

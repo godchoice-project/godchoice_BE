@@ -32,6 +32,7 @@ public class EventPost extends Timestamped {
     @JsonIgnore
     private Member member;
 
+    //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
 
@@ -52,6 +53,7 @@ public class EventPost extends Timestamped {
     @Column(nullable = false)
     private String postAddress;
 
+    //    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegionTag regionTag;
 

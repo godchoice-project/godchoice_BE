@@ -15,14 +15,12 @@ public class UserInfoDto {
     private String userImgUrl;
     private String role;
 
-    private Long notificationNum;
 
-    public UserInfoDto(Member member,Long notificationNum) {
+    public UserInfoDto(Member member ) {
         this.userId = member.getMemberId();
         this.userAddressTag = toAddressTag(member);
         this.userImgUrl = member.getUserImgUrl();
         this.role = member.getRole().toString();
-        this.notificationNum = notificationNum;
     }
 
     public String toAddressTag(Member member){

@@ -12,8 +12,6 @@ public interface EventPostLikeRepository extends JpaRepository<EventPostLike, Lo
 
     Optional<EventPostLike> findByEventPostAndMember(EventPost eventPost, Member member);
 
-    List<EventPostLike> findAllByMember(Member member);
-
     List<EventPostLike> findAllByMemberOrderByPostLikeIdDesc(Member member);
 
     boolean existsByMemberAndEventPost(Member member, EventPost eventPost);

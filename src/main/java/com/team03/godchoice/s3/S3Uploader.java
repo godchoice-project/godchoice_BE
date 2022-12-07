@@ -27,8 +27,6 @@ public class S3Uploader {
     // 4. url 리턴
 
     public String uploadFiles(MultipartFile multipartFile, String dirName) throws IOException {
-//        File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-//        multipartFile.transferTo(file); // 파일 변환할 수 없으면 에러
 
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
@@ -51,10 +49,8 @@ public class S3Uploader {
     // 로컬에 저장된 이미지 지우기
     private void removeNewFile(File targetFile) {
         if (targetFile.delete()) {
-            System.out.println("File delete success");
             return;
         }
-        System.out.println("File delete fail");
     }
 
     //로컬에 파일 업로드 하기
@@ -68,9 +64,6 @@ public class S3Uploader {
             return Optional.of(convertFile);
         }
         return Optional.empty();
-    }
-    public String getImg(String path) {
-        return amazonS3Client.getUrl(bucket, path).toString();
     }
 
     public void delImg(String path) {

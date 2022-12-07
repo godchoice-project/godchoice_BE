@@ -1,8 +1,6 @@
 package com.team03.godchoice.adminPage;
 
-import ch.qos.logback.core.html.NOPThrowableRenderer;
 import com.team03.godchoice.domain.Member;
-import com.team03.godchoice.domain.eventpost.EventPostImg;
 import com.team03.godchoice.dto.GlobalResDto;
 import com.team03.godchoice.enumclass.Role;
 import com.team03.godchoice.exception.CustomException;
@@ -16,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,9 +25,6 @@ public class AdminService {
 
     public GlobalResDto<?> createAdminPost(AdminPostReqDto adminPostReqDto, MultipartFile multipartFile, UserDetailsImpl userDetails) throws IOException {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         if(!member.getRole().equals(Role.ADMIN)){
             throw  new CustomException(ErrorCode.USER_ERROR);
@@ -44,9 +38,6 @@ public class AdminService {
 
     public GlobalResDto<?> deleteAdminPost(Long id, UserDetailsImpl userDetails) {
         Member member = isPresentMember(userDetails);
-        if (member == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_MEMBER);
-        }
 
         if(!member.getRole().equals(Role.ADMIN)){
             throw  new CustomException(ErrorCode.USER_ERROR);
@@ -67,8 +58,8 @@ public class AdminService {
     }
 
     public Member isPresentMember(UserDetailsImpl userDetails) {
-        Optional<Member> member = memberRepository.findById(userDetails.getAccount().getMemberId());
-        return member.orElse(null);
+        return memberRepository.findById(userDetails.getAccount().getMemberId())
+                .orElseThrow(()-> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
     }
 
     public String toImgPath(String imgUrl) {

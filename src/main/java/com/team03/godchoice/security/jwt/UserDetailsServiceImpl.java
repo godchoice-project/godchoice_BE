@@ -1,6 +1,8 @@
 package com.team03.godchoice.security.jwt;
 
 import com.team03.godchoice.domain.Member;
+import com.team03.godchoice.exception.CustomException;
+import com.team03.godchoice.exception.ErrorCode;
 import com.team03.godchoice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("NOT FOUNT ACCOUNT")  //커스텀 예외처리 해야함
+                () -> new CustomException(ErrorCode.NOT_FOUND_MEMBER) //커스텀 예외처리 해야함
         );
 
         UserDetailsImpl userDetails = new UserDetailsImpl();

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GatherPostRepository extends JpaRepository <GatherPost, Long> {
-    List<GatherPost> findAllByMember(Member member);
 
     Optional<GatherPost> findByGatherPostId(Long gatherPostId);
 

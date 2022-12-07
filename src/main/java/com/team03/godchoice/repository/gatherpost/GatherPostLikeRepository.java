@@ -12,8 +12,6 @@ public interface GatherPostLikeRepository extends JpaRepository<GatherPostLike, 
 
     Optional<GatherPostLike> findByGatherPostAndMember(GatherPost gatherPost, Member member);
 
-    List<GatherPostLike> findAllByMember(Member member);
-
     List<GatherPostLike> findAllByMemberOrderByPostLikeIdDesc(Member member);
 
     boolean existsByMemberAndGatherPost(Member member, GatherPost gatherPost);

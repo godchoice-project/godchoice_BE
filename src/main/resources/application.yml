@@ -10,8 +10,8 @@ cloud:
     s3:
       bucket: eunibucket
     credentials:
-      access-key: ''
-      secret-key: ''
+      access-key: ENC(WmPyaZcrBChfgr9MI4mgCfXf14qPuo7nw8mkt9sTlK0=)
+      secret-key: ENC(zgWqYw7o9syBquFowMMldB/Y50hdehnMfmoWBs9OdDbansG6v2xzAXdyq0sUyfe09MNaijr05gk=)
     region:
       static: ap-northeast-2
       auto: false

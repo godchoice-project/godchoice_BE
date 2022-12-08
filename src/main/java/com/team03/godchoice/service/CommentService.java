@@ -59,7 +59,7 @@ public class CommentService {
                 }
 
             }else{
-                if(!askPost.getMember().equals(askPostComment.getMember())){
+                if(!askPost.getMember().getMemberId().equals(askPostComment.getMember().getMemberId())){
                     notificationService.send(askPost.getMember(), AlarmType.askPostComment,commentRequestDto.getContent(),askPost.getAskPostId(),account.getUserName());
                 }
             }
@@ -83,7 +83,7 @@ public class CommentService {
                 }
 
             }else{
-                if(!eventPost.getMember().equals(eventPostComment.getMember())){
+                if(!eventPost.getMember().getMemberId().equals(eventPostComment.getMember().getMemberId())){
                     notificationService.send(eventPost.getMember(), AlarmType.eventPostComment,commentRequestDto.getContent(),eventPost.getEventPostId(),account.getUserName());
                 }
             }
@@ -106,7 +106,7 @@ public class CommentService {
                 }
 
             }else{
-                if(!gatherPost.getMember().equals(gatherPostComment.getMember())){
+                if(!gatherPost.getMember().getMemberId().equals(gatherPostComment.getMember().getMemberId())){
                     notificationService.send(gatherPost.getMember(), AlarmType.gatherPostComment,commentRequestDto.getContent(),gatherPost.getGatherPostId(),account.getUserName());
                 }
             }

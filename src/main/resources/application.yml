@@ -1,9 +1,9 @@
 #https ??
-#server:
-#  ssl:
-#    key-store-password: 5509kong
-#    key-store-type: PKCS12
-#    key-store:  classpath:keystore.p12
+server:
+  ssl:
+    key-store-password: 5509kong
+    key-store-type: PKCS12
+    key-store:  classpath:keystore.p12
 
 spring:
   h2:
@@ -44,8 +44,8 @@ spring:
             client-id: ENC(GRwC4xDK2+Li+1SoOSTQjPCUBW1RBhQIEsPlm21/u1VCOQI4L0UzvwfBEQsnJ+vJ)
 #            redirect-uri: http://54.180.201.200/member/signup/kakao
 #            redirect-uri: http://localhost:8080/member/signup/kakao
-#            redirect-uri: https://godchoice.shop/member/signup/kakao
-            redirect-uri: http://localhost:3000/member/signup/kakao
+            redirect-uri: https://godchoice.shop/member/signup/kakao
+#            redirect-uri: http://localhost:3000/member/signup/kakao
             client-authentication-method: POST
             client-secret: ENC(J4KeBmKJFYx1iNmpI0Lx4DUUziK07zu3Qyzrb+Ph0IZRhvZXMyEM9NQaheLsw0PM)
             authorization-grant-type: authorization_code
@@ -55,8 +55,8 @@ spring:
               - account_email
             client-name: kakao
           google:
-#            redirect-uri: https://godchoice.shop/member/signup/google
-            redirect-uri: http://localhost:3000/member/signup/google
+            redirect-uri: https://godchoice.shop/member/signup/google
+#            redirect-uri: http://localhost:3000/member/signup/google
             client-id: ENC(1cFCCJjbyqD6w9HK/+KLcHh0i3njhzV8z7X+u/zaA48PdBNPK29WChD1omoL//bIB7Gi7YGy+KopL6gQnZOZACQYdugGenR9rgIY572eCSnrzktFmglrHA==)
             client-secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)
             scope:
@@ -70,8 +70,8 @@ spring:
             authorization-grant-type: authorization_code
 #            redirect-uri: http://54.180.201.200/member/signup/naver
 #            redirect-uri: http://localhost:8080/member/signup/naver
-#            redirect-uri: https://godchoice.shop/member/signup/naver
-            redirect-uri: http://localhost:3000/member/signup/naver
+            redirect-uri: https://godchoice.shop/member/signup/naver
+#            redirect-uri: http://localhost:3000/member/signup/naver
             client-id: ENC(tB0Oc2vPBULZObHGk1UQnx+ZDNCmptVlXhp2xOpofYU=)
             client-secret: ENC(1Ox6O24XdWClCPdhil4/42Pn6vFSQJZ6)
             client-name: naver

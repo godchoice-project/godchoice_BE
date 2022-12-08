@@ -5,6 +5,19 @@ server:
     key-store-type: PKCS12
     key-store:  classpath:keystore.p12
 
+cloud:
+  aws:
+    s3:
+      bucket: eunibucket
+    credentials:
+      access-key: ' '
+      secret-key: ' '
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 spring:
   h2:
     console:
@@ -103,3 +116,10 @@ sentry:
   logging:
     minimum-event-level: warn
   dsn: https://d247bc84b40c4f9c9780a16db53b7da3@o4504194608201728.ingest.sentry.io/4504194610364416
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR

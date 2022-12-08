@@ -38,4 +38,3 @@ GodchoiceApplicationTest.java
 
 ### VS Code ###
 .vscode/
-/src/main/resources/application-secret.yml

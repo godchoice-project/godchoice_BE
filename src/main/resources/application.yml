@@ -5,6 +5,19 @@ server:
     key-store-type: PKCS12
     key-store:  classpath:keystore.p12
 
+cloud:
+  aws:
+    s3:
+      bucket: eunibucket
+    credentials:
+      access-key: ''
+      secret-key: ''
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 spring:
   h2:
     console:

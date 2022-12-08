@@ -10,8 +10,8 @@ cloud:
     s3:
       bucket: eunibucket
     credentials:
-      access-key: ' '
-      secret-key: ' '
+      access-key: ''
+      secret-key: ''
     region:
       static: ap-northeast-2
       auto: false

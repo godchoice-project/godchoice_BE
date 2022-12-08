@@ -12,6 +12,7 @@ env:
   S3_BUCKET_NAME: my-github-actions-s3-bucket-realproject
   CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group-realproject
+  RESOURCE_PATH: ./src/main/resources/application.yml
 #  cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
 #  cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 

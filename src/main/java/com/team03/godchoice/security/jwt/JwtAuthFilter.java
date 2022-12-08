@@ -1,7 +1,8 @@
 package com.team03.godchoice.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.team03.godchoice.exception.ErrorResponse;
+import com.team03.godchoice.exception.CustomException;
+import com.team03.godchoice.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setStatus(status.value());
         response.setContentType("application/json");
         try {
-            String json = new ObjectMapper().writeValueAsString(new ErrorResponse(status.value(), "T001", msg));
+//            String json = new ObjectMapper().writeValueAsString(new ErrorResponse(status.value(), "T001", msg));
+            String json = new ObjectMapper().writeValueAsString(new CustomException(ErrorCode.TOKEN_ERROR));
             response.getWriter().write(json);
         } catch (Exception e) {
             log.error(e.getMessage());

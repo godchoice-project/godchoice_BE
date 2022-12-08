@@ -19,7 +19,7 @@ public enum ErrorCode {
 
     //게시물 오류
     NOT_FOUND_POST(HttpStatus.NOT_FOUND.value(), "P001", "게시물이 존재하지 않습니다."),
-    DATE_STATUS_ERROR(HttpStatus.BAD_REQUEST.value(), "D001", "만남날짜가 지난 날짜입니다."),
+    DATE_STATUS_ERROR(HttpStatus.BAD_REQUEST.value(), "M001", "만남날짜가 지난 날짜입니다."),
 
     //권한 오류
     NO_PERMISSION_DELETE(HttpStatus.BAD_REQUEST.value(), "P002", "삭제할 권한이 없습니다."),
@@ -36,8 +36,11 @@ public enum ErrorCode {
     NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "N001", "알림이 존재하지 않습니다."),
 
     //알수없는 오류
-    ERROR(HttpStatus.NO_CONTENT.value(), "S001", "알수업는오류"),
-    ERROR_LOGIN(HttpStatus.BAD_REQUEST.value(), "L001", "로그인을 다시 시도해주세요");
+    ERROR(HttpStatus.NO_CONTENT.value(), "E001", "알수업는오류"),
+    ERROR_LOGIN(HttpStatus.BAD_REQUEST.value(), "E001", "로그인을 다시 시도해주세요"),
+
+    //토큰오류
+    TOKEN_ERROR(HttpStatus.BAD_REQUEST.value(), "T001","토큰이 만료되었습니다.");
 
 
     private final int status;

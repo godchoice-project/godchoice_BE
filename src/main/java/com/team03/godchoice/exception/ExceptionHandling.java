@@ -30,8 +30,8 @@ public class ExceptionHandling {
     }
 
     //런타임 예외처리 해야함 (알수없는 오류)
-//    @ExceptionHandler(RuntimeException.class)
-//    public Object runTimeException(RuntimeException e) {
-//        return GlobalResDto.fail(ErrorCode.NOT_FOUND);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    public Object runTimeException(RuntimeException e) {
+        return GlobalResDto.fail(ErrorCode.ERROR);
+    }
 }

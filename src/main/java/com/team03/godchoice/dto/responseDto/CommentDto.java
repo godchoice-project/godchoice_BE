@@ -40,7 +40,7 @@ public class CommentDto extends TimeCountClass {
             this.userId = 0L;
             this.userName = "알수없음";
             this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_user_img.png";
-            this.content = "알수없음";
+            this.content = "삭제된 댓글입니다.";
         }
     }
 
@@ -57,7 +57,7 @@ public class CommentDto extends TimeCountClass {
             this.userId = 0L;
             this.userName = "알수없음";
             this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_user_img.png";
-            this.content = "알수없음";
+            this.content = "삭제된 댓글입니다.";
         }
 
     }
@@ -75,7 +75,7 @@ public class CommentDto extends TimeCountClass {
             this.userId = 0L;
             this.userName = "알수없음";
             this.userImg = "https://eunibucket.s3.ap-northeast-2.amazonaws.com/testdir/normal_user_img.png";
-            this.content = "알수없음";
+            this.content = "삭제된 댓글입니다.";
         }
     }
 

@@ -38,3 +38,5 @@ GodchoiceApplicationTest.java
 
 ### VS Code ###
 .vscode/
+/src/main/resources/application-secret.yml
+/src/main/resources/keystore.p12

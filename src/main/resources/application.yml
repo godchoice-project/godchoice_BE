@@ -52,8 +52,8 @@ spring:
             client-secret: ENC(VmYADJ+wPrqPUX+36AXjnBuAbP0TR9XT3EIcSd3RtTAH4VriQi2cA0hMAAl4atgD)
 
           github :
-#            redirect-uri: http://localhost:3000/member/signup/github
-            redirect-uri: https://godchoice.shop/member/signup/github
+            redirect-uri: http://localhost:3000/member/signup/github
+#            redirect-uri: https://godchoice.shop/member/signup/github
             client-id: ENC(kPT+Y+wbyQ33X2pxj8883ic6543VJ28mMF0u6wH85Gg=)
             client-secret: ENC(LoQHy5dVgo+rHIXp51+8P03fgkZpWcv6a1lL186yLhZJkiM1NeSSL6jnN0e70Zgn6jw3IecNG3Q=)
 

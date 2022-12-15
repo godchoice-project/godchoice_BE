@@ -52,6 +52,10 @@ public class EventPostService extends MakeRegionTagClass {
         //시작시간,만료시간 localDate로 바꾸고 주소 태그만들고
         LocalDate startPeriod = LocalDate.parse(eventPostReqDto.getStartPeriod(), DateTimeFormatter.ISO_DATE);
         LocalDate endPeriod = LocalDate.parse(eventPostReqDto.getEndPeriod(), DateTimeFormatter.ISO_DATE);
+        if(endPeriod.isBefore(startPeriod)){
+            throw new CustomException(ErrorCode.DATE_STATUS_ERROR);
+        }
+
         RegionTag regionTag = toRegionTag(eventPostReqDto.getPostAddress());
         String eventStatus = toEventStatus(endPeriod);
 
@@ -76,6 +80,10 @@ public class EventPostService extends MakeRegionTagClass {
 
         LocalDate startPeriod = LocalDate.parse(eventPostPutReqDto.getStartPeriod(), DateTimeFormatter.ISO_DATE);
         LocalDate endPeriod = LocalDate.parse(eventPostPutReqDto.getEndPeriod(), DateTimeFormatter.ISO_DATE);
+        if(endPeriod.isBefore(startPeriod)){
+            throw new CustomException(ErrorCode.DATE_STATUS_ERROR);
+        }
+
         RegionTag regionTag = toRegionTag(eventPostPutReqDto.getPostAddress());
         String eventStatus = toEventStatus(endPeriod);
 
@@ -93,7 +101,6 @@ public class EventPostService extends MakeRegionTagClass {
                 s3Uploader.delImg(s3Path);
                 eventPostImgRepository.deleteById(imgId);
             }
-
         }
 
         saveImg(multipartFiles, eventPost);

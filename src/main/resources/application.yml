@@ -1,8 +1,8 @@
-server:
-  ssl:
-    key-store-password: 5509kong
-    key-store-type: PKCS12
-    key-store:  classpath:keystore.p12
+#server:
+#  ssl:
+#    key-store-password: 5509kong
+#    key-store-type: PKCS12
+#    key-store:  classpath:keystore.p12
 
 spring:
   profiles:

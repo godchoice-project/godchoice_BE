@@ -249,7 +249,7 @@ Querydsl을 사용해 다양한 경우에 한가지 쿼리로 동작할 수 있�
 ## ⭐️ 팀원분들
 <hr/>
 
-| Position                 | Name   | Blog                                                     | MBTI |
+| Position                 | Name   | Github                                                     | MBTI |
 | ------------------------ | ------ | -------------------------------------------------------- | ---- |
 | 🔰 FE·React | 민현홍 | 🔗 [GitHub::Min Hyeonhong](https://github.com/minhyeonhong)       | ISFP |
 | FE·React   | 박지윤 | 🔗 [GitHub::connie](https://github.com/verocony)     | ENFP |

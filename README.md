@@ -90,9 +90,12 @@
 <br/>
 <br/>
 
-
+## 📚 ERD
 <br/>
-
+        
+![캡처3](https://user-images.githubusercontent.com/108788078/208020199-b262bcb8-6594-409b-99d4-c0e52d7cae4f.PNG)
+<br/>
+<br/>
 
 ## 🥑 기술적 의사결정 
 
